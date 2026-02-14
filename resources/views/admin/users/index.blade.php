@@ -1,0 +1,216 @@
+@extends('layouts.admin')
+
+@section('title', 'User Management')
+
+@section('header', 'User Management')
+@section('subheader', 'Manage system users and permissions')
+
+@section('content')
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Total Users</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\User::count() }}</p>
+            </div>
+            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-people text-blue-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Admins</p>
+                <p class="text-3xl font-bold text-green-600 mt-1">{{ \App\Models\User::whereIn('role', ['super_admin', 'admin'])->count() }}</p>
+            </div>
+            <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-shield-check text-green-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Staff</p>
+                <p class="text-3xl font-bold text-blue-600 mt-1">{{ \App\Models\User::whereIn('role', ['city_vet', 'records_staff', 'admin_staff', 'meat_inspector', 'inventory_staff', 'barangay_encoder'])->count() }}</p>
+            </div>
+            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-person-badge text-blue-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Viewers</p>
+                <p class="text-3xl font-bold text-purple-600 mt-1">{{ \App\Models\User::where('role', 'viewer')->count() }}</p>
+            </div>
+            <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-eye text-purple-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Quick Actions</h3>
+        <a href="{{ route('admin.users.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+            <i class="bi bi-person-plus"></i> Add User
+        </a>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <a href="{{ route('admin.users.create') }}" class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-person-plus text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Add User</span>
+        </a>
+
+        <a href="#" class="flex flex-col items-center p-4 bg-green-50 hover:bg-green-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-file-earmark-excel text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Export</span>
+        </a>
+
+        <a href="#" class="flex flex-col items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-funnel text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Filter</span>
+        </a>
+
+        <a href="#" class="flex flex-col items-center p-4 bg-orange-50 hover:bg-orange-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-gear text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Roles</span>
+        </a>
+
+        <a href="#" class="flex flex-col items-center p-4 bg-red-50 hover:bg-red-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                <i class="bi bi-trash text-white text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Inactive</span>
+        </a>
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-800">All Users</h3>
+        <form method="GET" action="{{ route('admin.users.index') }}" class="flex items-center gap-4">
+            <!-- Search -->
+            <div class="relative">
+                <input type="text" name="search" placeholder="Search users..." value="{{ request('search') }}" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64">
+                <i class="bi bi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <!-- Filter -->
+            <select name="role" onchange="this.form.submit()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">All Roles</option>
+                <option value="super_admin" {{ request('role') == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
+                <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                <option value="city_vet" {{ request('role') == 'city_vet' ? 'selected' : '' }}>City Vet</option>
+                <option value="records_staff" {{ request('role') == 'records_staff' ? 'selected' : '' }}>Records Staff</option>
+                <option value="admin_staff" {{ request('role') == 'admin_staff' ? 'selected' : '' }}>Admin Staff</option>
+                <option value="viewer" {{ request('role') == 'viewer' ? 'selected' : '' }}>Viewer</option>
+            </select>
+            @if(request('search') || request('role'))
+                <a href="{{ route('admin.users.index') }}" class="text-sm text-gray-500 hover:text-gray-700">Clear</a>
+            @endif
+        </form>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Barangay</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @forelse(\App\Models\User::latest()->take(10)->get() as $user)
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-white font-semibold text-sm">{{ substr($user->name, 0, 1) }}</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">{{ $user->name }}</p>
+                                    <p class="text-xs text-gray-500">{{ $user->email }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+                                @switch($user->role)
+                                    @case('super_admin') bg-red-100 text-red-800 @break
+                                    @case('admin') bg-orange-100 text-orange-800 @break
+                                    @case('city_vet') bg-blue-100 text-blue-800 @break
+                                    @case('records_staff') bg-green-100 text-green-800 @break
+                                    @case('viewer') bg-gray-100 text-gray-800 @break
+                                    @default bg-purple-100 text-purple-800
+                                @endswitch">
+                                {{ str_replace('_', ' ', $user->role) }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ $user->barangay ?? 'N/A' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ $user->created_at->format('M d, Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if($user->status == 'active')
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Active</span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Inactive</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('admin.users.edit', $user) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{{ route('admin.users.show', $user) }}" class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition" title="View">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete" onclick="return confirm('Are you sure?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                            <i class="bi bi-people text-4xl mb-2 block"></i>
+                            No users found
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+    <div class="px-6 py-4 border-t border-gray-100">
+        {{ \App\Models\User::paginate(10)->links() }}
+    </div>
+</div>
+@endsection
