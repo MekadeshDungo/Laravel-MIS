@@ -62,7 +62,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('announcements.public.index') ? 'active' : '' }}" 
+                        <a class="nav-link {{ request()->routeIs('announcements.public.index') ? 'active' : '' }}"
                            href="{{ route('announcements.public.index') }}">
                             <i class="bi bi-megaphone me-1"></i>Announcements
                         </a>

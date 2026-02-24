@@ -36,6 +36,13 @@
 
     // Only admin/super_admin should have portal announcements routes
     $canManageAnnouncements = in_array($role, ['admin', 'super_admin']);
+
+    // Check if user has unread announcements (created in last 7 days AND not read by this user)
+    $unreadAnnouncements = \App\Models\Announcement::where('created_at', '>=', now()->subDays(7))
+        ->whereDoesntHave('reads', function($query) {
+            $query->where('user_id', auth()->id());
+        })
+        ->count();
 @endphp
 
     <!-- Mobile Header -->
@@ -53,9 +60,9 @@
 
             <div class="flex items-center gap-2">
                 <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" class="p-2 rounded-lg hover:bg-gray-100 relative">
+                    <button @click="open = !open; fetch('{{ route('announcements.markAsRead') }}', {method: 'POST', headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}});" class="p-2 rounded-lg hover:bg-gray-100 relative">
                         <i class="bi bi-bell text-xl text-gray-700"></i>
-                        @if(\App\Models\Announcement::where('created_at', '>=', now()->subDays(7))->count() > 0)
+                        @if($unreadAnnouncements > 0)
                         <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                         @endif
                     </button>
@@ -78,8 +85,8 @@
                                         <p class="text-xs text-gray-400 mt-1">{{ $announcement->created_at->diffForHumans() }}</p>
                                     </a>
                                 @else
-                                    {{-- For non-admin roles, send them to the public announcements page --}}
-                                    <a href="{{ route('announcements.public.index') }}"
+                                    {{-- For non-admin roles, send them to the portal announcements page --}}
+                                    <a href="{{ route('announcements.portal.index') }}"
                                        class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 transition">
                                         <p class="text-sm font-semibold text-gray-800">{{ $announcement->title }}</p>
                                         <p class="text-xs text-gray-600 mt-1">{{ Str::limit($announcement->content, 80) }}</p>
@@ -101,7 +108,7 @@
                                     View all announcements
                                 </a>
                             @else
-                                <a href="{{ route('announcements.public.index') }}" class="text-sm text-blue-600 hover:text-blue-700">
+                                <a href="{{ route('announcements.portal.index') }}" class="text-sm text-blue-600 hover:text-blue-700">
                                     View all announcements
                                 </a>
                             @endif
@@ -257,7 +264,13 @@
                 <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Operations</p>
             </div>
 
-            <a href="{{ route('announcements.public.index') }}"
+            <a href="{{ route('announcements.portal.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition {{ request()->routeIs('announcements.portal.*') ? 'bg-blue-600' : '' }}">
+                <i class="bi bi-megaphone text-lg w-6"></i>
+                <span>Announcements (View Only)</span>
+            </a>
+
+            <a href="{{ route('barangay.data-entry') }}"
                class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition {{ request()->routeIs('announcements.public.*') ? 'bg-blue-600' : '' }}">
                 <i class="bi bi-megaphone text-lg w-6"></i>
                 <span>Announcements (View Only)</span>
@@ -291,7 +304,16 @@
                 <span>Notifications</span>
             </a>
             @else
-            {{-- Other roles get basic menu - dashboard and logout only --}}
+            {{-- Other roles get basic menu - dashboard, announcements, and logout --}}
+            <div class="pt-4 pb-2">
+                <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Information</p>
+            </div>
+
+            <a href="{{ route('announcements.portal.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition {{ request()->routeIs('announcements.portal.*') ? 'bg-blue-600' : '' }}">
+                <i class="bi bi-megaphone text-lg w-6"></i>
+                <span>Announcements</span>
+            </a>
             @endif
 
             <!-- Logout -->
@@ -321,9 +343,9 @@
 
                 <div class="flex items-center gap-4">
                     <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg relative">
+                        <button @click="open = !open; fetch('{{ route('announcements.markAsRead') }}', {method: 'POST', headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}});" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg relative">
                             <i class="bi bi-bell text-xl"></i>
-                            @if(\App\Models\Announcement::where('created_at', '>=', now()->subDays(7))->count() > 0)
+                            @if($unreadAnnouncements > 0)
                             <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                             @endif
                         </button>
@@ -346,7 +368,7 @@
                                             <p class="text-xs text-gray-400 mt-1">{{ $announcement->created_at->diffForHumans() }}</p>
                                         </a>
                                     @else
-                                        <a href="{{ route('announcements.public.index') }}"
+                                        <a href="{{ route('announcements.portal.index') }}"
                                            class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 transition">
                                             <p class="text-sm font-semibold text-gray-800">{{ $announcement->title }}</p>
                                             <p class="text-xs text-gray-600 mt-1">{{ Str::limit($announcement->content, 80) }}</p>
@@ -368,7 +390,7 @@
                                         View all announcements
                                     </a>
                                 @else
-                                    <a href="{{ route('announcements.public.index') }}" class="text-sm text-blue-600 hover:text-blue-700">
+                                    <a href="{{ route('announcements.portal.index') }}" class="text-sm text-blue-600 hover:text-blue-700">
                                         View all announcements
                                     </a>
                                 @endif

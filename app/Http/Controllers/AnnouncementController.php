@@ -10,6 +10,25 @@ use App\Models\Announcement;
 class AnnouncementController extends Controller
 {
     /**
+     * Check if user is admin or super_admin
+     */
+    private function isAdmin()
+    {
+        $user = Auth::user();
+        return $user && in_array($user->role, ['super_admin', 'admin']);
+    }
+
+    /**
+     * Get redirect route based on user role
+     */
+    private function getAdminRedirectRoute()
+    {
+        return Auth::user()->role === 'super_admin'
+            ? 'super-admin.announcements.index'
+            : 'admin.announcements.index';
+    }
+
+    /**
      * Show announcements page for citizens.
      */
     public function index()
@@ -17,23 +36,80 @@ class AnnouncementController extends Controller
         $announcements = Announcement::where('is_active', true)
             ->latest()
             ->paginate(10);
-            
+
         return view('announcements.index', compact('announcements'));
     }
 
     /**
+     * Show public announcements for all authenticated users (non-admin).
+     */
+    public function publicIndex()
+    {
+        $announcements = Announcement::where('is_active', true)
+            ->latest()
+            ->paginate(10);
+
+        return view('announcements.public-index', compact('announcements'));
+    }
+
+    /**
+     * Mark recent announcements as read for the current user.
+     * This is called via AJAX when opening the notification dropdown.
+     */
+    public function markAsRead()
+    {
+        $recentAnnouncements = Announcement::where('is_active', true)
+            ->where('created_at', '>=', now()->subDays(7))
+            ->get();
+
+        $markedCount = 0;
+        foreach ($recentAnnouncements as $announcement) {
+            $alreadyRead = \App\Models\AnnouncementRead::where('announcement_id', $announcement->id)
+                ->where('user_id', Auth::id())
+                ->exists();
+
+            if (!$alreadyRead) {
+                \App\Models\AnnouncementRead::create([
+                    'announcement_id' => $announcement->id,
+                    'user_id' => Auth::id(),
+                    'read_at' => now(),
+                ]);
+                $markedCount++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'marked_count' => $markedCount,
+            'message' => 'Announcements marked as read'
+        ]);
+    }
+
+    /**
      * Show the form for creating a new announcement.
+     * Only admin and super_admin can access.
      */
     public function create()
     {
+        if (!$this->isAdmin()) {
+            return redirect()->route('announcements.index')
+                ->with('error', 'You do not have permission to create announcements.');
+        }
+
         return view('announcements.create');
     }
 
     /**
      * Store a newly created announcement.
+     * Only admin and super_admin can create.
      */
     public function store(Request $request)
     {
+        if (!$this->isAdmin()) {
+            return redirect()->route('announcements.index')
+                ->with('error', 'You do not have permission to create announcements.');
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'nullable|string|in:info,alert,reminder,update',
@@ -67,12 +143,7 @@ class AnnouncementController extends Controller
             'is_active' => ($validated['status'] ?? 'published') === 'published',
         ]);
 
-        // Determine redirect route based on user role
-        $redirectRoute = Auth::user()->role === 'super_admin' 
-            ? 'super-admin.announcements.index' 
-            : 'admin.announcements.index';
-
-        return redirect()->route($redirectRoute)
+        return redirect()->route($this->getAdminRedirectRoute())
             ->with('success', 'Announcement posted successfully!');
     }
 
@@ -81,10 +152,15 @@ class AnnouncementController extends Controller
      */
     public function list()
     {
+        if (!$this->isAdmin()) {
+            return redirect()->route('announcements.index')
+                ->with('error', 'You do not have permission to view this page.');
+        }
+
         $announcements = Announcement::with('user')
             ->latest()
             ->paginate(10);
-            
+
         return view('announcements.list', compact('announcements'));
     }
 
@@ -98,17 +174,29 @@ class AnnouncementController extends Controller
 
     /**
      * Show the form for editing an announcement.
+     * Only admin and super_admin can access.
      */
     public function edit(Announcement $announcement)
     {
+        if (!$this->isAdmin()) {
+            return redirect()->route('announcements.index')
+                ->with('error', 'You do not have permission to edit announcements.');
+        }
+
         return view('announcements.edit', compact('announcement'));
     }
 
     /**
      * Update an announcement.
+     * Only admin and super_admin can update.
      */
     public function update(Request $request, Announcement $announcement)
     {
+        if (!$this->isAdmin()) {
+            return redirect()->route('announcements.index')
+                ->with('error', 'You do not have permission to edit announcements.');
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'nullable|string|in:info,alert,reminder,update',
@@ -151,33 +239,29 @@ class AnnouncementController extends Controller
 
         $announcement->update($updateData);
 
-        // Determine redirect route based on user role
-        $redirectRoute = Auth::user()->role === 'super_admin' 
-            ? 'super-admin.announcements.index' 
-            : 'admin.announcements.index';
-
-        return redirect()->route($redirectRoute)
+        return redirect()->route($this->getAdminRedirectRoute())
             ->with('success', 'Announcement updated successfully!');
     }
 
     /**
      * Delete an announcement.
+     * Only admin and super_admin can delete.
      */
     public function destroy(Announcement $announcement)
     {
+        if (!$this->isAdmin()) {
+            return redirect()->route('announcements.index')
+                ->with('error', 'You do not have permission to delete announcements.');
+        }
+
         // Delete photo if exists
         if ($announcement->photo_path) {
             Storage::disk('public')->delete($announcement->photo_path);
         }
-        
+
         $announcement->delete();
 
-        // Determine redirect route based on user role
-        $redirectRoute = Auth::user()->role === 'super_admin' 
-            ? 'super-admin.announcements.index' 
-            : 'admin.announcements.index';
-
-        return redirect()->route($redirectRoute)
+        return redirect()->route($this->getAdminRedirectRoute())
             ->with('success', 'Announcement deleted successfully!');
     }
 }

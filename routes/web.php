@@ -58,13 +58,21 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.public.index');
 
 // ==============================
+// AUTHENTICATED NON-ADMIN ANNOUNCEMENTS (Barangay, Clinic, etc.)
+// ==============================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/portal/announcements', [AnnouncementController::class, 'publicIndex'])->name('announcements.portal.index');
+    Route::post('/portal/announcements/mark-read', [AnnouncementController::class, 'markAsRead'])->name('announcements.markAsRead');
+});
+
+// ==============================
 // SUPER ADMIN PORTAL (Super Administrator)
 // Role: Super Admin
 // Access: Full system access with account management
 // ==============================
 Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('super-admin.')->group(function () {
     Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('dashboard');
-    
+
     // User Management (Full Access)
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -73,23 +81,23 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-    
+
     // All Reports (City-wide View)
     Route::get('/all-reports', [AdminController::class, 'allReports'])->name('all-reports');
-    
+
     // Animal Bite Reports (from Barangay)
     Route::get('/animal-bite-reports', [AdminController::class, 'indexBiteReports'])->name('bite-reports.index');
     Route::get('/animal-bite-reports/{report}', [AdminController::class, 'showBiteReport'])->name('bite-reports.show');
     Route::put('/animal-bite-reports/{report}', [AdminController::class, 'updateBiteReport'])->name('bite-reports.update');
-    
+
     // Rabies Vaccination Reports (from Clinic)
     Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
     Route::get('/vaccination-reports/{report}', [AdminController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
-    
+
     // Meat Inspection Reports
     Route::get('/meat-inspection-reports', [AdminController::class, 'indexMeatInspectionReports'])->name('meat-inspection-reports.index');
     Route::get('/meat-inspection-reports/{report}', [AdminController::class, 'showMeatInspectionReport'])->name('meat-inspection-reports.show');
-    
+
     // Announcements
     Route::get('/announcements', [AnnouncementController::class, 'list'])->name('announcements.index');
     Route::get('/announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create');
@@ -98,7 +106,7 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
     Route::get('/announcements/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('announcements.edit');
     Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
-    
+
     // System Logs
     Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
     Route::get('/system-logs/{log}', [SystemLogController::class, 'show'])->name('system-logs.show');
@@ -112,7 +120,7 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
 // ==============================
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    
+
     // User Management (Limited - can manage other admins)
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -121,23 +129,23 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-    
+
     // All Reports (City-wide View)
     Route::get('/all-reports', [AdminController::class, 'allReports'])->name('all-reports');
-    
+
     // Animal Bite Reports (from Barangay)
     Route::get('/animal-bite-reports', [AdminController::class, 'indexBiteReports'])->name('bite-reports.index');
     Route::get('/animal-bite-reports/{report}', [AdminController::class, 'showBiteReport'])->name('bite-reports.show');
     Route::put('/animal-bite-reports/{report}', [AdminController::class, 'updateBiteReport'])->name('bite-reports.update');
-    
+
     // Rabies Vaccination Reports (from Clinic)
     Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
     Route::get('/vaccination-reports/{report}', [AdminController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
-    
+
     // Meat Inspection Reports
     Route::get('/meat-inspection-reports', [AdminController::class, 'indexMeatInspectionReports'])->name('meat-inspection-reports.index');
     Route::get('/meat-inspection-reports/{report}', [AdminController::class, 'showMeatInspectionReport'])->name('meat-inspection-reports.show');
-    
+
     // Announcements
     Route::get('/announcements', [AnnouncementController::class, 'list'])->name('announcements.index');
     Route::get('/announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create');
@@ -146,7 +154,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/announcements/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('announcements.edit');
     Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
-    
+
     // System Logs
     Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
     Route::get('/system-logs/{log}', [SystemLogController::class, 'show'])->name('system-logs.show');
@@ -160,19 +168,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // ==============================
 Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet.')->group(function () {
     Route::get('/dashboard', [CityVetController::class, 'dashboard'])->name('dashboard');
-    
+
     // Vaccination Reports
     Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
     Route::get('/vaccination-reports/{report}', [AdminController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
-    
+
     // Rabies Cases
     Route::get('/rabies-cases', [RabiesCaseController::class, 'index'])->name('rabies-cases.index');
     Route::get('/rabies-cases/{case}', [RabiesCaseController::class, 'show'])->name('rabies-cases.show');
-    
+
     // Animal Bite Reports
     Route::get('/bite-reports', [AdminController::class, 'indexBiteReports'])->name('bite-reports.index');
     Route::get('/bite-reports/{report}', [AdminController::class, 'showBiteReport'])->name('bite-reports.show');
-    
+
     // All Reports
     Route::get('/all-reports', [AdminController::class, 'allReports'])->name('all-reports');
 });
@@ -193,10 +201,10 @@ Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('ad
 // ==============================
 Route::middleware(['auth', 'role:disease_control'])->prefix('disease-control')->name('disease-control.')->group(function () {
     Route::get('/dashboard', [DiseaseControlController::class, 'dashboard'])->name('dashboard');
-    
+
     // Rabies Cases
     Route::get('/rabies-cases', [DiseaseControlController::class, 'indexCases'])->name('rabies-cases.index');
-    
+
     // Animal Bite Reports
     Route::get('/animal-bite-reports', [DiseaseControlController::class, 'indexBiteReports'])->name('animal-bite-reports.index');
 });
@@ -217,7 +225,7 @@ Route::middleware(['auth', 'role:city_pound'])->prefix('city-pound')->name('city
 // ==============================
 Route::middleware(['auth', 'role:meat_inspector'])->prefix('meat-inspection')->name('meat-inspection.')->group(function () {
     Route::get('/dashboard', [MeatInspectionController::class, 'dashboard'])->name('dashboard');
-    
+
     // Meat Inspection Reports
     Route::get('/reports/create', [MeatInspectionController::class, 'createReport'])->name('reports.create');
     Route::post('/reports', [MeatInspectionController::class, 'storeReport'])->name('reports.store');
@@ -232,21 +240,21 @@ Route::middleware(['auth', 'role:meat_inspector'])->prefix('meat-inspection')->n
 // ==============================
 Route::middleware(['auth', 'role:barangay_encoder|barangay'])->prefix('barangay')->name('barangay.')->group(function () {
     Route::get('/dashboard', [BarangayController::class, 'dashboard'])->name('dashboard');
-    
+
     // Data Entry (choose report type)
     Route::get('/data-entry', [BarangayController::class, 'showDataEntry'])->name('data-entry');
-    
+
     // Stray Reports
     Route::get('/reports', [BarangayController::class, 'indexStrayReports'])->name('reports.index');
     Route::get('/reports/create', [BarangayController::class, 'createStrayReport'])->name('reports.create');
     Route::post('/reports', [BarangayController::class, 'storeStrayReport'])->name('reports.store');
-    
+
     // Impound Records
     Route::get('/impounds', [BarangayController::class, 'indexImpoundRecords'])->name('impounds.index');
-    
+
     // Adoption Requests
     Route::get('/adoptions', [BarangayController::class, 'indexAdoptionRequests'])->name('adoptions.index');
-    
+
     // Notifications
     Route::get('/notifications', [BarangayController::class, 'indexNotifications'])->name('notifications.index');
     Route::put('/notifications/{notification}/mark-read', [BarangayController::class, 'markNotificationRead'])->name('notifications.mark-read');
@@ -259,10 +267,10 @@ Route::middleware(['auth', 'role:barangay_encoder|barangay'])->prefix('barangay'
 // ==============================
 Route::middleware(['auth', 'role:clinic'])->prefix('clinic')->name('clinic.')->group(function () {
     Route::get('/dashboard', [ClinicController::class, 'dashboard'])->name('dashboard');
-    
+
     // Data Entry (choose report type)
     Route::get('/data-entry', [ClinicController::class, 'showDataEntry'])->name('data-entry');
-    
+
     // Rabies Vaccination Reports
     Route::get('/vaccination-reports/create', [ClinicController::class, 'createVaccinationReport'])->name('vaccination-reports.create');
     Route::post('/vaccination-reports', [ClinicController::class, 'storeVaccinationReport'])->name('vaccination-reports.store');
@@ -276,7 +284,7 @@ Route::middleware(['auth', 'role:clinic'])->prefix('clinic')->name('clinic.')->g
 // ==============================
 Route::middleware(['auth', 'role:admin|city_vet|super_admin|disease_control'])->prefix('spay-neuter')->name('spay-neuter.')->group(function () {
     Route::get('/dashboard', [SpayNeuterController::class, 'dashboard'])->name('dashboard');
-    
+
     // Spay/Neuter Reports
     Route::get('/reports', [SpayNeuterController::class, 'index'])->name('reports.index');
     Route::get('/reports/create', [SpayNeuterController::class, 'create'])->name('reports.create');
@@ -294,7 +302,7 @@ Route::middleware(['auth', 'role:admin|city_vet|super_admin|disease_control'])->
 // ==============================
 Route::middleware(['auth', 'role:admin|city_vet|super_admin|inventory_staff'])->prefix('inventory')->name('inventory.')->group(function () {
     Route::get('/dashboard', [InventoryController::class, 'dashboard'])->name('dashboard');
-    
+
     // Inventory Items
     Route::get('/', [InventoryController::class, 'index'])->name('index');
     Route::get('/create', [InventoryController::class, 'create'])->name('create');
@@ -303,7 +311,7 @@ Route::middleware(['auth', 'role:admin|city_vet|super_admin|inventory_staff'])->
     Route::get('/{item}/edit', [InventoryController::class, 'edit'])->name('edit');
     Route::put('/{item}', [InventoryController::class, 'update'])->name('update');
     Route::delete('/{item}', [InventoryController::class, 'destroy'])->name('destroy');
-    
+
     // Stock Movements
     Route::get('/{item}/stock-in', [InventoryController::class, 'showStockIn'])->name('stock-in');
     Route::post('/{item}/stock-in', [InventoryController::class, 'stockIn'])->name('stock-in.process');
@@ -311,11 +319,11 @@ Route::middleware(['auth', 'role:admin|city_vet|super_admin|inventory_staff'])->
     Route::post('/{item}/stock-out', [InventoryController::class, 'stockOut'])->name('stock-out.process');
     Route::get('/{item}/adjustment', [InventoryController::class, 'showAdjustment'])->name('adjustment');
     Route::post('/{item}/adjustment', [InventoryController::class, 'adjustment'])->name('adjustment.process');
-    
+
     // Alerts
     Route::get('/alerts/low-stock', [InventoryController::class, 'lowStock'])->name('low-stock');
     Route::get('/alerts/expiring', [InventoryController::class, 'expiring'])->name('expiring');
-    
+
     // Movements Log
     Route::get('/movements', [InventoryController::class, 'movements'])->name('movements');
 });
@@ -374,7 +382,7 @@ Route::middleware(['auth', 'role:admin|city_vet|super_admin|disease_control'])->
 // ==============================
 Route::middleware(['auth', 'role:records_staff'])->prefix('records-staff')->name('records-staff.')->group(function () {
     Route::get('/dashboard', [RecordsController::class, 'dashboard'])->name('dashboard');
-    
+
     // Pet Registration
     Route::get('/pets', [RecordsController::class, 'pets'])->name('pets.index');
     Route::get('/pets/create', [RecordsController::class, 'createPet'])->name('pets.create');
@@ -382,17 +390,17 @@ Route::middleware(['auth', 'role:records_staff'])->prefix('records-staff')->name
     Route::get('/pets/{pet}', [RecordsController::class, 'showPet'])->name('pets.show');
     Route::get('/pets/{pet}/edit', [RecordsController::class, 'editPet'])->name('pets.edit');
     Route::put('/pets/{pet}', [RecordsController::class, 'updatePet'])->name('pets.update');
-    
+
     // Owner Records
     Route::get('/owners', [RecordsController::class, 'owners'])->name('owners.index');
     Route::get('/owners/{owner}', [RecordsController::class, 'showOwner'])->name('owners.show');
-    
+
     // Vaccination Encoding
     Route::get('/vaccinations/create', [RecordsController::class, 'createVaccination'])->name('vaccinations.create');
     Route::post('/vaccinations', [RecordsController::class, 'storeVaccination'])->name('vaccinations.store');
     Route::get('/vaccinations', [RecordsController::class, 'vaccinations'])->name('vaccinations.index');
     Route::get('/vaccinations/{report}', [RecordsController::class, 'showVaccination'])->name('vaccinations.show');
-    
+
     // Global Search
     Route::get('/search', [RecordsController::class, 'search'])->name('search');
 });
@@ -413,11 +421,11 @@ Route::prefix('pages')->name('pages.')->group(function () {
     Route::get('/pet-owner-info', function() {
         return view('pages.pet-owner-info');
     })->name('pet-owner-info');
-    
+
     Route::get('/programs-schedules', function() {
         return view('pages.programs-schedules');
     })->name('programs-schedules');
-    
+
     Route::get('/reports-safety', function() {
         return view('pages.reports-safety');
     })->name('reports-safety');
@@ -429,13 +437,13 @@ Route::prefix('pages')->name('pages.')->group(function () {
 Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
     // Store device token
     Route::post('/device-tokens', [\App\Http\Controllers\DeviceTokenController::class, 'store'])->name('device-tokens.store');
-    
+
     // Update token usage
     Route::put('/device-tokens/usage', [\App\Http\Controllers\DeviceTokenController::class, 'updateUsage'])->name('device-tokens.update-usage');
-    
+
     // Deactivate token
     Route::delete('/device-tokens', [\App\Http\Controllers\DeviceTokenController::class, 'destroy'])->name('device-tokens.destroy');
-    
+
     // Get user's tokens
     Route::get('/device-tokens', [\App\Http\Controllers\DeviceTokenController::class, 'index'])->name('device-tokens.index');
 });
