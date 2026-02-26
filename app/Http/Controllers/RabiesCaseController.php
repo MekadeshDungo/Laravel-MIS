@@ -46,7 +46,7 @@ class RabiesCaseController extends Controller
         }
 
         $cases = $query->with('barangay', 'owner')->latest()->paginate(10);
-        $barangays = Barangay::pluck('barangay_name', 'id');
+        $barangays = Barangay::pluck('barangay_name', 'barangay_id');
 
         return view('rabies-cases.index', compact('cases', 'barangays'));
     }
@@ -56,7 +56,7 @@ class RabiesCaseController extends Controller
      */
     public function create()
     {
-        $barangays = Barangay::pluck('barangay_name', 'id');
+        $barangays = Barangay::pluck('barangay_name', 'barangay_id');
         $owners = Owner::pluck('owner_name', 'id');
         return view('rabies-cases.create', compact('barangays', 'owners'));
     }
@@ -113,7 +113,7 @@ class RabiesCaseController extends Controller
      */
     public function edit(RabiesCase $rabiesCase)
     {
-        $barangays = Barangay::pluck('barangay_name', 'id');
+        $barangays = Barangay::pluck('barangay_name', 'barangay_id');
         $owners = Owner::pluck('owner_name', 'id');
         return view('rabies-cases.edit', compact('rabiesCase', 'barangays', 'owners'));
     }

@@ -42,7 +42,7 @@ class EstablishmentController extends Controller
         }
 
         $establishments = $query->with('barangay')->latest()->paginate(10);
-        $barangays = Barangay::pluck('barangay_name', 'id');
+        $barangays = Barangay::pluck('barangay_name', 'barangay_id');
 
         return view('establishments.index', compact('establishments', 'barangays'));
     }
@@ -52,7 +52,7 @@ class EstablishmentController extends Controller
      */
     public function create()
     {
-        $barangays = Barangay::pluck('barangay_name', 'id');
+        $barangays = Barangay::pluck('barangay_name', 'barangay_id');
         return view('establishments.create', compact('barangays'));
     }
 
@@ -68,7 +68,7 @@ class EstablishmentController extends Controller
             'address' => 'nullable|string',
             'contact_number' => 'nullable|string|max:255',
             'owner_name' => 'nullable|string|max:255',
-            'barangay_id' => 'nullable|exists:barangays,id',
+            'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'status' => 'nullable|string|in:active,inactive,suspended,pending',
         ]);
 
@@ -95,7 +95,7 @@ class EstablishmentController extends Controller
      */
     public function edit(Establishment $establishment)
     {
-        $barangays = Barangay::pluck('barangay_name', 'id');
+        $barangays = Barangay::pluck('barangay_name', 'barangay_id');
         return view('establishments.edit', compact('establishment', 'barangays'));
     }
 
@@ -111,7 +111,7 @@ class EstablishmentController extends Controller
             'address' => 'nullable|string',
             'contact_number' => 'nullable|string|max:255',
             'owner_name' => 'nullable|string|max:255',
-            'barangay_id' => 'nullable|exists:barangays,id',
+            'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'status' => 'nullable|string|in:active,inactive,suspended,pending',
         ]);
 

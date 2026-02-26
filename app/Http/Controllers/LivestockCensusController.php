@@ -37,7 +37,7 @@ class LivestockCensusController extends Controller
         }
 
         $censuses = $query->with('barangay')->latest()->paginate(10);
-        $barangays = Barangay::pluck('barangay_name', 'id');
+        $barangays = Barangay::pluck('barangay_name', 'barangay_id');
         $years = range(date('Y'), date('Y') - 10);
 
         return view('livestock-census.index', compact('censuses', 'barangays', 'years'));
@@ -48,7 +48,7 @@ class LivestockCensusController extends Controller
      */
     public function create()
     {
-        $barangays = Barangay::pluck('barangay_name', 'id');
+        $barangays = Barangay::pluck('barangay_name', 'barangay_id');
         return view('livestock-census.create', compact('barangays'));
     }
 
@@ -58,7 +58,7 @@ class LivestockCensusController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'barangay_id' => 'nullable|exists:barangays,id',
+            'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'species' => 'required|string|in:cattle,carabao,swine,horse,goat,dog,pigeon',
             'no_of_heads' => 'required|integer|min:0',
             'no_of_farmers' => 'required|integer|min:0',
@@ -88,7 +88,7 @@ class LivestockCensusController extends Controller
      */
     public function edit(LivestockCensus $census)
     {
-        $barangays = Barangay::pluck('barangay_name', 'id');
+        $barangays = Barangay::pluck('barangay_name', 'barangay_id');
         return view('livestock-census.edit', compact('census', 'barangays'));
     }
 
@@ -98,7 +98,7 @@ class LivestockCensusController extends Controller
     public function update(Request $request, LivestockCensus $census)
     {
         $validated = $request->validate([
-            'barangay_id' => 'nullable|exists:barangays,id',
+            'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'species' => 'required|string|in:cattle,carabao,swine,horse,goat,dog,pigeon',
             'no_of_heads' => 'required|integer|min:0',
             'no_of_farmers' => 'required|integer|min:0',

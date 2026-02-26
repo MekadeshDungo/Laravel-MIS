@@ -12,10 +12,32 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: system-ui, -apple-system, sans-serif; }
-        .sidebar { width: 260px; position: fixed; height: 100vh; transition: all 0.3s ease; }
+
+        /* Sidebar - Fixed position on left */
+        .sidebar {
+            width: 260px;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 50;
+        }
+
+        /* Main content - Pushed to right of sidebar */
+        main {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        /* Top header - Sticky at top */
+        .main-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
         .nav-item.active { background: linear-gradient(90deg, rgba(59,130,246,0.2) 0%, transparent 100%); border-left: 3px solid #3b82f6; }
         .nav-item:hover { background: rgba(59,130,246,0.1); }
-        main { margin-left: 260px; min-height: 100vh; transition: margin-left 0.3s ease; }
         .sidebar-section { padding: 1rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .sidebar-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #64748b; padding: 0 0.75rem; margin-bottom: 0.5rem; }
 
@@ -23,6 +45,7 @@
             .sidebar { left: -260px; z-index: 50; }
             .sidebar.open { left: 0; }
             main { margin-left: 0; }
+            .main-header { position: sticky; }
             .sidebar-overlay.active { display: block !important; }
         }
     </style>
@@ -303,6 +326,44 @@
                 <i class="bi bi-bell text-lg w-6"></i>
                 <span>Notifications</span>
             </a>
+            @elseif(auth()->user()->role === 'meat_inspector')
+            <div class="pt-4 pb-2">
+                <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Meat Inspection</p>
+            </div>
+
+            <a href="{{ route('meat-inspection.dashboard') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition {{ request()->routeIs('meat-inspection.dashboard') ? 'bg-blue-600' : '' }}">
+                <i class="bi bi-clipboard-check text-lg w-6"></i>
+                <span>Inspection Reports</span>
+            </a>
+
+            <a href="{{ route('establishments.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition {{ request()->routeIs('establishments.*') ? 'bg-blue-600' : '' }}">
+                <i class="bi bi-shop text-lg w-6"></i>
+                <span>Meat Establishments</span>
+            </a>
+
+            <a href="{{ route('meat-inspection.reports.create') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition {{ request()->routeIs('meat-inspection.reports.create') ? 'bg-blue-600' : '' }}">
+                <i class="bi bi-plus-circle text-lg w-6"></i>
+                <span>New Inspection</span>
+            </a>
+
+            <a href="{{ route('meat-inspection.reports.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition {{ request()->routeIs('meat-inspection.reports.*') ? 'bg-blue-600' : '' }}">
+                <i class="bi bi-list-ul text-lg w-6"></i>
+                <span>All Reports</span>
+            </a>
+
+            <div class="pt-4 pb-2">
+                <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Information</p>
+            </div>
+
+            <a href="{{ route('announcements.portal.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white transition {{ request()->routeIs('announcements.portal.*') ? 'bg-blue-600' : '' }}">
+                <i class="bi bi-megaphone text-lg w-6"></i>
+                <span>Announcements</span>
+            </a>
             @else
             {{-- Other roles get basic menu - dashboard, announcements, and logout --}}
             <div class="pt-4 pb-2">
@@ -333,7 +394,7 @@
     <!-- Main Content -->
     <main>
         <!-- Top Bar -->
-        <header class="bg-white shadow-sm sticky top-0 z-30 hidden md:block">
+        <header class="main-header bg-white shadow-sm hidden md:block">
             <div class="flex items-center justify-between px-6 py-4">
                 <div>
                     <h2 class="text-xl font-semibold text-gray-800">@yield('header', 'Dashboard')</h2>
@@ -410,7 +471,7 @@
         </header>
 
         <!-- Page Content -->
-        <div class="p-4 md:p-6 pt-16 md:pt-24">
+        <div class="content-wrapper p-4 md:p-6">
             @yield('content')
         </div>
     </main>
