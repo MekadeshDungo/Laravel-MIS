@@ -53,6 +53,17 @@ class AnnouncementController extends Controller
     }
 
     /**
+     * Show a single public announcement (API).
+     */
+    public function publicShow(Announcement $announcement)
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $announcement
+        ]);
+    }
+
+    /**
      * Mark recent announcements as read for the current user.
      * This is called via AJAX when opening the notification dropdown.
      */

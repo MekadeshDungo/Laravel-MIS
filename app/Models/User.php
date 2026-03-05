@@ -33,6 +33,10 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
         'division',
         'contact_number',
         'address',
+        // OTP fields
+        'otp_code',
+        'otp_expires_at',
+        'is_verified',
     ];
 
     /**
@@ -43,6 +47,9 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'otp_code',
+        'otp_expires_at',
+        'is_verified',
     ];
 
     /**
@@ -252,7 +259,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function isAdminWithBarangayAccess(): bool
     {
-        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_SUPER_ADMIN]) && 
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_SUPER_ADMIN]) &&
                $this->secondary_role === self::ROLE_BARANGAY_ENCODER;
     }
 
@@ -261,7 +268,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function isAdminWithClinicAccess(): bool
     {
-        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_SUPER_ADMIN]) && 
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_SUPER_ADMIN]) &&
                $this->secondary_role === self::ROLE_CLINIC;
     }
 
@@ -355,7 +362,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function hasAnyRole(array $roles): bool
     {
-        return in_array($this->role, $roles) || 
+        return in_array($this->role, $roles) ||
                (($this->secondary_role && in_array($this->secondary_role, $roles)));
     }
 

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SuperAdminController;
@@ -22,6 +23,10 @@ use App\Http\Controllers\ViewerController;
 use App\Http\Controllers\CityPoundController;
 use App\Http\Controllers\RecordsController;
 use App\Http\Controllers\SystemLogController;
+use App\Http\Controllers\Client\ProfileController;
+use App\Http\Controllers\Client\OtpController;
+use App\Http\Controllers\Client\PetRegistrationController;
+use App\Http\Controllers\Client\PetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,15 +47,46 @@ use App\Http\Controllers\SystemLogController;
 
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    // If user is authenticated, redirect to their role-based dashboard
+    if (Auth::check()) {
+        $user = Auth::user();
+        switch ($user->role) {
+            case 'super_admin':
+                return redirect()->route('super-admin.dashboard');
+            case 'admin':
+                return redirect()->route('admin.dashboard');
+            case 'city_vet':
+                return redirect()->route('city-vet.dashboard');
+            case 'records_staff':
+                return redirect()->route('records-staff.dashboard');
+            case 'disease_control':
+                return redirect()->route('disease-control.dashboard');
+            case 'meat_inspector':
+                return redirect()->route('meat-inspection.dashboard');
+            case 'inventory_staff':
+                return redirect()->route('inventory.dashboard');
+            case 'barangay_encoder':
+            case 'barangay':
+                return redirect()->route('barangay.dashboard');
+            case 'clinic':
+                return redirect()->route('clinic.dashboard');
+            case 'viewer':
+                return redirect()->route('viewer.dashboard');
+            case 'citizen':
+                return redirect()->to('/client');
+            default:
+                // Unknown role - log out and redirect to login for security
+                Auth::logout();
+                return redirect()->route('login');
+        }
+    }
+    return view('Client.welcome');
 })->name('landing');
 
 // ==============================
-// AUTHENTICATION ROUTES
+// AUTHENTICATION ROUTES - Client Portal (Default)
 // ==============================
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Login routes moved to routes/auth.php (loaded at end of this file)
 
 // ==============================
 // PUBLIC ANNOUNCEMENTS (Citizen View)
@@ -238,7 +274,7 @@ Route::middleware(['auth', 'role:meat_inspector'])->prefix('meat-inspection')->n
 // Role: Barangay Encoder
 // Access: Submit stray reports, manage impounds, adoption requests
 // ==============================
-Route::middleware(['auth', 'role:barangay_encoder|barangay'])->prefix('barangay')->name('barangay.')->group(function () {
+Route::middleware(['auth'])->prefix('barangay')->name('barangay.')->group(function () {
     Route::get('/dashboard', [BarangayController::class, 'dashboard'])->name('dashboard');
 
     // Data Entry (choose report type)
@@ -447,3 +483,116 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
     // Get user's tokens
     Route::get('/device-tokens', [\App\Http\Controllers\DeviceTokenController::class, 'index'])->name('device-tokens.index');
 });
+
+// ==============================
+// CLIENT PORTAL (Pet Owner) - NEW
+// ==============================
+// Only 'citizen' role can access these routes
+// Admin/staff roles should use their respective dashboards
+
+// Landing page for client portal
+Route::get('/client', function () {
+    return view('Client.welcome');
+});
+
+// OTP Routes - Only for citizens/clients
+Route::prefix('otp')->group(function () {
+    Route::get('/verify', [OtpController::class, 'showVerifyForm'])->name('otp.verify.form');
+    Route::post('/send', [OtpController::class, 'sendOtp'])->name('otp.send');
+    Route::post('/verify', [OtpController::class, 'verifyOtp'])->name('otp.verify');
+    Route::get('/resend', [OtpController::class, 'resendOtp'])->name('otp.resend');
+});
+
+// Password Reset OTP Routes - Only for citizens/clients
+Route::prefix('password')->group(function () {
+    Route::get('/otp/verify', [OtpController::class, 'showResetVerifyForm'])->name('password.otp.form');
+    Route::post('/otp/send', [OtpController::class, 'sendResetOtp'])->name('password.otp.send');
+    Route::post('/otp/verify', [OtpController::class, 'verifyResetOtp'])->name('password.otp.verify');
+    Route::get('/otp/resend', [OtpController::class, 'resendResetOtp'])->name('password.otp.resend');
+});
+
+// Services Page Route - Public
+Route::get('/services', function () {
+    return view('Client.services');
+});
+
+// Kapon Page Route - Public
+Route::get('/kapon', function () {
+    return view('Client.kapon');
+});
+
+// Kapon Form Page Route - Public
+Route::get('/kapon/form', function () {
+    return view('Client.kapon_form');
+});
+
+// Adoption Page Route - Public
+Route::get('/adoption', function () {
+    return view('Client.adoption');
+});
+
+// Adoption Form Page Route - Public
+Route::get('/adoption/form', function () {
+    return view('Client.adoption_form');
+});
+
+// Animal Cruelty Page Route - Public
+Route::get('/animal-cruelty', function () {
+    return view('Client.animal_cruelty_page');
+});
+
+// Missing Pets Page Route - Public
+Route::get('/missing-pets', function () {
+    return view('Client.missing_pets_page');
+});
+
+// Pet Registration Page Route - Public
+Route::get('/pet-registration', function () {
+    return view('Client.pet_registration_page');
+});
+
+// Pet Registration Form Page Route - Public
+Route::get('/pet-registration/form', function () {
+    return view('Client.pet_registration_form');
+});
+
+// Pet Registration Form POST Route - Only citizens
+Route::post('/pet-registration/form', [PetRegistrationController::class, 'store'])->name('pet.registration.store');
+
+// Vaccination Page Route - Public
+Route::get('/vaccination', function () {
+    return view('Client.vaccination_page');
+});
+
+// Vaccination Form Page Route - Public
+Route::get('/vaccination/form', function () {
+    return view('Client.vaccination_form');
+});
+
+// Owner Dashboard Route - Protected (any authenticated user)
+Route::get('/owner/dashboard', function () {
+    return view('Client.owner_dashboard');
+})->middleware(['auth'])->name('owner.dashboard');
+
+// View Pets Route
+Route::get('/owner/pets', function () {
+    return view('Client.view_pets');
+})->middleware(['auth'])->name('owner.pets');
+
+// Edit Pet Route
+Route::get('/owner/pets/{id}/edit', [PetController::class, 'edit'])->middleware(['auth'])->name('pet.edit');
+
+// Update Pet Route
+Route::put('/owner/pets/{id}', [PetController::class, 'update'])->middleware(['auth'])->name('pet.update');
+
+// Delete Pet Route
+Route::delete('/owner/pets/{id}', [PetController::class, 'destroy'])->middleware(['auth'])->name('pet.destroy');
+
+// Client Profile Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';

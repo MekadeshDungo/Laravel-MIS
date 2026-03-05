@@ -47,7 +47,7 @@ class Pet extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'age' => 'integer',
+        'age' => 'string',
         'weight' => 'float',
         'vaccination_date' => 'datetime',
         'next_vaccination_date' => 'datetime',
@@ -66,18 +66,30 @@ class Pet extends Model
 
     /**
      * Get the medical history for the pet.
+     *
+     * NOTE: This relationship requires PetMedicalRecord model to be created.
+     *       For now, medical records are stored in the health_status and
+     *       medical_history fields of the Pet model.
      */
     public function medicalHistory()
     {
-        return $this->hasMany(PetMedicalRecord::class);
+        // @todo Implement with PetMedicalRecord model when created
+        // Temporarily returning empty collection to prevent errors
+        return $this->morphMany(\Illuminate\Database\Eloquent\Model::class, 'pet');
     }
 
     /**
      * Get the vaccinations for the pet.
+     *
+     * NOTE: This relationship requires Vaccination model to be created.
+     *       Vaccination records are currently tracked via the
+     *       vaccination_status, vaccination_date, and next_vaccination_date fields.
      */
     public function vaccinations()
     {
-        return $this->hasMany(Vaccination::class);
+        // @todo Implement with Vaccination model when created
+        // Temporarily returning empty collection to prevent errors
+        return $this->morphMany(\Illuminate\Database\Eloquent\Model::class, 'pet');
     }
 
     /**

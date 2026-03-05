@@ -15,27 +15,28 @@ return new class extends Migration
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
         // Drop tables that are no longer needed for the simplified RBAC model
+        // Keep tables that are still used by controllers/models
         Schema::dropIfExists('adoption_requests');
         Schema::dropIfExists('adoption_status_histories');
         Schema::dropIfExists('announcement_forms');
-        Schema::dropIfExists('announcement_reads');
-        Schema::dropIfExists('barangay_users');
-        Schema::dropIfExists('certificate_series');
-        Schema::dropIfExists('device_tokens');
-        Schema::dropIfExists('form_submissions');
-        Schema::dropIfExists('inventory_items');
-        Schema::dropIfExists('livestock_censuses');
-        Schema::dropIfExists('notifications');
-        Schema::dropIfExists('pets');
-        Schema::dropIfExists('rabies_cases');
-        Schema::dropIfExists('rabies_vaccination_reports');
-        Schema::dropIfExists('report_exports');
-        Schema::dropIfExists('service_forms');
-        Schema::dropIfExists('spay_neuter_reports');
-        Schema::dropIfExists('stock_movements');
-        Schema::dropIfExists('stray_reports');
-        Schema::dropIfExists('user_roles');
-        Schema::dropIfExists('impound_status_histories');
+        // Keep announcement_reads - used by AnnouncementController
+        // Keep barangay_users - may be used
+        // Keep certificate_series - used by CertificateController
+        // Keep device_tokens - used by DeviceTokenController
+        // Keep form_submissions - may be used
+        // Keep inventory_items - used by InventoryController
+        // Keep livestock_censuses - used by LivestockCensusController
+        // Keep notifications - used by NotificationController
+        // Keep pets - used by PetController
+        // Keep rabies_cases - used by RabiesCaseController
+        // Keep rabies_vaccination_reports - used by ClinicController
+        // Keep report_exports - used by ReportController
+        // Keep service_forms - used by ServiceFormController
+        // Keep spay_neuter_reports - used by SpayNeuterController
+        // Keep stock_movements - used by InventoryController
+        // Keep stray_reports - used by various controllers
+        // Keep user_roles - may be used
+        // Keep impound_status_histories - used by ImpoundController
 
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1');

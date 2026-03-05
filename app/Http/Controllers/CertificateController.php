@@ -156,4 +156,36 @@ class CertificateController extends Controller
             default => \App\Models\Model::class,
         };
     }
+
+    /**
+     * API: Verify a certificate by series number.
+     */
+    public function verify(string $certificateSeries)
+    {
+        // First try exact match on series_name for better performance
+        $certificate = CertificateSeries::where('series_name', $certificateSeries)->first();
+
+        // If not found, try partial match (for flexible search)
+        if (!$certificate) {
+            $certificate = CertificateSeries::where('series_name', 'like', "%{$certificateSeries}%")
+                ->first();
+        }
+
+        // If still not found, try to find by last_number (cast to integer for safety)
+        if (!$certificate && is_numeric($certificateSeries)) {
+            $certificate = CertificateSeries::where('last_number', (int) $certificateSeries)->first();
+        }
+
+        if (!$certificate) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Certificate not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $certificate
+        ]);
+    }
 }
