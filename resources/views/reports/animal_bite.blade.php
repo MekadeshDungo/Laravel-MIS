@@ -36,10 +36,10 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-500">Ongoing</p>
-                <p class="text-3xl font-bold text-blue-600 mt-1">{{ \App\Models\AnimalBiteReport::where('status', 'investigating')->count() }}</p>
+                <p class="text-3xl font-bold text-green-600 mt-1">{{ \App\Models\AnimalBiteReport::where('status', 'investigating')->count() }}</p>
             </div>
-            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-arrow-repeat text-blue-600 text-2xl"></i>
+            <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-arrow-repeat text-green-600 text-2xl"></i>
             </div>
         </div>
     </div>
@@ -68,8 +68,8 @@
             <span class="text-sm font-medium text-gray-700">New Report</span>
         </a>
 
-        <a href="{{ route('admin.bite-reports.index') }}" class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+        <a href="{{ route('admin.bite-reports.index') }}" class="flex flex-col items-center p-4 bg-green-50 hover:bg-green-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                 <i class="bi bi-list text-white text-xl"></i>
             </div>
             <span class="text-sm font-medium text-gray-700">All Reports</span>
@@ -106,7 +106,7 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
         <h3 class="text-lg font-semibold text-gray-800">Recent Reports</h3>
-        <a href="{{ route('admin.bite-reports.index') }}" class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
+        <a href="{{ route('admin.bite-reports.index') }}" class="text-sm text-green-600 hover:text-green-800 flex items-center gap-1">
             View All <i class="bi bi-arrow-right"></i>
         </a>
     </div>
@@ -125,18 +125,18 @@
                 @forelse(\App\Models\AnimalBiteReport::latest()->take(5)->get() as $report)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-blue-600">#{{ $report->case_number ?? $report->id }}</span>
+                            <span class="text-sm font-medium text-green-600">#{{ $report->case_number ?? $report->id }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $report->victim_name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 capitalize">{{ $report->animal_type }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $report->incident_date->format('M d, Y') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $report->bite_date->format('M d, Y') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @switch($report->status)
                                 @case('pending')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
                                     @break
                                 @case('ongoing')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Ongoing</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Ongoing</span>
                                     @break
                                 @case('completed')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Completed</span>

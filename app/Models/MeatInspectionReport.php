@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class MeatInspectionReport extends Model
 {
     use HasFactory;
+    protected $table = 'meat_inspections';
 
     protected $fillable = [
-        'user_id',
+        'inspector_user_id',
         'establishment_name',
         'establishment_type',
         'establishment_address',
@@ -39,7 +40,7 @@ class MeatInspectionReport extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'inspector_user_id');
     }
 
     public function scopeCompliant($query)

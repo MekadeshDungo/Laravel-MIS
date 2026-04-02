@@ -80,7 +80,7 @@
                             <span class="text-sm text-gray-700 capitalize">{{ str_replace('_', ' ', $report->exposure_type) }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm text-gray-500">{{ $report->incident_date->format('M d, Y') }}</span>
+                            <span class="text-sm text-gray-500">{{ $report->bite_date->format('M d, Y') }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @switch($report->status)

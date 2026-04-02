@@ -5,41 +5,61 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\Pet;
+use App\Models\Animal;
 use App\Models\User;
+use App\Models\Client;
 use App\Models\RabiesVaccinationReport;
 use App\Models\AnimalBiteReport;
+use App\Models\Vaccination;
 
+/**
+ * RecordsController - Records Management Module
+ *
+ * THESIS ROLE MAPPING:
+ * - Primary Role: admin_staff (Administrative Assistant IV / Book Binder 4)
+ * - Also accessible by: super_admin, city_vet
+ *
+ * MODULE ASSIGNMENTS:
+ * - Pet Registration Records
+ * - Owner Records (via Client model)
+ * - Vaccination Encoding
+ * - Records Search
+ *
+ * Note: Pet owners are stored in 'clients' table, not 'users' table.
+ * Users table is for staff accounts only.
+ */
 class RecordsController extends Controller
 {
     /**
      * Show records staff dashboard.
+     *
+     * Module: Dashboard
+     * Role: admin_staff
      */
     public function dashboard()
     {
         $user = Auth::user();
-        
-        // Get statistics
+
+        // Get statistics (using Client for owners, Pet for pets)
         $stats = [
-            'total_pets' => Pet::count(),
-            'total_owners' => User::where('role', 'citizen')->count(),
-            'total_vaccinations' => RabiesVaccinationReport::count(),
-            'pending_vaccinations' => RabiesVaccinationReport::where('status', 'pending')->count(),
-            'vaccinated_pets' => Pet::where('vaccination_status', 'vaccinated')->count(),
-            'unvaccinated_pets' => Pet::where('vaccination_status', 'unvaccinated')->count(),
+            'total_pets' => Animal::count(),
+            'total_owners' => Client::count(),
+            'total_vaccinations' => Vaccination::count(),
+            'vaccinated_animals' => Animal::where('vaccination_status', 'vaccinated')->count(),
+            'unvaccinated_animals' => Animal::where('vaccination_status', 'unvaccinated')->count(),
             'bite_reports' => AnimalBiteReport::count(),
             'pending_bite_reports' => AnimalBiteReport::where('status', 'pending')->count(),
         ];
-        
-        // Get recent registrations
-        $recentPets = Pet::with('owner')->latest()->take(5)->get();
-        
-        // Get recent vaccinations
-        $recentVaccinations = RabiesVaccinationReport::latest()->take(5)->get();
-        
+
+        // Get recent registrations with eager loading
+        $recentAnimals = Animal::with(['owner', 'barangay'])->latest()->take(5)->get();
+
+        // Get recent vaccinations with eager loading
+        $recentVaccinations = Vaccination::with(['pet', 'user'])->latest()->take(5)->get();
+
         return view('records-staff.dashboard', compact('user', 'stats', 'recentPets', 'recentVaccinations'));
     }
-    
+
     /**
      * Display pet registration list.
      */
@@ -48,13 +68,14 @@ class RecordsController extends Controller
         $search = $request->get('search', '');
         $species = $request->get('species', '');
         $vaccinationStatus = $request->get('vaccination_status', '');
-        
-        $pets = Pet::with('owner')
+
+        $animals = Animal::with(['owner', 'barangay'])
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
                       ->orWhere('license_number', 'like', "%{$search}%")
                       ->orWhereHas('owner', function ($q) use ($search) {
-                          $q->where('name', 'like', "%{$search}%")
+                          $q->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
                             ->orWhere('email', 'like', "%{$search}%");
                       });
             })
@@ -66,19 +87,23 @@ class RecordsController extends Controller
             })
             ->orderBy('created_at', 'desc')
             ->paginate(15);
-        
+
         return view('records-staff.pets.index', compact('pets', 'search', 'species', 'vaccinationStatus'));
     }
-    
+
     /**
      * Show pet registration form.
+     *
+     * Module: Pet Registration
+     * Role: admin_staff
      */
     public function createPet()
     {
-        $owners = User::where('role', 'citizen')->orderBy('name')->get();
+        // Use Client model for owners (pet owners)
+        $owners = Client::active()->orderBy('last_name')->get();
         return view('records-staff.pets.create', compact('owners'));
     }
-    
+
     /**
      * Store new pet registration.
      */
@@ -101,7 +126,7 @@ class RecordsController extends Controller
             'vaccination_status' => 'nullable|string|in:vaccinated,unvaccinated,pending',
             'notes' => 'nullable|string',
         ]);
-        
+
         // Handle owner - either select existing or create new
         $ownerId = null;
         if (!empty($request->owner_id)) {
@@ -117,8 +142,8 @@ class RecordsController extends Controller
             ]);
             $ownerId = $owner->id;
         }
-        
-        Pet::create([
+
+        Animal::create([
             'owner_id' => $ownerId,
             'name' => $validated['name'],
             'species' => $validated['species'],
@@ -133,32 +158,32 @@ class RecordsController extends Controller
             'vaccination_status' => $validated['vaccination_status'] ?? 'unvaccinated',
             'notes' => $validated['notes'] ?? null,
         ]);
-        
+
         return redirect()->route('records-staff.pets.index')->with('success', 'Pet registered successfully.');
     }
-    
+
     /**
      * Display pet details.
      */
-    public function showPet(Pet $pet)
+    public function showAnimal(Animal $animal)
     {
         $pet->load('owner', 'vaccinations');
         return view('records-staff.pets.show', compact('pet'));
     }
-    
+
     /**
      * Show pet edit form.
      */
-    public function editPet(Pet $pet)
+    public function editAnimal(Animal $animal)
     {
         $owners = User::where('role', 'citizen')->orderBy('name')->get();
         return view('records-staff.pets.edit', compact('pet', 'owners'));
     }
-    
+
     /**
      * Update pet record.
      */
-    public function updatePet(Request $request, Pet $pet)
+    public function updateAnimal(Request $request, Animal $animal)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -177,19 +202,19 @@ class RecordsController extends Controller
             'next_vaccination_date' => 'nullable|date|after:vaccination_date',
             'notes' => 'nullable|string',
         ]);
-        
+
         $pet->update($validated);
-        
+
         return redirect()->route('records-staff.pets.show', $pet)->with('success', 'Pet record updated successfully.');
     }
-    
+
     /**
      * Display owner records list.
      */
     public function owners(Request $request)
     {
         $search = $request->get('search', '');
-        
+
         $owners = User::where('role', 'citizen')
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
@@ -199,10 +224,10 @@ class RecordsController extends Controller
             ->withCount('pets')
             ->orderBy('name')
             ->paginate(15);
-        
+
         return view('records-staff.owners.index', compact('owners', 'search'));
     }
-    
+
     /**
      * Display owner details with their pets.
      */
@@ -211,19 +236,19 @@ class RecordsController extends Controller
         $owner->load(['pets' => function ($query) {
             $query->orderBy('name');
         }]);
-        
+
         return view('records-staff.owners.show', compact('owner'));
     }
-    
+
     /**
      * Display vaccination encoding form.
      */
     public function createVaccination()
     {
-        $pets = Pet::orderBy('name')->get();
-        return view('records-staff.vaccinations.create', compact('pets'));
+        $animals = Animal::orderBy('name')->get();
+        return view('records-staff.vaccinations.create', compact('animals'));
     }
-    
+
     /**
      * Store vaccination record.
      */
@@ -250,7 +275,7 @@ class RecordsController extends Controller
             'status' => 'nullable|string|in:completed,pending',
             'notes' => 'nullable|string',
         ]);
-        
+
         RabiesVaccinationReport::create([
             'user_id' => Auth::id(),
             'clinic_name' => 'VSO Records',
@@ -274,10 +299,10 @@ class RecordsController extends Controller
             'status' => $validated['status'] ?? 'completed',
             'notes' => $validated['notes'] ?? null,
         ]);
-        
+
         return redirect()->route('records-staff.dashboard')->with('success', 'Vaccination record encoded successfully.');
     }
-    
+
     /**
      * Display vaccination records list.
      */
@@ -286,7 +311,7 @@ class RecordsController extends Controller
         $search = $request->get('search', '');
         $status = $request->get('status', '');
         $month = $request->get('month', '');
-        
+
         $vaccinations = RabiesVaccinationReport::with('user')
             ->when($search, function ($query) use ($search) {
                 $query->where('patient_name', 'like', "%{$search}%")
@@ -301,10 +326,10 @@ class RecordsController extends Controller
             })
             ->orderBy('vaccination_date', 'desc')
             ->paginate(15);
-        
+
         return view('records-staff.vaccinations.index', compact('vaccinations', 'search', 'status', 'month'));
     }
-    
+
     /**
      * Display vaccination record details.
      */
@@ -312,26 +337,26 @@ class RecordsController extends Controller
     {
         return view('records-staff.vaccinations.show', compact('report'));
     }
-    
+
     /**
      * Global records search.
      */
     public function search(Request $request)
     {
         $search = $request->get('q', '');
-        
+
         if (empty($search)) {
             return redirect()->route('records-staff.dashboard');
         }
-        
-        // Search pets
-        $pets = Pet::where('name', 'like', "%{$search}%")
+
+        // Search animals
+        $animals = Animal::where('name', 'like', "%{$search}%")
             ->orWhere('license_number', 'like', "%{$search}%")
             ->orWhere('microchip_number', 'like', "%{$search}%")
             ->with('owner')
             ->take(10)
             ->get();
-        
+
         // Search owners
         $owners = User::where('role', 'citizen')
             ->where(function ($query) use ($search) {
@@ -342,13 +367,13 @@ class RecordsController extends Controller
             ->withCount('pets')
             ->take(10)
             ->get();
-        
+
         // Search vaccinations
         $vaccinations = RabiesVaccinationReport::where('patient_name', 'like', "%{$search}%")
             ->orWhere('pet_name', 'like', "%{$search}%")
             ->take(10)
             ->get();
-        
+
         return view('records-staff.search', compact('search', 'pets', 'owners', 'vaccinations'));
     }
 }

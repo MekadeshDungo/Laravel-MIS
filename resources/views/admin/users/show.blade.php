@@ -41,12 +41,6 @@
                     <p class="font-medium text-gray-800 capitalize">{{ str_replace('_', ' ', $user->role) }}</p>
                 </div>
 
-                @if($user->secondary_role)
-                <div class="p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-500 mb-1">Secondary Role</p>
-                    <p class="font-medium text-gray-800 capitalize">{{ str_replace('_', ' ', $user->secondary_role) }}</p>
-                </div>
-                @endif
 
                 @if($user->barangay)
                 <div class="p-4 bg-gray-50 rounded-lg">
@@ -82,9 +76,15 @@
         </div>
 
         <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-4">
+            @can('update', $user)
             <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                 <i class="bi bi-pencil"></i>
                 <span>Edit User</span>
+            </a>
+            @endcan
+            <a href="{{ route('admin.users.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                <i class="bi bi-arrow-left"></i>
+                <span>Back</span>
             </a>
         </div>
     </div>

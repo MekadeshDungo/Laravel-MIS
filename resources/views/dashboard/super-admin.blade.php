@@ -105,13 +105,6 @@
             <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Announce</span>
         </a>
 
-        <a href="{{ route('super-admin.all-reports') }}" class="flex flex-col items-center p-3 md:p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition group">
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-file-earmark-bar-graph text-white text-lg md:text-xl"></i>
-            </div>
-            <span class="text-xs md:text-sm font-medium text-gray-700 text-center">Reports</span>
-        </a>
-
         <a href="{{ route('super-admin.system-logs.index') }}" class="flex flex-col items-center p-3 md:p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition group">
             <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                 <i class="bi bi-journal-text text-white text-lg md:text-xl"></i>

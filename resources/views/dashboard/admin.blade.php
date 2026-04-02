@@ -7,11 +7,11 @@
 
 @section('content')
 <!-- Welcome Banner (force visible) -->
-<div class="relative z-10 bg-blue-700 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 text-white">
+<div class="relative z-10 bg-green-700 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 text-white">
     <h2 class="text-xl md:text-2xl font-bold mb-2">
         Welcome back, {{ auth()->user()->name ?? 'Admin' }}!
     </h2>
-    <p class="text-blue-100 text-sm md:text-base">
+    <p class="text-green-100 text-sm md:text-base">
         Manage daily operations, staff accounts, and monitor department reports.
     </p>
 </div>
@@ -50,10 +50,10 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs md:text-sm font-medium text-gray-500">Open Cases</p>
-                <p class="text-xl md:text-3xl font-bold text-blue-600 mt-1">{{ \App\Models\AnimalBiteReport::where('status', 'investigating')->count() }}</p>
+                <p class="text-xl md:text-3xl font-bold text-green-600 mt-1">{{ \App\Models\AnimalBiteReport::where('status', 'investigating')->count() }}</p>
             </div>
-            <div class="w-10 h-10 md:w-14 md:h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-folder2-open text-blue-600 text-lg md:text-2xl"></i>
+            <div class="w-10 h-10 md:w-14 md:h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-folder2-open text-green-600 text-lg md:text-2xl"></i>
             </div>
         </div>
     </div>
@@ -170,13 +170,13 @@
         <!-- Date Range -->
         <div>
             <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Date Range</label>
-            <input type="date" class="w-full rounded-lg border-gray-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <input type="date" class="w-full rounded-lg border-gray-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500" />
         </div>
 
         <!-- Barangay Filter -->
         <div>
             <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Barangay</label>
-            <select class="w-full rounded-lg border-gray-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <select class="w-full rounded-lg border-gray-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
                 <option value="">All Barangays</option>
                 @foreach(\App\Models\Barangay::all() as $barangay)
                     <option value="{{ $barangay->barangay_name }}">{{ $barangay->barangay_name }}</option>
@@ -187,7 +187,7 @@
         <!-- Status Filter -->
         <div>
             <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select class="w-full rounded-lg border-gray-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <select class="w-full rounded-lg border-gray-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
                 <option value="">All Status</option>
                 <option value="pending">Pending</option>
                 <option value="investigating">Investigating</option>
@@ -198,7 +198,7 @@
         <!-- Severity Filter -->
         <div>
             <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Severity</label>
-            <select class="w-full rounded-lg border-gray-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <select class="w-full rounded-lg border-gray-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
                 <option value="">All Severity</option>
                 <option value="minor">Minor</option>
                 <option value="moderate">Moderate</option>
@@ -212,8 +212,8 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
     <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
     <div class="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4">
-        <a href="{{ route('admin.users.create') }}" class="flex flex-col items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+        <a href="{{ route('admin.users.create') }}" class="flex flex-col items-center p-3 bg-green-50 hover:bg-green-100 rounded-xl transition group">
+            <div class="w-10 h-10 md:w-12 md:h-12 bg-green-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                 <i class="bi bi-person-plus text-white text-lg md:text-xl"></i>
             </div>
             <span class="text-xs font-medium text-gray-700 text-center">Add Staff</span>
@@ -258,8 +258,8 @@
             @forelse(\App\Models\User::where('role', '!=', 'super_admin')->latest()->take(5)->get() as $user)
                 <div class="py-3 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 md:w-10 md:h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span class="text-blue-600 font-semibold text-xs md:text-sm">{{ substr($user->name, 0, 1) }}</span>
+                        <div class="w-8 h-8 md:w-10 md:h-10 bg-green-100 rounded-full flex items-center justify-center">
+                            <span class="text-green-600 font-semibold text-xs md:text-sm">{{ substr($user->name, 0, 1) }}</span>
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-800">{{ $user->name }}</p>
@@ -299,12 +299,12 @@
 </div>
 
 <!-- Admin Capabilities Info -->
-<div class="bg-blue-50 border border-blue-200 rounded-xl p-4 md:p-6">
-    <h4 class="font-semibold text-blue-800 mb-3 text-sm md:text-base">Admin Operations Manager</h4>
+<div class="bg-green-50 border border-green-200 rounded-xl p-4 md:p-6">
+    <h4 class="font-semibold text-green-800 mb-3 text-sm md:text-base">Admin Operations Manager</h4>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
         <div>
-            <p class="font-medium text-blue-700 mb-1">You Can:</p>
-            <ul class="list-disc list-inside text-blue-600 space-y-1">
+            <p class="font-medium text-green-700 mb-1">You Can:</p>
+            <ul class="list-disc list-inside text-green-600 space-y-1">
                 <li>Create staff accounts</li>
                 <li>Manage announcements</li>
                 <li>View and approve reports</li>
@@ -312,7 +312,7 @@
             </ul>
         </div>
         <div>
-            <p class="font-medium text-blue-700 mb-1">You Cannot:</p>
+            <p class="font-medium text-green-700 mb-1">You Cannot:</p>
             <ul class="list-disc list-inside text-gray-500 space-y-1">
                 <li>Delete super admin accounts</li>
                 <li>Change system roles</li>

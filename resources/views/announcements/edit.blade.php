@@ -57,8 +57,8 @@
                 @enderror
             </div>
 
-            <!-- Type and Status Row -->
-            <div class="px-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Type, Audience, Priority Row -->
+            <div class="px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Type -->
                 <div>
                     <label for="type" class="block text-sm font-medium text-gray-700 mb-2">
@@ -67,16 +67,55 @@
                     <select class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('type') border-red-500 @enderror" 
                             id="type" name="type" required>
                         <option value="">Select type</option>
-                        <option value="info" {{ old('type', $announcement->type) == 'info' ? 'selected' : '' }}>Information</option>
-                        <option value="alert" {{ old('type', $announcement->type) == 'alert' ? 'selected' : '' }}>Alert</option>
-                        <option value="reminder" {{ old('type', $announcement->type) == 'reminder' ? 'selected' : '' }}>Reminder</option>
-                        <option value="update" {{ old('type', $announcement->type) == 'update' ? 'selected' : '' }}>Update</option>
+                        <option value="Vaccination Program" {{ old('type', $announcement->type) == 'Vaccination Program' ? 'selected' : '' }}>Vaccination Program</option>
+                        <option value="Rabies Alert" {{ old('type', $announcement->type) == 'Rabies Alert' ? 'selected' : '' }}>Rabies Alert</option>
+                        <option value="Livestock Advisory" {{ old('type', $announcement->type) == 'Livestock Advisory' ? 'selected' : '' }}>Livestock Advisory</option>
+                        <option value="Meat Inspection Notice" {{ old('type', $announcement->type) == 'Meat Inspection Notice' ? 'selected' : '' }}>Meat Inspection Notice</option>
+                        <option value="General Announcement" {{ old('type', $announcement->type) == 'General Announcement' ? 'selected' : '' }}>General Announcement</option>
                     </select>
                     @error('type')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
+                <!-- Audience -->
+                <div>
+                    <label for="audience" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="bi bi-people me-1 text-green-600"></i>Audience <span class="text-red-500">*</span>
+                    </label>
+                    <select class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('audience') border-red-500 @enderror" 
+                            id="audience" name="audience" required>
+                        <option value="">Select audience</option>
+                        <option value="Public" {{ old('audience', $announcement->audience) == 'Public' ? 'selected' : '' }}>Public</option>
+                        <option value="Pet Owners" {{ old('audience', $announcement->audience) == 'Pet Owners' ? 'selected' : '' }}>Pet Owners</option>
+                        <option value="Farmers / Livestock Owners" {{ old('audience', $announcement->audience) == 'Farmers / Livestock Owners' ? 'selected' : '' }}>Farmers / Livestock Owners</option>
+                        <option value="Internal Staff" {{ old('audience', $announcement->audience) == 'Internal Staff' ? 'selected' : '' }}>Internal Staff</option>
+                    </select>
+                    @error('audience')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Priority -->
+                <div>
+                    <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="bi bi-flag me-1 text-green-600"></i>Priority <span class="text-red-500">*</span>
+                    </label>
+                    <select class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('priority') border-red-500 @enderror" 
+                            id="priority" name="priority" required>
+                        <option value="">Select priority</option>
+                        <option value="Normal" {{ old('priority', $announcement->priority) == 'Normal' ? 'selected' : '' }}>Normal</option>
+                        <option value="Important" {{ old('priority', $announcement->priority) == 'Important' ? 'selected' : '' }}>Important</option>
+                        <option value="Urgent" {{ old('priority', $announcement->priority) == 'Urgent' ? 'selected' : '' }}>Urgent</option>
+                    </select>
+                    @error('priority')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Status and Dates Row -->
+            <div class="px-6 mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Status -->
                 <div>
                     <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
@@ -85,10 +124,42 @@
                     <select class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('status') border-red-500 @enderror" 
                             id="status" name="status" required>
                         <option value="">Select status</option>
-                        <option value="draft" {{ old('status', $announcement->status) == 'draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="published" {{ old('status', $announcement->status) == 'published' ? 'selected' : '' }}>Published</option>
+                        <option value="Draft" {{ old('status', $announcement->status) == 'Draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="Published" {{ old('status', $announcement->status) == 'Published' ? 'selected' : '' }}>Published</option>
+                        <option value="Archived" {{ old('status', $announcement->status) == 'Archived' ? 'selected' : '' }}>Archived</option>
                     </select>
                     @error('status')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Publish Date -->
+                <div>
+                    <label for="publish_date" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="bi bi-calendar me-1 text-green-600"></i>Publish Date <span class="text-red-500">*</span>
+                    </label>
+                    <input type="datetime-local" 
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('publish_date') border-red-500 @enderror" 
+                           id="publish_date" 
+                           name="publish_date" 
+                           value="{{ old('publish_date', $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('Y-m-d\TH:i') : '') }}"
+                           required>
+                    @error('publish_date')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Expiry Date -->
+                <div>
+                    <label for="expiry_date" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="bi bi-calendar-x me-1 text-green-600"></i>Expiry Date
+                    </label>
+                    <input type="datetime-local" 
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('expiry_date') border-red-500 @enderror" 
+                           id="expiry_date" 
+                           name="expiry_date" 
+                           value="{{ old('expiry_date', $announcement->expiry_date ? \Carbon\Carbon::parse($announcement->expiry_date)->format('Y-m-d\TH:i') : '') }}">
+                    @error('expiry_date')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -104,7 +175,7 @@
                           name="content" 
                           rows="5" 
                           placeholder="Enter full description"
-                          required>{{ old('content', $announcement->description) }}</textarea>
+                          required>{{ old('content', $announcement->content) }}</textarea>
                 @error('content')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -114,18 +185,18 @@
             <div class="px-6 mt-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                     <i class="bi bi-image me-1 text-green-600"></i>
-                    {{ $announcement->photo_path ? 'Replace Photo (Optional)' : 'Photo (Optional)' }}
+                    {{ $announcement->image_path ? 'Replace Photo (Optional)' : 'Photo (Optional)' }}
                 </label>
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition">
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-green-400 transition">
                     <input type="file" 
                            class="hidden" 
                            id="photo" 
                            name="photo" 
-                           accept="image/*"
+                           accept="image/jpeg,image/png,image/jpg,image/gif"
                            onchange="previewImage(event)">
                     <label for="photo" class="cursor-pointer">
-                        <i class="bi bi-cloud-upload text-4xl text-gray-400 mb-2 block"></i>
-                        <p class="text-sm text-gray-600">Click to upload or drag and drop</p>
+                        <i class="bi bi-cloud-upload text-3xl text-gray-400 mb-2 block"></i>
+                        <p class="text-sm text-gray-600">Click to upload photo</p>
                         <p class="text-xs text-gray-400 mt-1">PNG, JPG up to 2MB</p>
                     </label>
                 </div>
@@ -134,20 +205,13 @@
                 @enderror
                 
                 <!-- Current Photo Preview -->
-                @if($announcement->photo_path)
+                @if($announcement->image_path)
                     <div class="mt-4" id="currentPhoto">
                         <div class="flex items-center gap-4">
-                            @if(Storage::disk('public')->exists($announcement->photo_path))
-                                <img src="{{ Storage::url($announcement->photo_path) }}" 
-                                     alt="Current photo" 
-                                     class="rounded-lg object-cover"
-                                     style="max-height: 100px;">
-                            @else
-                                <img src="{{ asset('storage/' . $announcement->photo_path) }}" 
-                                     alt="Current photo" 
-                                     class="rounded-lg object-cover"
-                                     style="max-height: 100px;">
-                            @endif
+                            <img src="{{ $announcement->image_url }}" 
+                                 alt="Current photo" 
+                                 class="rounded-lg object-cover"
+                                 style="max-height: 100px;">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" 
                                        id="remove_photo" 
@@ -174,108 +238,48 @@
                 </div>
             </div>
 
-            <hr class="my-6 mx-6 border-gray-200">
-
-            <!-- Event Details Section -->
-            <div class="px-6">
-                <h6 class="font-semibold text-gray-800 mb-4">
-                    <i class="bi bi-calendar-event me-2 text-green-600"></i>Event Details (Optional)
-                </h6>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Event Date -->
-                    <div>
-                        <label for="event_date" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="bi bi-calendar3 me-1"></i>Event Date
-                        </label>
-                        <input type="date" 
-                               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('event_date') border-red-500 @enderror" 
-                               id="event_date" 
-                               name="event_date" 
-                               value="{{ old('event_date', $announcement->event_date ? \Carbon\Carbon::parse($announcement->event_date)->format('Y-m-d') : '') }}">
-                        @error('event_date')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Event Time -->
-                    <div>
-                        <label for="event_time" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="bi bi-clock me-1"></i>Event Time
-                        </label>
-                        <input type="time" 
-                               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('event_time') border-red-500 @enderror" 
-                               id="event_time" 
-                               name="event_time" 
-                               value="{{ old('event_time', $announcement->event_time) }}">
-                        @error('event_time')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Location -->
-                    <div>
-                        <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="bi bi-geo-alt me-1"></i>Location
-                        </label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                <i class="bi bi-geo-alt"></i>
-                            </span>
-                            <input type="text" 
-                                   class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('location') border-red-500 @enderror" 
-                                   id="location" 
-                                   name="location" 
-                                   value="{{ old('location', $announcement->location) }}" 
-                                   placeholder="Enter event location">
-                            @error('location')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Organized By -->
-                    <div>
-                        <label for="organized_by" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="bi bi-person-badge me-1"></i>Organized By
-                        </label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                <i class="bi bi-person"></i>
-                            </span>
-                            <input type="text" 
-                                   class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('organized_by') border-red-500 @enderror" 
-                                   id="organized_by" 
-                                   name="organized_by" 
-                                   value="{{ old('organized_by', $announcement->organized_by) }}" 
-                                   placeholder="Enter organizer name">
-                            @error('organized_by')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Contact Number -->
-                    <div>
-                        <label for="contact_number" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="bi bi-telephone me-1"></i>Contact Number
-                        </label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                <i class="bi bi-phone"></i>
-                            </span>
-                            <input type="text" 
-                                   class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition @error('contact_number') border-red-500 @enderror" 
-                                   id="contact_number" 
-                                   name="contact_number" 
-                                   value="{{ old('contact_number', $announcement->contact_number) }}" 
-                                   placeholder="Enter contact number">
-                            @error('contact_number')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
+            <!-- Attachment Upload -->
+            <div class="px-6 mt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="bi bi-paperclip me-1 text-green-600"></i>
+                    {{ $announcement->attachment_path ? 'Replace Attachment (Optional)' : 'Attachment (Optional - PDF only)' }}
+                </label>
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-green-400 transition">
+                    <input type="file" 
+                           class="hidden" 
+                           id="attachment" 
+                           name="attachment" 
+                           accept="application/pdf"
+                           onchange="previewAttachment(event)">
+                    <label for="attachment" class="cursor-pointer">
+                        <i class="bi bi-file-earmark-text text-3xl text-gray-400 mb-2 block"></i>
+                        <p class="text-sm text-gray-600">Click to upload PDF</p>
+                        <p class="text-xs text-gray-400 mt-1">PDF up to 5MB</p>
+                    </label>
                 </div>
+                @error('attachment')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+                
+                <!-- Current Attachment -->
+                @if($announcement->attachment_path)
+                    <div class="mt-4" id="currentAttachment">
+                        <div class="flex items-center gap-4">
+                            <a href="{{ $announcement->attachment_url }}" target="_blank" class="flex items-center gap-2 text-blue-600 hover:text-blue-800">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                                <span>View Current Attachment</span>
+                            </a>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" 
+                                       id="remove_attachment" 
+                                       name="remove_attachment" 
+                                       value="1"
+                                       class="w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500">
+                                <span class="text-sm text-red-600">Remove</span>
+                            </label>
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <!-- Submit Button -->
@@ -300,7 +304,6 @@
         const currentPhoto = document.getElementById('currentPhoto');
         
         if (input.files && input.files[0]) {
-            // Hide current photo if exists
             if (currentPhoto) {
                 currentPhoto.style.display = 'none';
             }
@@ -323,10 +326,16 @@
         input.value = '';
         preview.classList.add('hidden');
         
-        // Show current photo again if it was hidden
         const currentPhoto = document.getElementById('currentPhoto');
         if (currentPhoto) {
             currentPhoto.style.display = 'block';
+        }
+    }
+
+    function previewAttachment(event) {
+        const input = event.target;
+        if (input.files && input.files[0]) {
+            alert('File selected: ' + input.files[0].name);
         }
     }
 </script>

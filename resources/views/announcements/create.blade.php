@@ -38,34 +38,91 @@
                 @enderror
             </div>
 
-            <!-- Type and Status Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Type, Audience, Priority Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <!-- Type -->
                 <div>
                     <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Type <span class="text-red-500">*</span></label>
                     <select name="type" id="type" 
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('type') border-red-500 @enderror" required>
                         <option value="">Select type</option>
-                        <option value="info" {{ old('type') == 'info' ? 'selected' : '' }}>Information</option>
-                        <option value="alert" {{ old('type') == 'alert' ? 'selected' : '' }}>Alert</option>
-                        <option value="reminder" {{ old('type') == 'reminder' ? 'selected' : '' }}>Reminder</option>
-                        <option value="update" {{ old('type') == 'update' ? 'selected' : '' }}>Update</option>
+                        <option value="Vaccination Program" {{ old('type') == 'Vaccination Program' ? 'selected' : '' }}>Vaccination Program</option>
+                        <option value="Rabies Alert" {{ old('type') == 'Rabies Alert' ? 'selected' : '' }}>Rabies Alert</option>
+                        <option value="Livestock Advisory" {{ old('type') == 'Livestock Advisory' ? 'selected' : '' }}>Livestock Advisory</option>
+                        <option value="Meat Inspection Notice" {{ old('type') == 'Meat Inspection Notice' ? 'selected' : '' }}>Meat Inspection Notice</option>
+                        <option value="General Announcement" {{ old('type') == 'General Announcement' ? 'selected' : '' }}>General Announcement</option>
                     </select>
                     @error('type')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
+                <!-- Audience -->
+                <div>
+                    <label for="audience" class="block text-sm font-medium text-gray-700 mb-2">Audience <span class="text-red-500">*</span></label>
+                    <select name="audience" id="audience" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('audience') border-red-500 @enderror" required>
+                        <option value="">Select audience</option>
+                        <option value="Public" {{ old('audience') == 'Public' ? 'selected' : '' }}>Public</option>
+                        <option value="Pet Owners" {{ old('audience') == 'Pet Owners' ? 'selected' : '' }}>Pet Owners</option>
+                        <option value="Farmers / Livestock Owners" {{ old('audience') == 'Farmers / Livestock Owners' ? 'selected' : '' }}>Farmers / Livestock Owners</option>
+                        <option value="Internal Staff" {{ old('audience') == 'Internal Staff' ? 'selected' : '' }}>Internal Staff</option>
+                    </select>
+                    @error('audience')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Priority -->
+                <div>
+                    <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">Priority <span class="text-red-500">*</span></label>
+                    <select name="priority" id="priority" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('priority') border-red-500 @enderror" required>
+                        <option value="">Select priority</option>
+                        <option value="Normal" {{ old('priority') == 'Normal' ? 'selected' : '' }}>Normal</option>
+                        <option value="Important" {{ old('priority') == 'Important' ? 'selected' : '' }}>Important</option>
+                        <option value="Urgent" {{ old('priority') == 'Urgent' ? 'selected' : '' }}>Urgent</option>
+                    </select>
+                    @error('priority')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Status and Dates Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <!-- Status -->
                 <div>
                     <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status <span class="text-red-500">*</span></label>
                     <select name="status" id="status" 
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('status') border-red-500 @enderror" required>
                         <option value="">Select status</option>
-                        <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
+                        <option value="Draft" {{ old('status') == 'Draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="Published" {{ old('status') == 'Published' ? 'selected' : '' }}>Published</option>
+                        <option value="Archived" {{ old('status') == 'Archived' ? 'selected' : '' }}>Archived</option>
                     </select>
                     @error('status')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Publish Date -->
+                <div>
+                    <label for="publish_date" class="block text-sm font-medium text-gray-700 mb-2">Publish Date <span class="text-red-500">*</span></label>
+                    <input type="datetime-local" name="publish_date" id="publish_date" value="{{ old('publish_date') }}" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('publish_date') border-red-500 @enderror"
+                        required>
+                    @error('publish_date')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Expiry Date -->
+                <div>
+                    <label for="expiry_date" class="block text-sm font-medium text-gray-700 mb-2">Expiry Date (Optional)</label>
+                    <input type="datetime-local" name="expiry_date" id="expiry_date" value="{{ old('expiry_date') }}" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('expiry_date') border-red-500 @enderror">
+                    @error('expiry_date')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -82,20 +139,39 @@
                 @enderror
             </div>
 
-            <!-- Photo -->
-            <div class="mb-6">
-                <label for="photo" class="block text-sm font-medium text-gray-700 mb-2">Photo (Optional)</label>
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition cursor-pointer">
-                    <input type="file" name="photo" id="photo" class="hidden" accept="image/*">
-                    <label for="photo" class="cursor-pointer">
-                        <i class="bi bi-cloud-upload text-4xl text-gray-400 mb-2"></i>
-                        <p class="text-sm text-gray-600">Click to upload or drag and drop</p>
-                        <p class="text-xs text-gray-400 mt-1">PNG, JPG up to 2MB</p>
-                    </label>
+            <!-- Photo and Attachment Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Photo -->
+                <div>
+                    <label for="photo" class="block text-sm font-medium text-gray-700 mb-2">Photo (Optional)</label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition cursor-pointer">
+                        <input type="file" name="photo" id="photo" class="hidden" accept="image/jpeg,image/png,image/jpg,image/gif">
+                        <label for="photo" class="cursor-pointer">
+                            <i class="bi bi-cloud-upload text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600">Click to upload photo</p>
+                            <p class="text-xs text-gray-400 mt-1">PNG, JPG up to 2MB</p>
+                        </label>
+                    </div>
+                    @error('photo')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
-                @error('photo')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+
+                <!-- Attachment -->
+                <div>
+                    <label for="attachment" class="block text-sm font-medium text-gray-700 mb-2">Attachment (Optional)</label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition cursor-pointer">
+                        <input type="file" name="attachment" id="attachment" class="hidden" accept="application/pdf">
+                        <label for="attachment" class="cursor-pointer">
+                            <i class="bi bi-file-earmark-text text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600">Click to upload file</p>
+                            <p class="text-xs text-gray-400 mt-1">PDF up to 5MB</p>
+                        </label>
+                    </div>
+                    @error('attachment')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             <!-- Form Actions -->

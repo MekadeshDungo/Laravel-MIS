@@ -17,7 +17,7 @@
         <div class="bg-red-500 text-white rounded-xl shadow-sm p-6">
             <div class="text-center">
                 <i class="bi bi-exclamation-triangle text-4xl md:text-5xl mb-3 block"></i>
-                <h4 class="text-3xl md:text-4xl font-bold mb-1">{{ \App\Models\AnimalBiteReport::count() }}</h4>
+                <h4 class="text-3xl md:text-4xl font-bold mb-1">{{ $stats['total_bite_reports'] }}</h4>
                 <small class="text-red-100">Animal Bite Reports</small>
                 <div class="mt-3">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-red-600">
@@ -29,7 +29,7 @@
         <div class="bg-green-500 text-white rounded-xl shadow-sm p-6">
             <div class="text-center">
                 <i class="bi bi-shield-check text-4xl md:text-5xl mb-3 block"></i>
-                <h4 class="text-3xl md:text-4xl font-bold mb-1">{{ \App\Models\RabiesVaccinationReport::count() }}</h4>
+                <h4 class="text-3xl md:text-4xl font-bold mb-1">{{ $stats['total_vaccinations'] }}</h4>
                 <small class="text-green-100">Vaccination Reports</small>
                 <div class="mt-3">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-green-600">
@@ -41,7 +41,7 @@
         <div class="bg-yellow-500 text-dark rounded-xl shadow-sm p-6">
             <div class="text-center">
                 <i class="bi bi-search text-4xl md:text-5xl mb-3 block"></i>
-                <h4 class="text-3xl md:text-4xl font-bold mb-1">{{ \App\Models\MeatInspectionReport::count() }}</h4>
+                <h4 class="text-3xl md:text-4xl font-bold mb-1">{{ $stats['total_meat_inspections'] }}</h4>
                 <small class="text-yellow-700">Meat Inspection Reports</small>
                 <div class="mt-3">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white text-yellow-600">
@@ -99,7 +99,7 @@
                             @forelse($biteReports as $report)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-sm font-medium">#{{ $report->id }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($report->bite_date)->format('M d, Y') }}</td>
                                 <td class="px-4 py-3 text-sm">{{ $report->reporter_name }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ $report->barangay }}</td>
                                 <td class="px-4 py-3 text-sm">{{ $report->victim_name }}</td>
@@ -278,16 +278,16 @@ function switchTab(tab) {
     document.querySelectorAll('.tab-pane').forEach(pane => {
         pane.classList.add('hidden');
     });
-    
+
     // Reset all tab buttons
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('border-red-500', 'text-red-600');
         btn.classList.add('border-transparent', 'text-gray-500');
     });
-    
+
     // Show selected tab content
     document.getElementById(tab + '-content').classList.remove('hidden');
-    
+
     // Highlight selected tab button
     const activeBtn = document.getElementById(tab + '-tab-btn');
     activeBtn.classList.remove('border-transparent', 'text-gray-500');

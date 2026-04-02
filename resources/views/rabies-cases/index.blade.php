@@ -38,8 +38,8 @@
                     <label for="barangay_id" class="form-label">Barangay</label>
                     <select name="barangay_id" id="barangay_id" class="form-select">
                         <option value="">All Barangays</option>
-                        @foreach($barangays as $barangay)
-                            <option value="{{ $barangay->id }}" {{ request('barangay_id') == $barangay->id ? 'selected' : '' }}>{{ $barangay->barangay_name }}</option>
+                        @foreach($barangays as $id => $name)
+                            <option value="{{ $id }}" {{ request('barangay_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
                         @endforeach
                     </select>
                 </div>

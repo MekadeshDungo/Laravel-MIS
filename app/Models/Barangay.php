@@ -13,6 +13,8 @@ class Barangay extends Model
         'barangay_name',
         'city',
         'province',
+        'latitude',
+        'longitude',
         'contact_number',
         'office_email',
         'status',
@@ -20,15 +22,9 @@ class Barangay extends Model
 
     protected $casts = [
         'created_at' => 'datetime',
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
-
-    /**
-     * Get the barangay users for this barangay.
-     */
-    public function barangayUsers(): HasMany
-    {
-        return $this->hasMany(BarangayUser::class, 'barangay_id', 'barangay_id');
-    }
 
     /**
      * Get the stray reports for this barangay.
@@ -36,13 +32,5 @@ class Barangay extends Model
     public function strayReports(): HasMany
     {
         return $this->hasMany(StrayReport::class, 'barangay_id', 'barangay_id');
-    }
-
-    /**
-     * Get active barangay users.
-     */
-    public function activeUsers()
-    {
-        return $this->barangayUsers()->where('status', 'active');
     }
 }

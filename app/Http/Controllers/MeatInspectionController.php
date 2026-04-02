@@ -14,7 +14,7 @@ class MeatInspectionController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
-        $reports = MeatInspectionReport::where('user_id', $user->id)->latest()->take(5)->get();
+        $reports = MeatInspectionReport::where('inspector_user_id', $user->id)->latest()->take(5)->get();
         return view('dashboard.meat-inspection', compact('reports'));
     }
 
@@ -45,7 +45,7 @@ class MeatInspectionController extends Controller
         ]);
 
         $report = MeatInspectionReport::create([
-            'user_id' => Auth::id(),
+            'inspector_user_id' => Auth::id(),
             ...$validated,
         ]);
 
@@ -58,7 +58,7 @@ class MeatInspectionController extends Controller
      */
     public function indexReports()
     {
-        $reports = MeatInspectionReport::where('user_id', Auth::id())
+        $reports = MeatInspectionReport::where('inspector_user_id', Auth::id())
             ->latest()
             ->paginate(10);
         return view('reports.meat_inspection', compact('reports'));
@@ -75,7 +75,7 @@ class MeatInspectionController extends Controller
 
     private function authorizeReport($report)
     {
-        if ($report->user_id !== Auth::id() && !in_array(Auth::user()->role, ['super_admin', 'admin'])) {
+        if ($report->inspector_user_id !== Auth::id() && !in_array(Auth::user()->role, ['super_admin', 'admin'])) {
             abort(403, 'Unauthorized action.');
         }
     }

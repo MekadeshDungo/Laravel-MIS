@@ -137,12 +137,16 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'admin');
                 {{ $reports->links() }}
             </div>
         @else
-            <div class="p-12 text-center">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="bi bi-shield-check text-gray-400 text-2xl"></i>
+            <div class="p-16 text-center">
+                <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="bi bi-shield-check text-green-400 text-4xl"></i>
                 </div>
-                <h3 class="text-lg font-medium text-gray-800 mb-2">No vaccination reports found</h3>
-                <p class="text-gray-500">No vaccination reports have been submitted yet.</p>
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">No Vaccination Reports Found</h3>
+                <p class="text-gray-500 mb-8 max-w-md mx-auto">There are currently no recorded vaccination reports. Start by creating a new vaccination report to begin tracking.</p>
+                <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                    <i class="bi bi-plus-lg"></i>
+                    Create Vaccination Report
+                </a>
             </div>
         @endif
     </div>

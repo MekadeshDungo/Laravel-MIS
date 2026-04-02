@@ -16,7 +16,7 @@
     <div class="flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-bold mb-2">Admin Staff Portal</h2>
-            <p class="text-blue-100">Supporting administrative and records management.</p>
+            <p class="text-green-100">Supporting administrative and records management.</p>
         </div>
         <div class="hidden md:block">
             <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
@@ -70,8 +70,8 @@
                 <p class="text-xs text-gray-500">Meat Inspection</p>
                 <p class="text-2xl font-bold text-gray-800">{{ \App\Models\MeatInspectionReport::count() }}</p>
             </div>
-            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <i class="bi bi-clipboard-check text-blue-600"></i>
+            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <i class="bi bi-clipboard-check text-green-600"></i>
             </div>
         </div>
     </div>
@@ -101,7 +101,7 @@
                 <span class="text-sm font-medium text-gray-700">Bite Reports</span>
             </a>
         @else
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ route('assistant-vet.dashboard') }}"
                class="flex flex-col items-center p-4 bg-red-50 hover:bg-red-100 rounded-xl transition group">
                 <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                     <i class="bi bi-exclamation-triangle text-white text-xl"></i>
@@ -110,10 +110,10 @@
             </a>
         @endif
 
-        {{-- Records / Encoding (point to records-staff if you want admin_staff to do records; otherwise remove) --}}
-        <a href="{{ route('dashboard') }}"
-           class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
-            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
+        {{-- Records / Encoding - redirect to admin-staff dashboard --}}
+        <a href="{{ route('admin-staff.dashboard') }}"
+           class="flex flex-col items-center p-4 bg-green-50 hover:bg-green-100 rounded-xl transition group">
+            <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                 <i class="bi bi-folder2-open text-white text-xl"></i>
             </div>
             <span class="text-sm font-medium text-gray-700">Records</span>
@@ -152,7 +152,7 @@
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mt-2 capitalize
                             @switch($announcement->type)
                                 @case('alert') bg-yellow-100 text-yellow-700 @break
-                                @case('info') bg-blue-100 text-blue-700 @break
+                                @case('info') bg-green-100 text-green-700 @break
                                 @default bg-gray-100 text-gray-700
                             @endswitch">
                             {{ $announcement->type }}
@@ -178,8 +178,8 @@
             @forelse(\App\Models\User::latest()->take(4)->get() as $user)
                 <div class="p-4 flex items-center justify-between hover:bg-gray-50 transition">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span class="text-blue-600 font-semibold text-sm">{{ substr($user->name, 0, 1) }}</span>
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                            <span class="text-green-600 font-semibold text-sm">{{ substr($user->name, 0, 1) }}</span>
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-800">{{ $user->name }}</p>

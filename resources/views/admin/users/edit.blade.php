@@ -113,35 +113,26 @@
                     <!-- Primary Role -->
                     <div>
                         <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Primary Role <span class="text-red-500">*</span></label>
-                        <select name="role" id="role" 
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('role') border-red-500 @enderror" required>
-                            <option value="">Select role</option>
-                            <option value="super_admin" {{ old('role', $user->role) == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
-                            <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
-                            <option value="city_vet" {{ old('role', $user->role) == 'city_vet' ? 'selected' : '' }}>City Vet</option>
-                            <option value="records_staff" {{ old('role', $user->role) == 'records_staff' ? 'selected' : '' }}>Records Staff</option>
-                            <option value="admin_staff" {{ old('role', $user->role) == 'admin_staff' ? 'selected' : '' }}>Admin Staff</option>
-                            <option value="meat_inspector" {{ old('role', $user->role) == 'meat_inspector' ? 'selected' : '' }}>Meat Inspector</option>
-                            <option value="inventory_staff" {{ old('role', $user->role) == 'inventory_staff' ? 'selected' : '' }}>Inventory Staff</option>
-                            <option value="barangay_encoder" {{ old('role', $user->role) == 'barangay_encoder' ? 'selected' : '' }}>Barangay Encoder</option>
-                            <option value="viewer" {{ old('role', $user->role) == 'viewer' ? 'selected' : '' }}>Viewer</option>
-                        </select>
-                        @error('role')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Secondary Role -->
-                    <div>
-                        <label for="secondary_role" class="block text-sm font-medium text-gray-700 mb-2">Secondary Role (Optional)</label>
-                        <select name="secondary_role" id="secondary_role" 
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                            <option value="">None</option>
-                            <option value="city_vet" {{ old('secondary_role', $user->secondary_role) == 'city_vet' ? 'selected' : '' }}>City Vet</option>
-                            <option value="records_staff" {{ old('secondary_role', $user->secondary_role) == 'records_staff' ? 'selected' : '' }}>Records Staff</option>
-                            <option value="admin_staff" {{ old('secondary_role', $user->secondary_role) == 'admin_staff' ? 'selected' : '' }}>Admin Staff</option>
-                            <option value="barangay_encoder" {{ old('secondary_role', $user->secondary_role) == 'barangay_encoder' ? 'selected' : '' }}>Barangay Encoder</option>
-                        </select>
+                        @if($user->isSuperAdmin() && $user->isSelf())
+                            <div class="w-full px-4 py-3 rounded-lg border bg-gray-100 text-gray-600">
+                                <i class="bi bi-lock-fill mr-2"></i>
+                                {{ $user->getRoleDisplayName() }}
+                            </div>
+                            <input type="hidden" name="role" value="{{ $user->role }}">
+                            <p class="mt-1 text-xs text-red-500"><i class="bi bi-exclamation-circle"></i> Super Admin cannot change their own role.</p>
+                        @else
+                            <select name="role" id="role" 
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('role') border-red-500 @enderror" required>
+                                <option value="">Select role</option>
+                                @foreach($assignableRoles as $role => $label)
+                                    <option value="{{ $role }}" {{ old('role', $user->role) == $role ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('role')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <p class="mt-1 text-xs text-gray-500">Only roles within your permission level are available.</p>
+                        @endif
                     </div>
                 </div>
             </div>

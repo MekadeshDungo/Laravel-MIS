@@ -10,7 +10,7 @@ class Notification extends Model
     protected $primaryKey = 'notification_id';
 
     protected $fillable = [
-        'barangay_user_id',
+        'user_id',
         'title',
         'message',
         'related_module',
@@ -24,11 +24,11 @@ class Notification extends Model
     ];
 
     /**
-     * Get the barangay user this notification belongs to.
+     * Get the user this notification belongs to.
      */
-    public function barangayUser(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(BarangayUser::class, 'barangay_user_id', 'barangay_user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**

@@ -2,102 +2,87 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Establishment extends Model
 {
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
+    use HasFactory;
+
     protected $table = 'establishments';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'barangay_id',
         'name',
         'type',
-        'permit_no',
-        'address',
-        'contact_number',
         'owner_name',
+        'contact_number',
+        'address',
+        'barangay_id',
         'status',
-        'user_id',
+    ];
+
+    protected $casts = [
+        'status' => 'string',
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Get the barangay that owns the establishment.
      */
-    protected function casts(): array
-    {
-        return [
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-        ];
-    }
-
-    /**
-     * Get the barangay.
-     */
-    public function barangay()
+    public function barangay(): BelongsTo
     {
         return $this->belongsTo(Barangay::class);
     }
 
     /**
-     * Get the user who created this establishment.
+     * Scope to filter by type.
      */
-    public function user()
+    public function scopeByType($query, $type)
     {
-        return $this->belongsTo(User::class);
+        return $query->where('type', $type);
     }
 
     /**
-     * Get inspections for this establishment.
+     * Scope to filter by barangay.
      */
-    public function inspections()
+    public function scopeByBarangay($query, $barangayId)
     {
-        return $this->hasMany(MeatInspectionReport::class, 'establishment_id');
+        return $query->where('barangay_id', $barangayId);
     }
 
     /**
-     * Get establishment type badge.
+     * Scope to filter by status.
      */
-    public function getTypeBadgeAttribute()
+    public function scopeByStatus($query, $status)
     {
-        $badges = [
-            'meat_shop' => 'danger',
-            'poultry' => 'warning',
-            'pet_shop' => 'info',
-            'vet_clinic' => 'primary',
-            'livestock_facility' => 'success',
-            'other' => 'secondary',
-        ];
-
-        return $badges[$this->type] ?? 'secondary';
+        return $query->where('status', $status);
     }
 
     /**
-     * Get formatted type name.
+     * Scope to search by name.
      */
-    public function getTypeNameAttribute()
+    public function scopeSearch($query, $search)
     {
-        $names = [
-            'meat_shop' => 'Meat Shop',
-            'poultry' => 'Poultry',
-            'pet_shop' => 'Pet Shop',
-            'vet_clinic' => 'Veterinary Clinic',
-            'livestock_facility' => 'Livestock Facility',
-            'other' => 'Other',
-        ];
+        return $query->where('name', 'like', '%' . $search . '%')
+            ->orWhere('owner_name', 'like', '%' . $search . '%');
+    }
 
-        return $names[$this->type] ?? ucfirst($this->type);
+    /**
+     * Scope for active establishments.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * Get count by type.
+     */
+    public static function getCountByType()
+    {
+        return self::selectRaw('type, COUNT(*) as count')
+            ->groupBy('type')
+            ->get()
+            ->pluck('count', 'type');
     }
 }

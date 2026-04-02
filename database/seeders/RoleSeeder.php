@@ -16,49 +16,59 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $roles = [
+            // Thesis Primary Roles (7 roles)
             [
                 'role_name' => 'super_admin',
-                'description' => 'System Administrator - Full system access with account management',
-            ],
-            [
-                'role_name' => 'admin',
-                'description' => 'Administrator - System management and user oversight',
+                'description' => 'Super Administrator (IT) - Full system control and technical administration',
             ],
             [
                 'role_name' => 'city_vet',
-                'description' => 'City Veterinarian - Consolidated reports, planning, regulatory decision-making',
+                'description' => 'City Veterinarian (Admin/Office Head) - Analytics, monitoring, decision-making',
             ],
             [
-                'role_name' => 'records_staff',
-                'description' => 'Records Staff - Encoding, organizing, maintaining official records',
+                'role_name' => 'admin_staff',
+                'description' => 'Administrative Staff (Book Binder 4) - Clerical operations, client service, adoption management, portal gatekeeper',
             ],
             [
-                'role_name' => 'disease_control',
-                'description' => 'Disease Control Personnel - Animal health programs, vaccination activities',
+                'role_name' => 'assistant_vet',
+                'description' => 'Assistant Veterinarian (Vet 3) - Medical records, vaccination, clinical actions, cruelty assessment',
+            ],
+            [
+                'role_name' => 'livestock_inspector',
+                'description' => 'Livestock Inspector (Book Binder 1) - Farm profiling, livestock census, business profiling',
             ],
             [
                 'role_name' => 'meat_inspector',
-                'description' => 'Meat Inspector - Inspection results, compliance monitoring, regulatory reports',
-            ],
-            [
-                'role_name' => 'inventory_staff',
-                'description' => 'Inventory Staff - Vaccine and supply management',
-            ],
-            [
-                'role_name' => 'barangay_encoder',
-                'description' => 'Barangay Encoder - Livestock census data entry, health-related data submission',
-            ],
-            [
-                'role_name' => 'clinic',
-                'description' => 'Veterinary Clinic - Submit rabies vaccination reports',
-            ],
-            [
-                'role_name' => 'viewer',
-                'description' => 'Viewer - Read-only access to reports',
+                'description' => 'Meat & Post-Abattoir Inspector - Establishment profiling, compliance monitoring',
             ],
             [
                 'role_name' => 'citizen',
-                'description' => 'Citizen - Public portal access for pet registration',
+                'description' => 'Citizen (Pet Owner) - Pet owner portal access',
+            ],
+            // Legacy/Additional roles (for backward compatibility)
+            [
+                'role_name' => 'admin_asst',
+                'description' => 'Legacy alias for admin_staff - Administrative Assistant IV',
+            ],
+            [
+                'role_name' => 'disease_control',
+                'description' => 'Legacy alias for assistant_vet - Assistant Veterinary Personnel',
+            ],
+            [
+                'role_name' => 'veterinarian',
+                'description' => 'Veterinarian (Clinic) - Veterinary clinic operations',
+            ],
+            [
+                'role_name' => 'viewer',
+                'description' => 'Viewer (Read-only) - Can view reports and dashboards only',
+            ],
+            [
+                'role_name' => 'records_staff',
+                'description' => 'Records Staff - Pet registration, owner records, vaccination encoding',
+            ],
+            [
+                'role_name' => 'barangay_encoder',
+                'description' => 'Barangay Encoder - Submit stray reports, manage impounds, adoption requests',
             ],
         ];
 

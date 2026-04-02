@@ -36,8 +36,8 @@
                         <label for="barangay_id" class="form-label">Barangay</label>
                         <select name="barangay_id" id="barangay_id" class="form-select @error('barangay_id') is-invalid @enderror">
                             <option value="">Select Barangay</option>
-                            @foreach($barangays as $barangay)
-                                <option value="{{ $barangay->id }}" {{ old('barangay_id') == $barangay->id ? 'selected' : '' }}>{{ $barangay->barangay_name }}</option>
+                            @foreach($barangays as $id => $name)
+                                <option value="{{ $id }}" {{ old('barangay_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
                             @endforeach
                         </select>
                         @error('barangay_id')

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ImpoundRecord extends Model
 {
+    protected $table = 'impounds';
     protected $primaryKey = 'impound_id';
 
     protected $fillable = [

@@ -12,15 +12,11 @@ $dashboardRoutes = [
     'admin' => 'admin.dashboard',
     'city_vet' => 'city-vet.dashboard',
     'admin_staff' => 'admin-staff.dashboard',
-    'disease_control' => 'disease-control.dashboard',
-    'inventory_staff' => 'inventory.dashboard',
-    'city_pound' => 'city-pound.dashboard',
+    'admin_asst' => 'admin-staff.dashboard',
+    'assistant_vet' => 'assistant-vet.dashboard',
     'meat_inspector' => 'meat-inspection.dashboard',
-    'records_staff' => 'records-staff.dashboard',
-    'barangay_encoder' => 'barangay.dashboard',
-    'barangay' => 'barangay.dashboard',
-    'clinic' => 'clinic.dashboard',
-    'viewer' => 'viewer.dashboard',
+    'livestock_inspector' => 'livestock.dashboard',
+    'citizen' => 'owner.dashboard',
 ];
 $rolePrefix = str_replace('_', '-', $role);
 $dashboardRoute = $dashboardRoutes[$role] ?? $rolePrefix . '.dashboard';
@@ -196,14 +192,15 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
                 {{ $reports->links() }}
             </div>
         @else
-            <div class="p-12 text-center">
-                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="bi bi-clipboard-check text-gray-400 text-3xl"></i>
+            <div class="p-16 text-center">
+                <div class="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="bi bi-clipboard-check text-red-400 text-4xl"></i>
                 </div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-2">No meat inspection reports found</h3>
-                <p class="text-gray-500 mb-6">No meat inspection reports have been submitted yet.</p>
-                <a href="{{ route('meat-inspection.reports.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium">
-                    <i class="bi bi-plus-lg"></i>Create First Report
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">No Meat Inspection Reports Found</h3>
+                <p class="text-gray-500 mb-8 max-w-md mx-auto">There are currently no recorded meat inspection reports. Start by creating a new report to begin monitoring.</p>
+                <a href="{{ route('meat-inspection.reports.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                    <i class="bi bi-plus-lg"></i>
+                    Create Meat Inspection Report
                 </a>
             </div>
         @endif

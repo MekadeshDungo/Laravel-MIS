@@ -27,12 +27,15 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
         'email',
         'password',
         'role',
-        'secondary_role',
         'barangay',
         'clinic_name',
         'division',
         'contact_number',
         'address',
+        // OTP fields
+        'otp_code',
+        'otp_expires_at',
+        'is_verified',
     ];
 
     /**
@@ -43,6 +46,9 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'otp_code',
+        'otp_expires_at',
+        'is_verified',
     ];
 
     /**
@@ -122,18 +128,14 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
         $this->{$this->getRememberTokenName()} = $value;
     }
 
-    // Role constants based on VET-MIS specifications
-    public const ROLE_SUPER_ADMIN = 'super_admin';
-    public const ROLE_ADMIN = 'admin';
-    public const ROLE_CITY_VETERINARIAN = 'city_vet';
-    public const ROLE_RECORDS_STAFF = 'records_staff';
-    public const ROLE_BARANGAY_ENCODER = 'barangay_encoder';
-    public const ROLE_DISEASE_CONTROL = 'disease_control';
-    public const ROLE_MEAT_INSPECTOR = 'meat_inspector';
-    public const ROLE_INVENTORY_STAFF = 'inventory_staff';
-    public const ROLE_CLINIC = 'clinic';
-    public const ROLE_VIEWER = 'viewer';
-    public const ROLE_CITIZEN = 'citizen';
+    // Role constants - Clean Role Structure for Vet MIS (7 roles)
+    public const ROLE_SUPER_ADMIN = 'super_admin';          // IT Personnel
+    public const ROLE_CITY_VET = 'city_vet';               // City Veterinarian (Admin/Office Head)
+    public const ROLE_ADMIN_STAFF = 'admin_staff';         // Administrative Assistant IV (Book Binder 4)
+    public const ROLE_ASSISTANT_VET = 'assistant_vet';     // Assistant Veterinarian (Vet 3)
+    public const ROLE_LIVESTOCK_INSPECTOR = 'livestock_inspector'; // Livestock Inspector (Book Binder 1)
+    public const ROLE_MEAT_INSPECTOR = 'meat_inspector';     // Meat & Post-Abattoir Inspector
+    public const ROLE_CITIZEN = 'citizen';                  // Pet owner/citizen portal
 
     /**
      * Check if user is a super admin (System Administrator).
@@ -148,7 +150,15 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->role === self::ROLE_ADMIN || $this->role === self::ROLE_CITY_VETERINARIAN;
+        return $this->role === self::ROLE_CITY_VET || $this->role === self::ROLE_SUPER_ADMIN;
+    }
+
+    /**
+     * Check if user is a City Veterinarian.
+     */
+    public function isCityVet(): bool
+    {
+        return $this->role === self::ROLE_CITY_VET;
     }
 
     /**
@@ -156,7 +166,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function isRecordsStaff(): bool
     {
-        return $this->role === self::ROLE_RECORDS_STAFF;
+        return $this->role === 'records_staff';
     }
 
     /**
@@ -164,15 +174,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function isBarangayEncoder(): bool
     {
-        return $this->role === self::ROLE_BARANGAY_ENCODER;
-    }
-
-    /**
-     * Check if user is disease control personnel.
-     */
-    public function isDiseaseControl(): bool
-    {
-        return $this->role === self::ROLE_DISEASE_CONTROL;
+        return $this->role === 'barangay_encoder';
     }
 
     /**
@@ -184,27 +186,11 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     }
 
     /**
-     * Check if user is inventory staff.
+     * Check if user is assistant vet (includes former inventory staff and city pound roles).
      */
-    public function isInventoryStaff(): bool
+    public function isAssistantVet(): bool
     {
-        return $this->role === self::ROLE_INVENTORY_STAFF;
-    }
-
-    /**
-     * Check if user is a clinic user.
-     */
-    public function isClinic(): bool
-    {
-        return $this->role === self::ROLE_CLINIC;
-    }
-
-    /**
-     * Check if user has viewing access only.
-     */
-    public function isViewer(): bool
-    {
-        return $this->role === self::ROLE_VIEWER;
+        return $this->role === self::ROLE_ASSISTANT_VET;
     }
 
     /**
@@ -220,7 +206,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function hasRole(string $role): bool
     {
-        return $this->role === $role || $this->secondary_role === $role;
+        return $this->role === $role;
     }
 
     /**
@@ -232,37 +218,27 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     }
 
     /**
-     * Check if user has a specific secondary role.
-     */
-    public function hasSecondaryRole(string $role): bool
-    {
-        return $this->secondary_role === $role;
-    }
-
-    /**
-     * Get effective role (primary or secondary).
+     * Get effective role.
      */
     public function getEffectiveRole(): string
     {
-        return $this->secondary_role ?? $this->role;
+        return $this->role;
     }
 
     /**
-     * Check if user is an admin with secondary barangay role.
+     * Check if user is admin with barangay access.
      */
     public function isAdminWithBarangayAccess(): bool
     {
-        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_SUPER_ADMIN]) && 
-               $this->secondary_role === self::ROLE_BARANGAY_ENCODER;
+        return in_array($this->role, [self::ROLE_CITY_VET, self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN_STAFF]);
     }
 
     /**
-     * Check if user is an admin with secondary clinic role.
+     * Check if user is admin with clinic access.
      */
     public function isAdminWithClinicAccess(): bool
     {
-        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_SUPER_ADMIN]) && 
-               $this->secondary_role === self::ROLE_CLINIC;
+        return in_array($this->role, [self::ROLE_CITY_VET, self::ROLE_SUPER_ADMIN, self::ROLE_ASSISTANT_VET]);
     }
 
     /**
@@ -271,17 +247,15 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     public function getRoleDisplayName(): string
     {
         return match($this->role) {
-            self::ROLE_SUPER_ADMIN => 'Super Administrator',
-            self::ROLE_ADMIN => 'Veterinary Administrator',
-            self::ROLE_CITY_VETERINARIAN => 'City Veterinarian',
-            self::ROLE_BARANGAY_ENCODER => 'Barangay Encoder',
-            self::ROLE_CLINIC => 'Veterinary Clinic User',
-            self::ROLE_DISEASE_CONTROL => 'Disease Control Personnel',
-            self::ROLE_MEAT_INSPECTOR => 'Meat Inspector',
-            self::ROLE_INVENTORY_STAFF => 'Inventory Staff',
+            self::ROLE_SUPER_ADMIN => 'Super Administrator (IT)',
+            self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
+            self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV',
+            self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian',
+            self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector',
+            self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
             self::ROLE_RECORDS_STAFF => 'Records Staff',
-            self::ROLE_VIEWER => 'Viewer / Supervisor',
-            self::ROLE_CITIZEN => 'Citizen / Pet Owner',
+            self::ROLE_CITY_POUND => 'City Pound Personnel',
+            self::ROLE_CITIZEN => 'Citizen (Pet Owner)',
             default => 'Unknown',
         };
     }
@@ -292,42 +266,141 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     public static function getRoles(): array
     {
         return [
-            self::ROLE_SUPER_ADMIN => 'Super Administrator',
-            self::ROLE_ADMIN => 'Veterinary Administrator',
-            self::ROLE_CITY_VETERINARIAN => 'City Veterinarian',
+            self::ROLE_SUPER_ADMIN => 'Super Administrator (IT)',
+            self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
+            self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV (Book Binder 4)',
+            self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian (Vet 3)',
+            self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector (Book Binder 1)',
+            self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
             self::ROLE_RECORDS_STAFF => 'Records Staff',
-            self::ROLE_BARANGAY_ENCODER => 'Barangay Encoder',
-            self::ROLE_DISEASE_CONTROL => 'Disease Control Personnel',
-            self::ROLE_MEAT_INSPECTOR => 'Meat Inspector',
-            self::ROLE_INVENTORY_STAFF => 'Inventory Staff',
-            self::ROLE_CLINIC => 'Veterinary Clinic User',
-            self::ROLE_VIEWER => 'Viewer / Supervisor',
-            self::ROLE_CITIZEN => 'Citizen / Pet Owner',
+            self::ROLE_CITY_POUND => 'City Pound Personnel',
+            self::ROLE_CITIZEN => 'Citizen (Pet Owner)',
         ];
     }
 
     /**
-     * Get admin roles (full access).
+     * Get role hierarchy levels (higher number = more permissions).
+     */
+    public static function getRoleHierarchy(): array
+    {
+        return [
+            self::ROLE_SUPER_ADMIN => 10,       // IT Personnel - Highest
+            self::ROLE_CITY_VET => 8,           // Admin/Office Head
+            self::ROLE_ADMIN_STAFF => 6,         // Administrative Assistant IV
+            self::ROLE_ASSISTANT_VET => 5,      // Assistant Veterinarian
+            self::ROLE_LIVESTOCK_INSPECTOR => 4,// Livestock Inspector
+            self::ROLE_MEAT_INSPECTOR => 4,     // Meat & Post-Abattoir Inspector
+            self::ROLE_RECORDS_STAFF => 3,      // Records Management
+            self::ROLE_CITY_POUND => 3,         // City Pound Personnel
+            self::ROLE_CITIZEN => 1,            // Pet owner / citizen portal
+        ];
+    }
+
+    /**
+     * Get the hierarchy level for this user.
+     */
+    public function getHierarchyLevel(): int
+    {
+        return self::getRoleHierarchy()[$this->role] ?? 0;
+    }
+
+    /**
+     * Check if user can manage another user based on role hierarchy.
+     * User can only manage users with equal or lower hierarchy level.
+     */
+    public function canManageUser(User $targetUser): bool
+    {
+        // Super admin cannot be managed by anyone
+        if ($targetUser->role === self::ROLE_SUPER_ADMIN) {
+            return false;
+        }
+
+        // If target is super_admin, only another super_admin can manage (but cannot delete self)
+        if ($targetUser->isSuperAdmin()) {
+            return $this->isSuperAdmin();
+        }
+
+        // Other users: check hierarchy
+        return $this->getHierarchyLevel() >= $targetUser->getHierarchyLevel();
+    }
+
+    /**
+     * Check if user can assign a specific role.
+     * Users cannot assign roles higher than their own level.
+     */
+    public function canAssignRole(string $role): bool
+    {
+        $roleLevel = self::getRoleHierarchy()[$role] ?? 0;
+        return $this->getHierarchyLevel() >= $roleLevel;
+    }
+
+    /**
+     * Get available roles for assignment based on user's hierarchy.
+     */
+    public function getAssignableRoles(): array
+    {
+        $userLevel = $this->getHierarchyLevel();
+        $hierarchy = self::getRoleHierarchy();
+
+        $assignable = [];
+        foreach ($hierarchy as $role => $level) {
+            if ($level <= $userLevel) {
+                $assignable[$role] = self::getRoles()[$role] ?? $role;
+            }
+        }
+
+        return $assignable;
+    }
+
+    /**
+     * Check if user can access admin dashboard.
+     * Citizens cannot access admin areas.
+     */
+    public function canAccessAdminPanel(): bool
+    {
+        return $this->role !== self::ROLE_CITIZEN;
+    }
+
+    /**
+     * Check if user can modify super admin account.
+     */
+    public function canModifySuperAdmin(): bool
+    {
+        return $this->isSuperAdmin();
+    }
+
+    /**
+     * Check if this is the authenticated user's own account.
+     */
+    public function isSelf(): bool
+    {
+        return $this->id === auth()->id();
+    }
+
+    /**
+     * Get primary admin roles.
      */
     public static function getAdminRoles(): array
     {
         return [
             self::ROLE_SUPER_ADMIN,
-            self::ROLE_ADMIN,
+            self::ROLE_CITY_VET,
         ];
     }
 
     /**
-     * Get staff roles (division-based access).
+     * Get operational staff roles.
      */
     public static function getStaffRoles(): array
     {
         return [
-            self::ROLE_CITY_VETERINARIAN,
-            self::ROLE_RECORDS_STAFF,
-            self::ROLE_DISEASE_CONTROL,
+            self::ROLE_CITY_VET,
+            self::ROLE_ADMIN_STAFF,
+            self::ROLE_ASSISTANT_VET,
+            self::ROLE_LIVESTOCK_INSPECTOR,
             self::ROLE_MEAT_INSPECTOR,
-            self::ROLE_INVENTORY_STAFF,
+            self::ROLE_RECORDS_STAFF,
+            self::ROLE_CITY_POUND,
         ];
     }
 
@@ -347,7 +420,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function pets()
     {
-        return $this->hasMany(Pet::class, 'owner_id');
+        return $this->hasMany(Animal::class, 'owner_id');
     }
 
     /**
@@ -355,8 +428,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function hasAnyRole(array $roles): bool
     {
-        return in_array($this->role, $roles) || 
-               (($this->secondary_role && in_array($this->secondary_role, $roles)));
+        return in_array($this->role, $roles);
     }
 
     /**
@@ -365,17 +437,12 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     public function getPrimaryRoleNameAttribute(): string
     {
         $roleNames = [
-            self::ROLE_SUPER_ADMIN => 'Super Administrator',
-            self::ROLE_ADMIN => 'Administrator',
-            self::ROLE_CITY_VETERINARIAN => 'City Veterinarian',
-            self::ROLE_RECORDS_STAFF => 'Records Staff',
-            self::ROLE_BARANGAY_ENCODER => 'Barangay Encoder',
-            self::ROLE_DISEASE_CONTROL => 'Disease Control',
+            self::ROLE_SUPER_ADMIN => 'Super Admin (IT)',
+            self::ROLE_CITY_VET => 'City Veterinarian',
+            self::ROLE_ADMIN_ASST => 'Admin Assistant IV',
+            self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian',
+            self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector',
             self::ROLE_MEAT_INSPECTOR => 'Meat Inspector',
-            self::ROLE_INVENTORY_STAFF => 'Inventory Staff',
-            self::ROLE_CLINIC => 'Clinic',
-            self::ROLE_VIEWER => 'Viewer',
-            self::ROLE_CITIZEN => 'Citizen',
         ];
 
         return $roleNames[$this->role] ?? 'Unknown';
