@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\RabiesCase;
 use App\Models\Barangay;
 use App\Models\Owner;
-use App\Models\AnimalBiteReport;
+use App\Models\BiteRabiesReport;
 
 class RabiesCaseController extends Controller
 {
@@ -293,7 +293,7 @@ class RabiesCaseController extends Controller
     private function getBiteIncidentData(int $year): array
     {
         // Get bite incidents filtered by Dasmariñas city only
-        $byBarangay = AnimalBiteReport::whereRaw('YEAR(bite_date) = ?', [$year])
+        $byBarangay = BiteRabiesReport::whereYear('incident_date', $year)
             ->whereNotNull('barangay_id')
             ->whereHas('barangay', function($query) {
                 $query->where('city', 'dasmarinas');
@@ -345,7 +345,7 @@ class RabiesCaseController extends Controller
         $rabiesHighest = $rabiesHighestId ? Barangay::find($rabiesHighestId)?->barangay_name : null;
 
         // Bite incident stats
-        $biteByBarangay = AnimalBiteReport::whereRaw('YEAR(bite_date) = ?', [$year])
+        $biteByBarangay = BiteRabiesReport::whereYear('incident_date', $year)
             ->whereNotNull('barangay_id')
             ->selectRaw('barangay_id, COUNT(*) as count')
             ->groupBy('barangay_id')

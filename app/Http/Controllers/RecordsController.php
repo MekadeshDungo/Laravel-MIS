@@ -9,7 +9,7 @@ use App\Models\Animal;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\RabiesVaccinationReport;
-use App\Models\AnimalBiteReport;
+use App\Models\BiteRabiesReport;
 use App\Models\Vaccination;
 
 /**
@@ -47,8 +47,8 @@ class RecordsController extends Controller
             'total_vaccinations' => Vaccination::count(),
             'vaccinated_animals' => Animal::where('vaccination_status', 'vaccinated')->count(),
             'unvaccinated_animals' => Animal::where('vaccination_status', 'unvaccinated')->count(),
-            'bite_reports' => AnimalBiteReport::count(),
-            'pending_bite_reports' => AnimalBiteReport::where('status', 'pending')->count(),
+            'bite_reports' => BiteRabiesReport::count(),
+            'pending_bite_reports' => BiteRabiesReport::where('status', 'Pending Review')->count(),
         ];
 
         // Get recent registrations with eager loading

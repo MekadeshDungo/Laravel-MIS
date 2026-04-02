@@ -43,7 +43,7 @@
                         <label for="case_number" class="block text-sm font-medium text-gray-700 mb-2">Case Number <span class="text-red-500">*</span></label>
                         <div class="relative">
                             <input type="text" name="case_number" id="case_number" 
-                                value="{{ old('case_number', 'BITE-' . date('Y') . '-' . str_pad(\App\Models\AnimalBiteReport::count() + 1, 5, '0', STR_PAD_LEFT)) }}" 
+                                value="{{ old('case_number', 'BITE-' . date('Y') . '-' . str_pad(\App\Models\BiteRabiesReport::count() + 1, 5, '0', STR_PAD_LEFT)) }}" 
                                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition bg-gray-50 @error('case_number') border-red-500 @enderror"
                                 required readonly>
                             <button type="button" onclick="generateCaseNumber()" class="absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 text-xs bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition">

@@ -199,7 +199,7 @@
                 <i class="bi bi-exclamation-triangle"></i><span>Animal Bite Reports</span>
             </a>
             <a href="{{ route('admin.vaccination-reports.index') }}" class="nav-item {{ request()->routeIs('admin.vaccination-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-shield-check"></i><span>Rabies Vaccinations</span>
+                <i class="bi bi-shield-check"></i><span>Rabies Anti-Rabies Vaccination</span>
             </a>
             <a href="{{ route('admin.meat-inspection-reports.index') }}" class="nav-item {{ request()->routeIs('admin.meat-inspection-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-clipboard-check"></i><span>Meat Inspection</span>
@@ -219,11 +219,11 @@
                 <i class="bi bi-exclamation-triangle"></i><span>Rabies Cases</span>
             </a>
             <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-bite-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-virus"></i><span>Bite Reports</span>
+                <i class="bi bi-virus"></i><span>Bite & Rabies Reports</span>
             </a>
 
             <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Vaccinations</div>
+            <div class="sidebar-section-label">Anti-Rabies Vaccination</div>
 
             <a href="{{ route('city-vet.vaccination-reports.index') }}" class="nav-item {{ request()->routeIs('city-vet.vaccination-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-shield-check"></i><span>Vaccination Reports</span>
@@ -232,9 +232,6 @@
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Management</div>
 
-            <a href="{{ route('city-vet.bite-reports.index') }}" class="nav-item {{ request()->routeIs('city-vet.bite-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-file-earmark-medical"></i><span>Animal Bite Reports</span>
-            </a>
             <a href="{{ route('city-vet.impound.index') }}" class="nav-item {{ request()->routeIs('city-vet.impound.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-archive"></i><span>Impound Records</span>
             </a>
@@ -284,11 +281,11 @@
             <a href="{{ route('assistant-vet.rabies-cases.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.rabies-cases.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-exclamation-triangle"></i><span>Rabies Cases</span>
             </a>
-            <a href="{{ route('assistant-vet.animal-bite-reports.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.animal-bite-reports.*') ? 'active-nav' : '' }}">
+            <a href="{{ route('assistant-vet.rabies-bite-reports.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.rabies-bite-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-file-medical"></i><span>Bite Reports</span>
             </a>
             <a href="{{ route('assistant-vet.vaccinations.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.vaccinations.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-shield-check"></i><span>Vaccinations</span>
+                <i class="bi bi-shield-check"></i><span>Anti-Rabies Vaccination</span>
             </a>
             <a href="{{ route('assistant-vet.spay-neuter.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.spay-neuter.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-heart"></i><span>Spay/Neuter</span>

@@ -27,7 +27,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs text-gray-500">Bite Reports</p>
-                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\AnimalBiteReport::count() }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\BiteRabiesReport::count() }}</p>
             </div>
             <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                 <i class="bi bi-exclamation-triangle text-red-600"></i>
@@ -38,7 +38,7 @@
     <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-xs text-gray-500">Vaccinations</p>
+                <p class="text-xs text-gray-500">Anti-Rabies Vaccination</p>
                 <p class="text-2xl font-bold text-gray-800">{{ \App\Models\RabiesVaccinationReport::count() }}</p>
             </div>
             <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -87,7 +87,7 @@
             <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                 <i class="bi bi-eyedropper text-white text-xl"></i>
             </div>
-            <span class="text-sm font-medium text-gray-700">Vaccinations</span>
+            <span class="text-sm font-medium text-gray-700">Anti-Rabies Vaccination</span>
         </a>
 
         <a href="{{ route('admin.meat-inspection-reports.index') }}" class="flex flex-col items-center p-4 bg-yellow-50 hover:bg-yellow-100 rounded-xl transition group">
@@ -115,7 +115,7 @@
         <div class="space-y-3">
             <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600">Total Reports</span>
-                <span class="text-sm font-medium text-gray-800">{{ \App\Models\AnimalBiteReport::count() }}</span>
+                <span class="text-sm font-medium text-gray-800">{{ \App\Models\BiteRabiesReport::count() }}</span>
             </div>
         </div>
         <div class="mt-4 text-center">
@@ -129,7 +129,7 @@
         </h4>
         <div class="space-y-3">
             <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-600">Total Vaccinations</span>
+                <span class="text-sm text-gray-600">Total Anti-Rabies Vaccination</span>
                 <span class="text-sm font-medium text-gray-800">{{ \App\Models\RabiesVaccinationReport::count() }}</span>
             </div>
         </div>

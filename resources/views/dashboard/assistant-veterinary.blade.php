@@ -31,7 +31,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
         <h3 class="text-lg font-semibold text-gray-800">
             <i class="bi bi-file-text mr-2 text-green-600"></i>Bite & Rabies Reports Overview
         </h3>
-        <a href="{{ route($rolePrefix . '.animal-bite-reports.index') }}" class="text-sm text-green-600 hover:text-green-800">
+        <a href="{{ route($rolePrefix . '.rabies-bite-reports.index') }}" class="text-sm text-green-600 hover:text-green-800">
             View All Reports <i class="bi bi-arrow-right ml-1"></i>
         </a>
     </div>
@@ -94,25 +94,25 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
     <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <a href="{{ route($rolePrefix . '.animal-bite-reports.index') }}" class="flex flex-col items-center p-4 bg-green-50 hover:bg-green-100 rounded-xl transition group">
+        <a href="{{ route($rolePrefix . '.rabies-bite-reports.index') }}" class="flex flex-col items-center p-4 bg-green-50 hover:bg-green-100 rounded-xl transition group">
             <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                 <i class="bi bi-file-text text-white text-xl"></i>
             </div>
             <span class="text-sm font-medium text-gray-700">Bite & Rabies</span>
         </a>
 
-        <a href="{{ route($rolePrefix . '.rabies-cases.index') }}" class="flex flex-col items-center p-4 bg-red-50 hover:bg-red-100 rounded-xl transition group">
+        <a href="{{ route($rolePrefix . '.rabies-geomap') }}" class="flex flex-col items-center p-4 bg-red-50 hover:bg-red-100 rounded-xl transition group">
             <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
-                <i class="bi bi-bug text-white text-xl"></i>
+                <i class="bi bi-map text-white text-xl"></i>
             </div>
-            <span class="text-sm font-medium text-gray-700">Rabies Cases</span>
+            <span class="text-sm font-medium text-gray-700">Rabies Mapping</span>
         </a>
 
         <a href="{{ route($rolePrefix . '.vaccinations.index') }}" class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition group">
             <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition">
                 <i class="bi bi-shield-check text-white text-xl"></i>
             </div>
-            <span class="text-sm font-medium text-gray-700">Vaccinations</span>
+            <span class="text-sm font-medium text-gray-700">Anti-Rabies Vaccination</span>
         </a>
 
         <a href="#" class="flex flex-col items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition group">
@@ -204,7 +204,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
         <h3 class="font-semibold text-gray-800">
             <i class="bi bi-clock-history mr-2 text-green-600"></i>Recent Bite & Rabies Reports
         </h3>
-        <a href="{{ route($rolePrefix . '.animal-bite-reports.index') }}" class="text-sm text-green-600 hover:text-green-800">View All</a>
+        <a href="{{ route($rolePrefix . '.rabies-bite-reports.index') }}" class="text-sm text-green-600 hover:text-green-800">View All</a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full">
@@ -219,60 +219,36 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @php
-                    $recentBiteReports = \App\Models\AnimalBiteReport::latest()->take(3)->get();
-                    $recentRabiesReports = \App\Models\RabiesReport::latest()->take(3)->get();
-                    $recentBiteReports->each(function($r) { $r->report_type = 'bite'; $r->display_date = $r->created_at; });
-                    $recentRabiesReports->each(function($r) { $r->report_type = 'rabies'; $r->display_date = $r->created_at; });
-                    $combinedRecent = $recentBiteReports->concat($recentRabiesReports)->sortByDesc('display_date')->take(5);
+                    $recentReports = \App\Models\BiteRabiesReport::latest()->take(5)->get();
                 @endphp
-                @forelse($combinedRecent as $report)
+                @forelse($recentReports as $report)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4">
-                            @if($report->report_type === 'rabies')
-                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
-                                    <i class="bi bi-virus"></i>Rabies
-                                </span>
-                            @else
-                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
-                                    <i class="bi bi-exclamation-triangle"></i>Bite
-                                </span>
-                            @endif
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+                                <i class="bi bi-virus"></i>Bite & Rabies
+                            </span>
                         </td>
                         <td class="px-6 py-4">
-                            @if($report->report_type === 'rabies')
-                                <span class="font-medium text-purple-600">RB-{{ str_pad($report->id, 5, '0', STR_PAD_LEFT) }}</span>
-                            @else
-                                <span class="font-medium text-gray-800">AB-{{ str_pad($report->id, 5, '0', STR_PAD_LEFT) }}</span>
-                            @endif
+                            <span class="font-medium text-gray-800">{{ $report->report_number }}</span>
                         </td>
                         <td class="px-6 py-4">
-                            <p class="text-gray-800">
-                                @if($report->report_type === 'rabies')
-                                    {{ $report->patient_name ?? 'Unknown' }}
-                                @else
-                                    {{ $report->victim_name ?? 'Unknown' }}
-                                @endif
-                            </p>
+                            <p class="text-gray-800">{{ $report->patient_name ?? 'Unknown' }}</p>
                         </td>
                         <td class="px-6 py-4">
-                            <p class="text-gray-600">{{ $report->display_date->format('M d, Y') }}</p>
+                            <p class="text-gray-600">{{ $report->created_at->format('M d, Y') }}</p>
                         </td>
                         <td class="px-6 py-4">
                             @php
                                 $status = $report->status;
                                 $statusColors = [
-                                    'pending' => 'bg-yellow-100 text-yellow-700',
                                     'Pending Review' => 'bg-yellow-100 text-yellow-700',
-                                    'investigating' => 'bg-blue-100 text-blue-700',
                                     'Under Review' => 'bg-blue-100 text-blue-700',
-                                    'resolved' => 'bg-green-100 text-green-700',
                                     'Resolved' => 'bg-green-100 text-green-700',
-                                    'closed' => 'bg-gray-100 text-gray-700',
                                     'Closed' => 'bg-gray-100 text-gray-700',
                                 ];
                             @endphp
                             <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium {{ $statusColors[$status] ?? 'bg-gray-100 text-gray-700' }}">
-                                {{ str_replace('_', ' ', ucfirst($status ?? 'Unknown')) }}
+                                {{ $status ?? 'Unknown' }}
                             </span>
                         </td>
                     </tr>

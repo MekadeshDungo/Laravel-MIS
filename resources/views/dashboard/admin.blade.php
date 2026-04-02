@@ -24,7 +24,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs md:text-sm font-medium text-gray-500">Pending</p>
-                <p class="text-xl md:text-3xl font-bold text-yellow-600 mt-1">{{ \App\Models\AnimalBiteReport::where('status', 'pending')->count() }}</p>
+                <p class="text-xl md:text-3xl font-bold text-yellow-600 mt-1">{{ \App\Models\BiteRabiesReport::where('status', 'Pending Review')->count() }}</p>
             </div>
             <div class="w-10 h-10 md:w-14 md:h-14 bg-yellow-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-clock-history text-yellow-600 text-lg md:text-2xl"></i>
@@ -50,7 +50,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs md:text-sm font-medium text-gray-500">Open Cases</p>
-                <p class="text-xl md:text-3xl font-bold text-green-600 mt-1">{{ \App\Models\AnimalBiteReport::where('status', 'investigating')->count() }}</p>
+                <p class="text-xl md:text-3xl font-bold text-green-600 mt-1">{{ \App\Models\BiteRabiesReport::where('status', 'Under Review')->count() }}</p>
             </div>
             <div class="w-10 h-10 md:w-14 md:h-14 bg-green-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-folder2-open text-green-600 text-lg md:text-2xl"></i>
@@ -63,7 +63,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs md:text-sm font-medium text-gray-500">This Month</p>
-                <p class="text-xl md:text-3xl font-bold text-purple-600 mt-1">{{ \App\Models\AnimalBiteReport::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count() }}</p>
+                <p class="text-xl md:text-3xl font-bold text-purple-600 mt-1">{{ \App\Models\BiteRabiesReport::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count() }}</p>
             </div>
             <div class="w-10 h-10 md:w-14 md:h-14 bg-purple-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-calendar3 text-purple-600 text-lg md:text-2xl"></i>
@@ -88,11 +88,11 @@
 <!-- Response Time Indicators -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
     @php
-        $resolvedReports = \App\Models\AnimalBiteReport::where('status', 'resolved')->whereNotNull('action_taken')->get();
+        $resolvedReports = \App\Models\BiteRabiesReport::where('status', 'resolved')->whereNotNull('action_taken')->get();
         $avgDays = $resolvedReports->count() > 0 ? round($resolvedReports->avg(function($r) {
             return $r->created_at->diffInDays($r->updated_at);
         }), 1) : 0;
-        $olderThan7Days = \App\Models\AnimalBiteReport::where('status', '!=', 'resolved')
+        $olderThan7Days = \App\Models\BiteRabiesReport::where('status', '!=', 'resolved')
             ->where('created_at', '<', now()->subDays(7))
             ->count();
     @endphp

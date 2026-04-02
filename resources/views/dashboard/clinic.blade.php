@@ -26,7 +26,7 @@
     <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-xs text-gray-500">Vaccinations</p>
+                <p class="text-xs text-gray-500">Anti-Rabies Vaccination</p>
                 <p class="text-2xl font-bold text-gray-800">{{ \App\Models\RabiesVaccinationReport::count() }}</p>
             </div>
             <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -63,7 +63,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs text-gray-500">Reports</p>
-                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\AnimalBiteReport::count() }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\BiteRabiesReport::count() }}</p>
             </div>
             <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                 <i class="bi bi-file-text text-red-600"></i>

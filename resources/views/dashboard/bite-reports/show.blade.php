@@ -7,7 +7,7 @@
 
 @php
 $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
-$backRoute = $rolePrefix . '.animal-bite-reports.index';
+$backRoute = $rolePrefix . '.rabies-bite-reports.index';
 @endphp
 
 @section('content')

@@ -77,11 +77,11 @@
         </div>
     </div>
 
-    <!-- Total Vaccinations -->
+    <!-- Total Anti-Rabies Vaccination -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-xs md:text-sm font-medium text-gray-500">Vaccinations</p>
+                <p class="text-xs md:text-sm font-medium text-gray-500">Anti-Rabies Vaccination</p>
                 <p class="text-xl md:text-3xl font-bold text-green-600 mt-1">{{ $stats['total_vaccinations'] ?? 0 }}</p>
             </div>
             <div class="w-10 h-10 md:w-14 md:h-14 bg-green-100 rounded-xl flex items-center justify-center">
@@ -255,7 +255,7 @@
                 <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
                     <i class="bi bi-eyedropper text-white"></i>
                 </div>
-                <span class="text-sm font-medium text-gray-700">Vaccinations</span>
+                <span class="text-sm font-medium text-gray-700">Anti-Rabies Vaccination</span>
             </a>
             <a href="{{ route('city-vet.rabies-cases.index') }}" class="flex items-center gap-3 p-3 bg-orange-50 hover:bg-orange-100 rounded-xl transition group">
                 <div class="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center">

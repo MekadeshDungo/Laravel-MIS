@@ -316,7 +316,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (filters.month) params.append('month', filters.month);
         if (filters.week) params.append('week', filters.week);
 
-        fetch('{{ route("city-vet.rabies-geomap.data") }}?' + params.toString())
+        var baseUrl = window.location.pathname.replace(/\/$/, '');
+        fetch(baseUrl + '/data?' + params.toString())
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 updateMap(data.heatmapData);

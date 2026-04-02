@@ -12,7 +12,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-500">Total Reports</p>
-                <p class="text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\AnimalBiteReport::count() }}</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\BiteRabiesReport::count() }}</p>
             </div>
             <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-exclamation-triangle text-red-600 text-2xl"></i>
@@ -24,7 +24,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-500">Pending</p>
-                <p class="text-3xl font-bold text-yellow-600 mt-1">{{ \App\Models\AnimalBiteReport::where('status', 'pending')->count() }}</p>
+                <p class="text-3xl font-bold text-yellow-600 mt-1">{{ \App\Models\BiteRabiesReport::where('status', 'Pending Review')->count() }}</p>
             </div>
             <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-clock text-yellow-600 text-2xl"></i>
@@ -36,7 +36,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-500">Ongoing</p>
-                <p class="text-3xl font-bold text-green-600 mt-1">{{ \App\Models\AnimalBiteReport::where('status', 'investigating')->count() }}</p>
+                <p class="text-3xl font-bold text-green-600 mt-1">{{ \App\Models\BiteRabiesReport::where('status', 'Under Review')->count() }}</p>
             </div>
             <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-arrow-repeat text-green-600 text-2xl"></i>
@@ -48,7 +48,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-500">Completed</p>
-                <p class="text-3xl font-bold text-green-600 mt-1">{{ \App\Models\AnimalBiteReport::where('status', 'resolved')->count() }}</p>
+                <p class="text-3xl font-bold text-green-600 mt-1">{{ \App\Models\BiteRabiesReport::where('status', 'resolved')->count() }}</p>
             </div>
             <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-check-circle text-green-600 text-2xl"></i>
@@ -122,7 +122,7 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
-                @forelse(\App\Models\AnimalBiteReport::latest()->take(5)->get() as $report)
+                @forelse(\App\Models\BiteRabiesReport::latest()->take(5)->get() as $report)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-sm font-medium text-green-600">#{{ $report->case_number ?? $report->id }}</span>

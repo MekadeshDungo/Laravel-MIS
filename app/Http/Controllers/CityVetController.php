@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\RabiesCase;
-use App\Models\AnimalBiteReport;
+use App\Models\BiteRabiesReport;
 use App\Models\RabiesVaccinationReport;
 use App\Models\Barangay;
 use App\Models\ImpoundRecord;
@@ -27,7 +27,7 @@ class CityVetController extends Controller
             'total_rabies_cases' => RabiesCase::whereYear('incident_date', $year)->count(),
             'open_cases' => RabiesCase::where('status', 'open')->whereYear('incident_date', $year)->count(),
             'confirmed_cases' => RabiesCase::where('case_type', 'positive')->whereYear('incident_date', $year)->count(),
-            'total_bite_reports' => AnimalBiteReport::whereRaw('YEAR(bite_date) = ?', [$year])->count(),
+            'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
             'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
         ];
 

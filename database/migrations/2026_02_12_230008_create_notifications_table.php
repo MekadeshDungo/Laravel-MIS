@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id('notification_id');
-            $table->unsignedBigInteger('barangay_user_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('title');
             $table->text('message');
-            $table->enum('related_module', ['stray_report', 'impound', 'adoption'])->nullable();
+            $table->enum('related_module', ['stray_report', 'impound', 'adoption', 'bite_rabies_report'])->nullable();
             $table->unsignedBigInteger('related_record_id')->nullable();
             $table->boolean('is_read')->default(false);
             $table->timestamps();
 
-            $table->foreign('barangay_user_id')->references('barangay_user_id')->on('barangay_users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

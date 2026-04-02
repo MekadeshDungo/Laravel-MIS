@@ -44,7 +44,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs text-gray-500">Bite Reports</p>
-                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\AnimalBiteReport::count() }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ \App\Models\BiteRabiesReport::count() }}</p>
             </div>
             <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                 <i class="bi bi-file-text text-red-600"></i>

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\AnimalBiteReport;
+use App\Models\BiteRabiesReport;
 use App\Models\RabiesVaccinationReport;
 use App\Models\MeatInspectionReport;
 use App\Models\ImpoundRecord;
@@ -29,8 +29,8 @@ class AdminController extends Controller
 
         // Get statistics
         $stats = [
-            'total_bite_reports' => AnimalBiteReport::count(),
-            'pending_bite_reports' => AnimalBiteReport::where('status', 'pending')->count(),
+            'total_bite_reports' => BiteRabiesReport::count(),
+            'pending_bite_reports' => BiteRabiesReport::where('status', 'Pending Review')->count(),
             'total_vaccination_reports' => RabiesVaccinationReport::count(),
             'total_meat_inspection_reports' => MeatInspectionReport::count(),
             'total_users' => User::count(),
@@ -38,7 +38,7 @@ class AdminController extends Controller
         ];
 
         // Get recent reports
-        $recent_bites = AnimalBiteReport::latest()->take(5)->get();
+        $recent_bites = BiteRabiesReport::latest()->take(5)->get();
         $recent_vaccinations = RabiesVaccinationReport::latest()->take(5)->get();
         $recent_meat_inspections = MeatInspectionReport::latest()->take(5)->get();
 
@@ -58,7 +58,7 @@ class AdminController extends Controller
             'total_users' => User::count(),
             'active_users' => User::where('status', 'active')->count(),
             'total_announcements' => Announcement::count(),
-            'total_bite_reports' => AnimalBiteReport::count(),
+            'total_bite_reports' => BiteRabiesReport::count(),
             'total_vaccinations' => RabiesVaccinationReport::count(),
             'total_meat_inspections' => MeatInspectionReport::count(),
             'total_stray_reports' => StrayReport::count(),
@@ -66,9 +66,9 @@ class AdminController extends Controller
 
         // Bite reports by status
         $biteStats = [
-            'pending' => AnimalBiteReport::where('status', 'pending')->count(),
-            'investigating' => AnimalBiteReport::where('status', 'investigating')->count(),
-            'resolved' => AnimalBiteReport::where('status', 'resolved')->count(),
+            'pending' => BiteRabiesReport::where('status', 'Pending Review')->count(),
+            'investigating' => BiteRabiesReport::where('status', 'Under Review')->count(),
+            'resolved' => BiteRabiesReport::where('status', 'Resolved')->count(),
         ];
 
         // Rabies vaccinations by species
@@ -92,10 +92,10 @@ class AdminController extends Controller
             ->toArray();
 
         // Recent activity (bite reports)
-        $recentActivity = AnimalBiteReport::latest()->take(5)->get();
+        $recentActivity = BiteRabiesReport::latest()->take(5)->get();
 
         // Get reports for export/generation
-        $biteReports = AnimalBiteReport::latest()->get();
+        $biteReports = BiteRabiesReport::latest()->get();
         $vaccinationReports = RabiesVaccinationReport::latest()->get();
         $inspectionReports = MeatInspectionReport::latest()->get();
 
@@ -147,13 +147,13 @@ class AdminController extends Controller
 
         // Get counts
         $stats = [
-            'total' => AnimalBiteReport::count(),
-            'pending' => AnimalBiteReport::where('status', 'pending')->count(),
-            'in_progress' => AnimalBiteReport::where('status', 'in_progress')->count(),
-            'resolved' => AnimalBiteReport::where('status', 'resolved')->count(),
+            'total' => BiteRabiesReport::count(),
+            'pending' => BiteRabiesReport::where('status', 'Pending Review')->count(),
+            'under_review' => BiteRabiesReport::where('status', 'Under Review')->count(),
+            'resolved' => BiteRabiesReport::where('status', 'Resolved')->count(),
         ];
 
-        $query = AnimalBiteReport::query();
+        $query = BiteRabiesReport::query();
 
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
@@ -164,13 +164,13 @@ class AdminController extends Controller
     }
 
     /**
-     * Show animal bite report details.
+     * Show bite report details.
      */
-    public function showBiteReport(AnimalBiteReport $report)
+    public function showBiteReport(BiteRabiesReport $report)
     {
         $user = Auth::user();
-        $report->load('user');
-        return view('dashboard.bite-report-view', compact('report', 'user'));
+        $report->load(['patientBarangay', 'user']);
+        return view('dashboard.bite-reports.show', compact('report', 'user'));
     }
 
     /**
@@ -226,10 +226,10 @@ class AdminController extends Controller
     /**
      * Update animal bite report status.
      */
-    public function updateBiteReport(Request $request, AnimalBiteReport $report)
+    public function updateBiteReport(Request $request, BiteRabiesReport $report)
     {
         $request->validate([
-            'status' => 'required|in:pending,investigating,resolved',
+            'status' => 'required|in:Pending Review,Under Review,Resolved,Closed',
         ]);
 
         $report->update(['status' => $request->status]);

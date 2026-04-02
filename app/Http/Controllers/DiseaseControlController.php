@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\RabiesCase;
-use App\Models\AnimalBiteReport;
-use App\Models\RabiesReport;
+use App\Models\BiteRabiesReport;
 use Carbon\Carbon;
 
 /**
@@ -41,30 +40,21 @@ class DiseaseControlController extends Controller
     {
         $user = Auth::user();
 
-        // Get statistics for Animal Bite Reports
-        $biteStats = [
-            'total' => AnimalBiteReport::count(),
-            'pending' => AnimalBiteReport::where('status', 'pending')->count(),
-            'investigating' => AnimalBiteReport::where('status', 'investigating')->count(),
-            'resolved' => AnimalBiteReport::where('status', 'resolved')->count(),
-        ];
-
-        // Get statistics for Rabies Reports
-        $rabiesStats = [
-            'total' => RabiesReport::count(),
-            'pending' => RabiesReport::where('status', 'Pending Review')->count(),
-            'under_review' => RabiesReport::where('status', 'Under Review')->count(),
-            'resolved' => RabiesReport::where('status', 'Resolved')->count(),
-            'closed' => RabiesReport::where('status', 'Closed')->count(),
+        // Unified Bite & Rabies Report stats
+        $reportStats = [
+            'total' => BiteRabiesReport::count(),
+            'pending' => BiteRabiesReport::where('status', 'Pending Review')->count(),
+            'under_review' => BiteRabiesReport::where('status', 'Under Review')->count(),
+            'resolved' => BiteRabiesReport::where('status', 'Resolved')->count(),
+            'closed' => BiteRabiesReport::where('status', 'Closed')->count(),
         ];
 
         // Combined stats
         $stats = [
             'total_rabies_cases' => RabiesCase::count(),
             'open_cases' => RabiesCase::where('status', 'open')->count(),
-            'total_bite_reports' => $biteStats['total'] + $rabiesStats['total'],
-            'bite_stats' => $biteStats,
-            'rabies_stats' => $rabiesStats,
+            'total_reports' => $reportStats['total'],
+            'report_stats' => $reportStats,
         ];
 
         // Get recent cases with relationships
@@ -73,7 +63,10 @@ class DiseaseControlController extends Controller
             ->take(5)
             ->get();
 
-        return view('dashboard.assistant-veterinary', compact('user', 'stats', 'recentCases'));
+        // Get recent reports
+        $recentReports = BiteRabiesReport::latest()->take(5)->get();
+
+        return view('dashboard.assistant-veterinary', compact('user', 'stats', 'recentCases', 'recentReports'));
     }
 
     /**
@@ -105,113 +98,49 @@ class DiseaseControlController extends Controller
     {
         $user = Auth::user();
 
-        // Get Animal Bite Report stats
-        $biteStats = [
-            'total' => AnimalBiteReport::count(),
-            'pending' => AnimalBiteReport::where('status', 'pending')->count(),
-            'in_progress' => AnimalBiteReport::where('status', 'in_progress')->count(),
-            'resolved' => AnimalBiteReport::where('status', 'resolved')->count(),
-        ];
-
-        // Get Rabies Report stats
-        $rabiesStats = [
-            'total' => RabiesReport::count(),
-            'pending' => RabiesReport::where('status', 'Pending Review')->count(),
-            'under_review' => RabiesReport::where('status', 'Under Review')->count(),
-            'resolved' => RabiesReport::where('status', 'Resolved')->count(),
-            'closed' => RabiesReport::where('status', 'Closed')->count(),
-        ];
-
-        // Combined stats
+        // Unified stats from BiteRabiesReport
         $stats = [
-            'bite' => $biteStats,
-            'rabies' => $rabiesStats,
-            'total' => $biteStats['total'] + $rabiesStats['total'],
+            'total' => BiteRabiesReport::count(),
+            'pending' => BiteRabiesReport::where('status', 'Pending Review')->count(),
+            'under_review' => BiteRabiesReport::where('status', 'Under Review')->count(),
+            'resolved' => BiteRabiesReport::where('status', 'Resolved')->count(),
+            'closed' => BiteRabiesReport::where('status', 'Closed')->count(),
         ];
 
-        // Get type filter
-        $type = $request->get('type', 'all');
-
-        // Get reports based on type filter
-        $biteQuery = AnimalBiteReport::with(['barangay']);
-        $rabiesQuery = RabiesReport::with(['patientBarangay']);
+        $query = BiteRabiesReport::with(['patientBarangay']);
 
         // Apply quick filter
         if ($request->has('quick_filter') && $request->quick_filter) {
             $today = Carbon::now()->startOfDay();
             switch ($request->quick_filter) {
                 case 'today':
-                    $biteQuery->whereDate('created_at', $today);
-                    $rabiesQuery->whereDate('created_at', $today);
+                    $query->whereDate('created_at', $today);
                     break;
                 case 'week':
-                    $biteQuery->where('created_at', '>=', Carbon::now()->startOfWeek());
-                    $rabiesQuery->where('created_at', '>=', Carbon::now()->startOfWeek());
+                    $query->where('created_at', '>=', Carbon::now()->startOfWeek());
                     break;
                 case 'month':
-                    $biteQuery->where('created_at', '>=', Carbon::now()->startOfMonth());
-                    $rabiesQuery->where('created_at', '>=', Carbon::now()->startOfMonth());
+                    $query->where('created_at', '>=', Carbon::now()->startOfMonth());
                     break;
             }
         }
 
-        // Apply status filter to the appropriate query
+        // Apply status filter
         if ($request->has('status') && $request->status) {
-            if ($type === 'bite' || $type === 'all') {
-                $biteQuery->where('status', $request->status);
-            }
-            if ($type === 'rabies' || $type === 'all') {
-                // Map status for rabies reports
-                $rabiesStatusMap = [
-                    'pending' => 'Pending Review',
-                    'in_progress' => 'Under Review',
-                    'resolved' => 'Resolved',
-                    'closed' => 'Closed',
-                ];
-                $rabiesStatus = $rabiesStatusMap[$request->status] ?? $request->status;
-                $rabiesQuery->where('status', $rabiesStatus);
-            }
+            $query->where('status', $request->status);
         }
 
         // Date filters
         if ($request->has('date_from') && $request->date_from) {
-            if ($type === 'bite' || $type === 'all') {
-                $biteQuery->whereDate('created_at', '>=', $request->date_from);
-            }
-            if ($type === 'rabies' || $type === 'all') {
-                $rabiesQuery->whereDate('created_at', '>=', $request->date_from);
-            }
+            $query->whereDate('created_at', '>=', $request->date_from);
         }
         if ($request->has('date_to') && $request->date_to) {
-            if ($type === 'bite' || $type === 'all') {
-                $biteQuery->whereDate('created_at', '<=', $request->date_to);
-            }
-            if ($type === 'rabies' || $type === 'all') {
-                $rabiesQuery->whereDate('created_at', '<=', $request->date_to);
-            }
+            $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        // Get the reports
-        $biteReports = $biteQuery->latest()->get();
-        $rabiesReports = $rabiesQuery->latest()->get();
+        $reports = $query->latest()->paginate(15);
 
-        // Add type indicator and combine
-        $biteReports->each(function($r) { $r->report_type = 'bite'; });
-        $rabiesReports->each(function($r) { $r->report_type = 'rabies'; });
-
-        // Combine and paginate
-        $combined = $biteReports->concat($rabiesReports)->sortByDesc('created_at');
-        $perPage = 15;
-        $page = request()->get('page', 1);
-        $reports = new \Illuminate\Pagination\LengthAwarePaginator(
-            $combined->forPage($page, $perPage),
-            $combined->count(),
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
-
-        return view('dashboard.bite-reports', compact('user', 'reports', 'stats', 'type'));
+        return view('dashboard.bite-reports', compact('user', 'reports', 'stats'));
     }
 
     /**
@@ -238,9 +167,9 @@ class DiseaseControlController extends Controller
     /**
      * Show bite report details.
      */
-    public function showBiteReport(AnimalBiteReport $report)
+    public function showBiteReport(BiteRabiesReport $report)
     {
-        $report->load(['barangay', 'user']);
+        $report->load(['patientBarangay', 'barangay', 'user']);
         return view('dashboard.bite-reports.show', compact('report'));
     }
 
@@ -250,9 +179,9 @@ class DiseaseControlController extends Controller
      * Module: Clinical Actions
      * Role: assistant_vet
      */
-    public function markBiteComplete(AnimalBiteReport $report)
+    public function markBiteComplete(BiteRabiesReport $report)
     {
-        $report->update(['status' => 'investigating']);
+        $report->update(['status' => 'Under Review']);
         return redirect()->back()->with('success', 'Report checked and acknowledged.');
     }
 
@@ -262,7 +191,7 @@ class DiseaseControlController extends Controller
      * Module: Clinical Actions
      * Role: assistant_vet
      */
-    public function checkRabiesReport(RabiesReport $rabiesReport)
+    public function checkRabiesReport(BiteRabiesReport $rabiesReport)
     {
         $rabiesReport->update(['status' => 'Under Review']);
         return redirect()->back()->with('success', 'Report checked and acknowledged.');
@@ -276,10 +205,9 @@ class DiseaseControlController extends Controller
      */
     public function indexVaccinations(Request $request)
     {
-        $vaccinations = \App\Models\Vaccination::with(['pet', 'user'])
-            ->latest()
-            ->paginate(10);
-        return view('dashboard.vaccinations.index', compact('vaccinations'));
+        $user = Auth::user();
+        $reports = \App\Models\RabiesVaccinationReport::latest()->paginate(10);
+        return view('dashboard.vaccination-reports', compact('user', 'reports'));
     }
 
     /**
@@ -287,8 +215,8 @@ class DiseaseControlController extends Controller
      */
     public function createVaccination()
     {
-        $animals = \App\Models\Animal::all();
-        return view('dashboard.vaccinations.create', compact('animals'));
+        return redirect()->route('assistant-vet.vaccinations.index')
+            ->with('info', 'Vaccination creation is available through the Clinic portal.');
     }
 
     /**
@@ -308,7 +236,7 @@ class DiseaseControlController extends Controller
         $validated['vaccinated_by'] = auth()->id();
         \App\Models\Vaccination::create($validated);
 
-        return redirect()->route('disease-control.vaccinations.index')
+        return redirect()->route('assistant-vet.vaccinations.index')
             ->with('success', 'Vaccination recorded successfully.');
     }
 
@@ -371,7 +299,7 @@ class DiseaseControlController extends Controller
     {
         $user = Auth::user();
 
-        $query = RabiesReport::with(['patientBarangay']);
+        $query = BiteRabiesReport::with(['patientBarangay']);
 
         // Filter by status
         if ($request->has('status') && $request->status) {
@@ -380,55 +308,55 @@ class DiseaseControlController extends Controller
 
         // Get counts
         $stats = [
-            'total' => RabiesReport::count(),
-            'pending' => RabiesReport::where('status', 'Pending Review')->count(),
-            'under_review' => RabiesReport::where('status', 'Under Review')->count(),
-            'resolved' => RabiesReport::where('status', 'Resolved')->count(),
-            'closed' => RabiesReport::where('status', 'Closed')->count(),
+            'total' => BiteRabiesReport::count(),
+            'pending' => BiteRabiesReport::where('status', 'Pending Review')->count(),
+            'under_review' => BiteRabiesReport::where('status', 'Under Review')->count(),
+            'resolved' => BiteRabiesReport::where('status', 'Resolved')->count(),
+            'closed' => BiteRabiesReport::where('status', 'Closed')->count(),
         ];
 
         $reports = $query->latest()->paginate(10);
 
-        return view('dashboard.rabies-bite-reports.index', compact('user', 'reports', 'stats'));
+        return view('dashboard.bite-rabies-reports.index', compact('user', 'reports', 'stats'));
     }
 
     /**
      * Show rabies bite report details.
      */
-    public function showRabiesReport(RabiesReport $rabiesReport)
+    public function showRabiesReport(BiteRabiesReport $rabiesReport)
     {
         $rabiesReport->load(['patientBarangay', 'barangay']);
-        return view('dashboard.rabies-bite-reports.show', compact('rabiesReport'));
+        return view('dashboard.bite-rabies-reports.show', compact('rabiesReport'));
     }
 
     /**
      * Accept a rabies bite report - start review.
      */
-    public function acceptRabiesReport(RabiesReport $rabiesReport)
+    public function acceptRabiesReport(BiteRabiesReport $rabiesReport)
     {
         $rabiesReport->update([
             'status' => 'Under Review',
         ]);
 
-        return redirect()->back()->with('success', 'Rabies Bite Report accepted and now under review.');
+        return redirect()->back()->with('success', 'Report accepted and now under review.');
     }
 
     /**
      * Mark a rabies bite report as resolved.
      */
-    public function resolveRabiesReport(RabiesReport $rabiesReport)
+    public function resolveRabiesReport(BiteRabiesReport $rabiesReport)
     {
         $rabiesReport->update([
             'status' => 'Resolved',
         ]);
 
-        return redirect()->back()->with('success', 'Rabies Bite Report has been marked as resolved.');
+        return redirect()->back()->with('success', 'Report has been marked as resolved.');
     }
 
     /**
      * Decline a rabies bite report.
      */
-    public function declineRabiesReport(Request $request, RabiesReport $rabiesReport)
+    public function declineRabiesReport(Request $request, BiteRabiesReport $rabiesReport)
     {
         $request->validate([
             'decline_reason' => 'required|string|max:500',
@@ -436,10 +364,10 @@ class DiseaseControlController extends Controller
 
         $rabiesReport->update([
             'status' => 'Closed',
-            'notes' => ($rabiesReport->notes ? $rabiesReport->notes . '\n\n' : '') . 'Declined: ' . $request->decline_reason,
+            'notes' => ($rabiesReport->notes ? $rabiesReport->notes . "\n\n" : '') . 'Declined: ' . $request->decline_reason,
         ]);
 
-        return redirect()->back()->with('success', 'Rabies Bite Report has been declined.');
+        return redirect()->back()->with('success', 'Report has been declined.');
     }
 
     /**
@@ -447,7 +375,7 @@ class DiseaseControlController extends Controller
      *
      * Pre-fills form with data from the report.
      */
-    public function createRabiesCaseFromReport(RabiesReport $rabiesReport)
+    public function createRabiesCaseFromReport(BiteRabiesReport $rabiesReport)
     {
         $barangays = \App\Models\Barangay::pluck('barangay_name', 'barangay_id');
 
@@ -467,9 +395,9 @@ class DiseaseControlController extends Controller
     }
 
     /**
-     * Store Rabies Case created from Rabies Report.
+     * Store Rabies Case created from Bite & Rabies Report.
      */
-    public function storeRabiesCaseFromReport(Request $request, RabiesReport $rabiesReport)
+    public function storeRabiesCaseFromReport(Request $request, BiteRabiesReport $rabiesReport)
     {
         $validated = $request->validate([
             'case_type' => 'required|string|in:positive,probable,suspect,negative',
@@ -498,10 +426,10 @@ class DiseaseControlController extends Controller
 
         $case = RabiesCase::create($validated);
 
-        // Update the rabies report status
+        // Update the report status
         $rabiesReport->update([
             'status' => 'Under Review',
-            'notes' => ($rabiesReport->notes ? $rabiesReport->notes . '\n\n' : '') . 'Converted to Rabies Case: ' . $case->case_number,
+            'notes' => ($rabiesReport->notes ? $rabiesReport->notes . "\n\n" : '') . 'Converted to Rabies Case: ' . $case->case_number,
         ]);
 
         return redirect()->route('assistant-vet.rabies-cases.show', $case)
@@ -523,7 +451,7 @@ class DiseaseControlController extends Controller
     /**
      * Generate remarks from Rabies Report data.
      */
-    private function generateRemarksFromReport(RabiesReport $report): string
+    private function generateRemarksFromReport(BiteRabiesReport $report): string
     {
         $remarks = [];
         $remarks[] = "Created from Rabies Bite Report: {$report->report_number}";

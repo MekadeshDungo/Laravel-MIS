@@ -48,6 +48,7 @@ class Notification extends Model
             'stray_report' => 'bg-warning',
             'impound' => 'bg-info',
             'adoption' => 'bg-success',
+            'bite_rabies_report' => 'bg-danger',
             default => 'bg-secondary',
         };
     }

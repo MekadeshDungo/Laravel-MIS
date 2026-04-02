@@ -180,10 +180,10 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('admin')->name('admin.')->g
     // All Reports (City-wide View)
     Route::get('/all-reports', [AdminController::class, 'allReports'])->name('all-reports');
 
-    // Animal Bite Reports (from Barangay)
-    Route::get('/animal-bite-reports', [AdminController::class, 'indexBiteReports'])->name('bite-reports.index');
-    Route::get('/animal-bite-reports/{report}', [AdminController::class, 'showBiteReport'])->name('bite-reports.show');
-    Route::put('/animal-bite-reports/{report}', [AdminController::class, 'updateBiteReport'])->name('bite-reports.update');
+    // Bite & Rabies Reports
+    Route::get('/bite-rabies-reports', [AdminController::class, 'indexBiteReports'])->name('bite-reports.index');
+    Route::get('/bite-rabies-reports/{report}', [AdminController::class, 'showBiteReport'])->name('bite-reports.show');
+    Route::put('/bite-rabies-reports/{report}', [AdminController::class, 'updateBiteReport'])->name('bite-reports.update');
 
     // Rabies Vaccination Reports (from Clinic)
     Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
@@ -234,13 +234,25 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
     // Impound Records
     Route::get('/impounds', [AdminController::class, 'indexImpoundRecords'])->name('impound.index');
 
+    // Bite & Rabies Reports
+    Route::get('/bite-rabies-reports', [AdminController::class, 'indexBiteReports'])->name('bite-reports.index');
+    Route::get('/bite-rabies-reports/{report}', [AdminController::class, 'showBiteReport'])->name('bite-reports.show');
+    Route::put('/bite-rabies-reports/{report}', [AdminController::class, 'updateBiteReport'])->name('bite-reports.update');
+
+    // Rabies Vaccination Reports (from Clinic)
+    Route::get('/vaccination-reports', [AdminController::class, 'indexVaccinationReports'])->name('vaccination-reports.index');
+    Route::get('/vaccination-reports/{report}', [AdminController::class, 'showVaccinationReport'])->name('vaccination-reports.show');
+
+    // Meat Inspection Reports
+    Route::get('/meat-inspection-reports', [AdminController::class, 'indexMeatInspectionReports'])->name('meat-inspection-reports.index');
+    Route::get('/meat-inspection-reports/{report}', [AdminController::class, 'showMeatInspectionReport'])->name('meat-inspection-reports.show');
+
+    // Impound Records
+    Route::get('/impounds', [AdminController::class, 'indexImpoundRecords'])->name('impound.index');
+
     // Rabies Bite Reports - VIEW ONLY (No actions)
     Route::get('/rabies-bite-reports', [DiseaseControlController::class, 'indexRabiesReports'])->name('rabies-bite-reports.index');
     Route::get('/rabies-bite-reports/{rabiesReport}', [DiseaseControlController::class, 'showRabiesReport'])->name('rabies-bite-reports.show');
-
-    // Animal Bite Reports - VIEW ONLY (No actions)
-    Route::get('/animal-bite-reports', [AdminController::class, 'indexBiteReports'])->name('bite-reports.index');
-    Route::get('/animal-bite-reports/{report}', [AdminController::class, 'showBiteReport'])->name('bite-reports.show');
 });
 
 // ==============================
@@ -303,17 +315,17 @@ Route::middleware(['auth', 'role:assistant_vet'])->prefix('assistant-vet')->name
     Route::get('/spay-neuter/create', [DiseaseControlController::class, 'createSpayNeuter'])->name('spay-neuter.create');
     Route::post('/spay-neuter', [DiseaseControlController::class, 'storeSpayNeuter'])->name('spay-neuter.store');
 
-    // Rabies Bite Incident Reports
-    Route::get('/rabies-bite-reports', [DiseaseControlController::class, 'indexRabiesReports'])->name('rabies-bite-reports.index');
-    Route::get('/rabies-bite-reports/{rabiesReport}', [DiseaseControlController::class, 'showRabiesReport'])->name('rabies-bite-reports.show');
-    Route::put('/rabies-bite-reports/{rabiesReport}/check', [DiseaseControlController::class, 'acceptRabiesReport'])->name('rabies-bite-reports.check');
-    Route::put('/rabies-bite-reports/{rabiesReport}/accept', [DiseaseControlController::class, 'acceptRabiesReport'])->name('rabies-bite-reports.accept');
-    Route::put('/rabies-bite-reports/{rabiesReport}/resolve', [DiseaseControlController::class, 'resolveRabiesReport'])->name('rabies-bite-reports.resolve');
-    Route::put('/rabies-bite-reports/{rabiesReport}/decline', [DiseaseControlController::class, 'declineRabiesReport'])->name('rabies-bite-reports.decline');
+    // Bite & Rabies Reports
+    Route::get('/bite-rabies-reports', [DiseaseControlController::class, 'indexRabiesReports'])->name('rabies-bite-reports.index');
+    Route::get('/bite-rabies-reports/{rabiesReport}', [DiseaseControlController::class, 'showRabiesReport'])->name('rabies-bite-reports.show');
+    Route::put('/bite-rabies-reports/{rabiesReport}/check', [DiseaseControlController::class, 'acceptRabiesReport'])->name('rabies-bite-reports.check');
+    Route::put('/bite-rabies-reports/{rabiesReport}/accept', [DiseaseControlController::class, 'acceptRabiesReport'])->name('rabies-bite-reports.accept');
+    Route::put('/bite-rabies-reports/{rabiesReport}/resolve', [DiseaseControlController::class, 'resolveRabiesReport'])->name('rabies-bite-reports.resolve');
+    Route::put('/bite-rabies-reports/{rabiesReport}/decline', [DiseaseControlController::class, 'declineRabiesReport'])->name('rabies-bite-reports.decline');
 
-    // Convert Rabies Report to Rabies Case
-    Route::get('/rabies-bite-reports/{rabiesReport}/create-case', [DiseaseControlController::class, 'createRabiesCaseFromReport'])->name('rabies-bite-reports.create-case');
-    Route::post('/rabies-bite-reports/{rabiesReport}/store-case', [DiseaseControlController::class, 'storeRabiesCaseFromReport'])->name('rabies-bite-reports.store-case');
+    // Convert Report to Rabies Case
+    Route::get('/bite-rabies-reports/{rabiesReport}/create-case', [DiseaseControlController::class, 'createRabiesCaseFromReport'])->name('rabies-bite-reports.create-case');
+    Route::post('/bite-rabies-reports/{rabiesReport}/store-case', [DiseaseControlController::class, 'storeRabiesCaseFromReport'])->name('rabies-bite-reports.store-case');
 
     // Announcements
     Route::get('/announcements', [AnnouncementController::class, 'list'])->name('announcements.index');
@@ -750,10 +762,10 @@ Route::middleware('auth')->group(function () {
 });
 
 // ==============================
-// RABIES BITE INCIDENT REPORT - PUBLIC FORM
+// BITE & RABIES REPORT - PUBLIC FORM
 // ==============================
-Route::get('/rabies-bite-report', [\App\Http\Controllers\Client\RabiesReportController::class, 'create'])->name('rabies-bite-report.create');
-Route::post('/rabies-bite-report', [\App\Http\Controllers\Client\RabiesReportController::class, 'store'])->name('rabies-bite-report.store');
-Route::get('/rabies-bite-report/success', [\App\Http\Controllers\Client\RabiesReportController::class, 'success'])->name('rabies-bite-report.success');
+Route::get('/bite-rabies-report', [\App\Http\Controllers\Client\BiteRabiesReportController::class, 'create'])->name('bite-rabies-report.create');
+Route::post('/bite-rabies-report', [\App\Http\Controllers\Client\BiteRabiesReportController::class, 'store'])->name('bite-rabies-report.store');
+Route::get('/bite-rabies-report/success', [\App\Http\Controllers\Client\BiteRabiesReportController::class, 'success'])->name('bite-rabies-report.success');
 
 require __DIR__.'/auth.php';
