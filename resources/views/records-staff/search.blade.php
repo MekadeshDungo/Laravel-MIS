@@ -7,7 +7,7 @@
 @section('content')
 <div class="p-4 md:p-6">
     <div class="flex items-center gap-4 mb-6">
-        <a href="{{ route('records-staff.dashboard') }}" class="p-2 hover:bg-gray-100 rounded-lg transition">
+        <a href="{{ route('admin-staff.dashboard') }}" class="p-2 hover:bg-gray-100 rounded-lg transition">
             <i class="bi bi-house text-gray-600"></i>
         </a>
         <div>
@@ -19,7 +19,7 @@
     <!-- Search Form -->
     <div class="bg-white rounded-xl shadow-sm mb-6">
         <div class="p-6">
-            <form method="GET" action="{{ route('records-staff.search') }}" class="flex gap-4">
+            <form method="GET" action="{{ route('admin-staff.search') }}" class="flex gap-4">
                 <div class="flex-1">
                     <input type="text" name="q" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Search pets, owners, or vaccinations..." value="{{ $search }}" autofocus>
                 </div>
@@ -42,7 +42,7 @@
                     <ul class="space-y-2">
                         @foreach($pets as $pet)
                             <li>
-                                <a href="{{ route('records-staff.pets.show', $pet) }}" class="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
+                                <a href="{{ route('admin-staff.pets.show', $pet) }}" class="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
                                     <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                                         <i class="bi bi-heart-fill text-blue-600"></i>
                                     </div>
@@ -74,7 +74,7 @@
                     <ul class="space-y-2">
                         @foreach($owners as $owner)
                             <li>
-                                <a href="{{ route('records-staff.owners.show', $owner) }}" class="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
+                                <a href="{{ route('admin-staff.owners.show', $owner) }}" class="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
                                     <div class="w-10 h-10 bg-info bg-opacity-20 rounded-full flex items-center justify-center">
                                         <i class="bi bi-person text-info"></i>
                                     </div>
@@ -106,7 +106,7 @@
                     <ul class="space-y-2">
                         @foreach($vaccinations as $vaccination)
                             <li>
-                                <a href="{{ route('records-staff.vaccinations.show', $vaccination) }}" class="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
+                                <a href="{{ route('admin-staff.vaccinations.show', $vaccination) }}" class="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
                                     <div class="w-10 h-10 bg-success bg-opacity-20 rounded-full flex items-center justify-center">
                                         <i class="bi bi-shield-check text-success"></i>
                                     </div>

@@ -41,7 +41,7 @@ class Announcement extends Model
         'status',
         'publish_date',
         'expiry_date',
-        'content',
+        'body',
         'image_path',
         'attachment_path',
         'is_active',

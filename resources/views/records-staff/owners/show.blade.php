@@ -7,14 +7,14 @@
 @section('content')
 <div class="p-4 md:p-6">
     <div class="flex items-center gap-4 mb-6">
-        <a href="{{ route('records-staff.owners.index') }}" class="p-2 hover:bg-gray-100 rounded-lg transition">
+        <a href="{{ route('admin-staff.owners.index') }}" class="p-2 hover:bg-gray-100 rounded-lg transition">
             <i class="bi bi-arrow-left text-gray-600"></i>
         </a>
         <div class="flex-1">
             <h1 class="text-2xl font-bold text-gray-800">{{ $owner->name }}</h1>
             <p class="text-gray-500 mt-1">{{ $owner->email }}</p>
         </div>
-        <a href="{{ route('records-staff.pets.create') }}?owner_id={{ $owner->id }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <a href="{{ route('admin-staff.pets.create') }}?owner_id={{ $owner->id }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
             <i class="bi bi-plus-lg mr-2"></i> Add Pet
         </a>
     </div>
@@ -54,7 +54,7 @@
             <div class="bg-white rounded-xl shadow-sm">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="font-semibold text-gray-800">Pets ({{ $owner->pets->count() }})</h3>
-                    <a href="{{ route('records-staff.pets.create') }}?owner_id={{ $owner->id }}" class="text-sm text-blue-600 hover:text-blue-800">
+                    <a href="{{ route('admin-staff.pets.create') }}?owner_id={{ $owner->id }}" class="text-sm text-blue-600 hover:text-blue-800">
                         <i class="bi bi-plus-lg mr-1"></i> Add Pet
                     </a>
                 </div>
@@ -91,10 +91,10 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="flex items-center gap-2">
-                                                <a href="{{ route('records-staff.pets.show', $pet) }}" class="p-2 text-info hover:bg-info hover:bg-opacity-10 rounded-lg transition" title="View">
+                                                <a href="{{ route('admin-staff.pets.show', $pet) }}" class="p-2 text-info hover:bg-info hover:bg-opacity-10 rounded-lg transition" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a href="{{ route('records-staff.pets.edit', $pet) }}" class="p-2 text-warning hover:bg-warning hover:bg-opacity-10 rounded-lg transition" title="Edit">
+                                                <a href="{{ route('admin-staff.pets.edit', $pet) }}" class="p-2 text-warning hover:bg-warning hover:bg-opacity-10 rounded-lg transition" title="Edit">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                             </div>
@@ -107,7 +107,7 @@
                         <div class="text-center py-12">
                             <i class="bi bi-heart-pulse text-5xl text-gray-300 mb-4"></i>
                             <p class="text-gray-500 mb-4">No pets registered for this owner.</p>
-                            <a href="{{ route('records-staff.pets.create') }}?owner_id={{ $owner->id }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            <a href="{{ route('admin-staff.pets.create') }}?owner_id={{ $owner->id }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                                 <i class="bi bi-plus-lg"></i>
                                 Register First Pet
                             </a>

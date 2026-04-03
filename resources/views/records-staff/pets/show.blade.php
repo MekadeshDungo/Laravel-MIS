@@ -7,14 +7,14 @@
 @section('content')
 <div class="p-4 md:p-6">
     <div class="flex items-center gap-4 mb-6">
-        <a href="{{ route('records-staff.pets.index') }}" class="p-2 hover:bg-gray-100 rounded-lg transition">
+        <a href="{{ route('admin-staff.pets.index') }}" class="p-2 hover:bg-gray-100 rounded-lg transition">
             <i class="bi bi-arrow-left text-gray-600"></i>
         </a>
         <div class="flex-1">
             <h1 class="text-2xl font-bold text-gray-800">{{ $pet->name }}</h1>
             <p class="text-gray-500 mt-1">{{ ucfirst($pet->species) }} | {{ $pet->breed ?? 'Unknown Breed' }}</p>
         </div>
-        <a href="{{ route('records-staff.pets.edit', $pet) }}" class="px-4 py-2 bg-warning text-white rounded-lg hover:bg-warning hover:bg-opacity-90 transition">
+        <a href="{{ route('admin-staff.pets.edit', $pet) }}" class="px-4 py-2 bg-warning text-white rounded-lg hover:bg-warning hover:bg-opacity-90 transition">
             <i class="bi bi-pencil mr-2"></i> Edit
         </a>
     </div>
@@ -158,7 +158,7 @@
                             </div>
                         </div>
                         <div class="mt-4 pt-4 border-t border-gray-100">
-                            <a href="{{ route('records-staff.owners.show', $pet->owner) }}" class="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            <a href="{{ route('admin-staff.owners.show', $pet->owner) }}" class="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                                 <i class="bi bi-eye mr-2"></i> View Owner Profile
                             </a>
                         </div>

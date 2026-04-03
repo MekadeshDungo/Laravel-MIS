@@ -48,6 +48,11 @@ require __DIR__.'/auth.php';
 */
 
 
+use App\Models\Animal;
+use App\Models\Announcement;
+
+// ... existing imports
+
 Route::get('/', function () {
     // If user is authenticated, redirect to their role-based dashboard
     if (Auth::check()) {
@@ -73,7 +78,27 @@ Route::get('/', function () {
                 return redirect()->route('login');
         }
     }
-    return view('Client.welcome');
+    // Get missing pets for the landing page
+    $missingPets = Animal::where('is_missing', true)
+        ->with('owner')
+        ->orderBy('missing_since', 'desc')
+        ->limit(5)
+        ->get();
+    
+    // Get active announcements for public (all published, no audience filter)
+    $announcements = Announcement::where('status', 'Published')
+        ->where(function ($q) {
+            $q->whereNull('publish_date')
+                ->orWhere('publish_date', '<=', now());
+        })
+        ->where(function ($q) {
+            $q->whereNull('expiry_date')
+                ->orWhere('expiry_date', '>=', now());
+        })
+        ->orderByRaw("CASE priority WHEN 'Urgent' THEN 1 WHEN 'Important' THEN 2 ELSE 3 END")
+        ->get();
+    
+    return view('Client.welcome', compact('missingPets', 'announcements'));
 })->name('landing');
 
 // ==============================
@@ -85,6 +110,7 @@ Route::get('/', function () {
 // PUBLIC ANNOUNCEMENTS (Citizen View)
 // ==============================
 Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.public.index');
+Route::get('/announcements/{announcement}', [AnnouncementController::class, 'publicShow'])->name('announcements.show');
 
 // ==============================
 // AUTHENTICATED NON-ADMIN ANNOUNCEMENTS (Barangay, Clinic, etc.)
@@ -264,24 +290,33 @@ Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('ad
     Route::get('/dashboard', [AdminStaffController::class, 'dashboard'])->name('dashboard');
 
     // Pet Registration & Records
-    Route::get('/pets', [RecordsController::class, 'indexPets'])->name('pets.index');
+    Route::get('/pets', [RecordsController::class, 'pets'])->name('pets.index');
     Route::get('/pets/create', [RecordsController::class, 'createPet'])->name('pets.create');
     Route::post('/pets', [RecordsController::class, 'storePet'])->name('pets.store');
-    Route::get('/pets/{pet}', [RecordsController::class, 'showPet'])->name('pets.show');
-    Route::get('/pets/{pet}/edit', [RecordsController::class, 'editPet'])->name('pets.edit');
-    Route::put('/pets/{pet}', [RecordsController::class, 'updatePet'])->name('pets.update');
+    Route::get('/pets/{animal}', [RecordsController::class, 'showAnimal'])->name('pets.show');
+    Route::get('/pets/{animal}/edit', [RecordsController::class, 'editAnimal'])->name('pets.edit');
+    Route::put('/pets/{animal}', [RecordsController::class, 'updateAnimal'])->name('pets.update');
 
     // Owner Records
-    Route::get('/owners', [RecordsController::class, 'indexOwners'])->name('owners.index');
-    Route::get('/owners/{owner}', [RecordsController::class, 'showOwner'])->name('owners.show');
+    Route::get('/owners', [RecordsController::class, 'owners'])->name('owners.index');
+    Route::get('/owners/{user}', [RecordsController::class, 'showOwner'])->name('owners.show');
 
     // Vaccination Records Encoding
-    Route::get('/vaccinations', [RecordsController::class, 'indexVaccinations'])->name('vaccinations.index');
+    Route::get('/vaccinations', [RecordsController::class, 'vaccinations'])->name('vaccinations.index');
     Route::get('/vaccinations/create', [RecordsController::class, 'createVaccination'])->name('vaccinations.create');
     Route::post('/vaccinations', [RecordsController::class, 'storeVaccination'])->name('vaccinations.store');
 
     // Search & Reports
     Route::get('/search', [RecordsController::class, 'search'])->name('search');
+
+    // Missing Pets
+    Route::get('/missing-pets', [App\Http\Controllers\AdminAsst\MissingPetController::class, 'index'])->name('missing-pets.index');
+    Route::get('/missing-pets/create', [App\Http\Controllers\AdminAsst\MissingPetController::class, 'create'])->name('missing-pets.create');
+    Route::post('/missing-pets', [App\Http\Controllers\AdminAsst\MissingPetController::class, 'store'])->name('missing-pets.store');
+    Route::get('/missing-pets/{animal}', [App\Http\Controllers\AdminAsst\MissingPetController::class, 'show'])->name('missing-pets.show');
+    Route::get('/missing-pets/{animal}/edit', [App\Http\Controllers\AdminAsst\MissingPetController::class, 'edit'])->name('missing-pets.edit');
+    Route::put('/missing-pets/{animal}', [App\Http\Controllers\AdminAsst\MissingPetController::class, 'update'])->name('missing-pets.update');
+    Route::post('/missing-pets/{animal}/found', [App\Http\Controllers\AdminAsst\MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
 
     // Announcements (view only)
     Route::get('/announcements', [AnnouncementController::class, 'list'])->name('announcements.index');
@@ -434,6 +469,21 @@ Route::middleware(['auth', 'role:meat_inspector'])->prefix('meat-inspection')->n
     Route::get('/reports/{report}/edit', [MeatInspectionController::class, 'editReport'])->name('reports.edit');
     Route::put('/reports/{report}', [MeatInspectionController::class, 'updateReport'])->name('reports.update');
     Route::delete('/reports/{report}', [MeatInspectionController::class, 'destroyReport'])->name('reports.destroy');
+
+    // Meat Shop Inspections
+    Route::get('/meat-shop', [MeatInspectionController::class, 'indexMeatShopInspections'])->name('meat-shop.index');
+    Route::get('/meat-shop/create', [MeatInspectionController::class, 'createMeatShopInspection'])->name('meat-shop.create');
+    Route::post('/meat-shop', [MeatInspectionController::class, 'storeMeatShopInspection'])->name('meat-shop.store');
+    Route::get('/meat-shop/{inspection}', [MeatInspectionController::class, 'showMeatShopInspection'])->name('meat-shop.show');
+    Route::put('/meat-shop/{inspection}', [MeatInspectionController::class, 'updateMeatShopInspection'])->name('meat-shop.update');
+    Route::get('/meat-shop/address', [MeatInspectionController::class, 'getMeatShopAddress'])->name('meat-shop.address');
+
+    // Meat Establishment Registration
+    Route::get('/establishments', [MeatInspectionController::class, 'indexEstablishments'])->name('establishments.index');
+    Route::get('/establishments/create', [MeatInspectionController::class, 'createEstablishment'])->name('establishments.create');
+    Route::post('/establishments', [MeatInspectionController::class, 'storeEstablishment'])->name('establishments.store');
+    Route::get('/establishments/{establishment}', [MeatInspectionController::class, 'showEstablishment'])->name('establishments.show');
+    Route::put('/establishments/{establishment}', [MeatInspectionController::class, 'updateEstablishment'])->name('establishments.update');
 });
 
 // ==============================
@@ -691,7 +741,25 @@ Route::get('/animal-cruelty/thank-you', function () {
 
 // Missing Pets Page Route - Public
 Route::get('/missing-pets', function () {
-    return view('Client.missing_pets_page');
+    $missingPets = Animal::where('is_missing', true)
+        ->with('owner')
+        ->orderBy('missing_since', 'desc')
+        ->get();
+    
+    // Get active announcements for public (all published, no audience filter)
+    $announcements = Announcement::where('status', 'Published')
+        ->where(function ($q) {
+            $q->whereNull('publish_date')
+                ->orWhere('publish_date', '<=', now());
+        })
+        ->where(function ($q) {
+            $q->whereNull('expiry_date')
+                ->orWhere('expiry_date', '>=', now());
+        })
+        ->orderByRaw("CASE priority WHEN 'Urgent' THEN 1 WHEN 'Important' THEN 2 ELSE 3 END")
+        ->get();
+    
+    return view('Client.missing_pets_page', compact('missingPets', 'announcements'));
 });
 
 // Pet Registration Page Route - Public

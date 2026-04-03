@@ -54,7 +54,7 @@ class AnnouncementController extends Controller
             ->orderBy('publish_date', 'desc')
             ->paginate(10);
 
-        return view('announcements.index', compact('announcements'));
+        return view('announcements.public-index', compact('announcements'));
     }
 
     /**
@@ -80,7 +80,21 @@ class AnnouncementController extends Controller
     }
 
     /**
-     * Show a single announcement (public view).
+     * Show a single announcement for public (citizen) view.
+     */
+    public function publicShow(Announcement $announcement)
+    {
+        // Only show published announcements to public
+        if ($announcement->status !== 'Published') {
+            return redirect()->route('announcements.public.index')
+                ->with('error', 'This announcement is not available.');
+        }
+
+        return view('announcements.public-show', compact('announcement'));
+    }
+
+    /**
+     * Show a single announcement (admin view).
      */
     public function show(Announcement $announcement)
     {

@@ -1,6 +1,6 @@
 @extends('layouts.client')
 
-@section('title', 'Announcements - Dasmariñas City Veterinary Services')
+@section('title', $announcement->title . ' - Dasmariñas City Veterinary Services')
 
 @section('content')
 <!-- Header -->
@@ -80,83 +80,123 @@
     </div>
 </header>
 
-<!-- Announcements Content -->
+<!-- Announcement Content -->
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Page Title -->
-    <div class="text-center mb-8">
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Announcements</h1>
-        <p class="text-gray-600 mt-2">Stay updated with the latest news from Dasmariñas City Veterinary Services</p>
-    </div>
-
-    <!-- Announcements List -->
-    <div class="space-y-6">
-        @forelse($announcements as $announcement)
-            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <div class="p-6">
-                    <!-- Priority Badge & Date -->
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-2">
-                            @if($announcement->priority)
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold 
-                                @if($announcement->priority === 'Urgent') bg-red-100 text-red-700
-                                @elseif($announcement->priority === 'Important') bg-yellow-100 text-yellow-700
-                                @else bg-green-100 text-green-700 @endif">
-                                {{ $announcement->priority }}
-                            </span>
-                            @endif
-                            @if($announcement->type)
-                            <span class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                                {{ $announcement->type }}
-                            </span>
-                            @endif
-                        </div>
-                        <span class="text-sm text-gray-500">
-                            {{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('M d, Y') : '' }}
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Header Banner -->
+        <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-8 text-white">
+            <div class="flex items-start justify-between flex-wrap gap-4">
+                <div class="flex-1">
+                    <h1 class="text-2xl md:text-3xl font-bold mb-3">{{ $announcement->title }}</h1>
+                    <div class="flex flex-wrap items-center gap-4 text-green-100 text-sm">
+                        <span class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            By {{ $announcement->user->name ?? 'Unknown' }}
+                        </span>
+                        <span class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {{ $announcement->created_at->format('F d, Y') }}
                         </span>
                     </div>
-
-                    <!-- Title -->
-                    <h2 class="text-xl font-bold text-gray-900 mb-2">{{ $announcement->title }}</h2>
-
-                    <!-- Preview -->
-                    <p class="text-gray-600 mb-4 line-clamp-3">{{ Str::limit($announcement->body, 200) }}</p>
-
-                    <!-- Read More Button -->
-                    <a href="{{ route('announcements.show', $announcement->id) }}" 
-                       class="inline-flex items-center gap-2 text-primary font-medium hover:text-secondary transition-colors">
-                        Read More
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </a>
                 </div>
+                <!-- Priority Badge -->
+                @if($announcement->priority)
+                <span class="px-4 py-2 rounded-full text-sm font-semibold 
+                    @if($announcement->priority === 'Urgent') bg-red-500 text-white
+                    @elseif($announcement->priority === 'Important') bg-yellow-500 text-gray-900
+                    @else bg-green-500 text-white @endif">
+                    {{ $announcement->priority }}
+                </span>
+                @endif
             </div>
-        @empty
-            <!-- No Announcements -->
-            <div class="text-center py-12">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-                </svg>
-                <h3 class="text-lg font-medium text-gray-600 mb-2">No Announcements Yet</h3>
-                <p class="text-gray-500">Check back later for updates from the Veterinary Office.</p>
+            
+            <!-- Type Badge -->
+            @if($announcement->type)
+            <div class="mt-4">
+                <span class="px-3 py-1 rounded text-xs font-medium bg-white/20">
+                    {{ $announcement->type }}
+                </span>
             </div>
-        @endforelse
+            @endif
+        </div>
+
+        <!-- Image -->
+        @if($announcement->image_path)
+        <div class="w-full">
+            <img src="{{ $announcement->image_url }}"
+                 alt="{{ $announcement->title }}"
+                 class="w-full h-auto object-cover max-h-96">
+        </div>
+        @endif
+
+        <!-- Content -->
+        <div class="px-6 py-8">
+            <!-- Date Info -->
+            <div class="flex flex-wrap gap-6 mb-6 pb-6 border-b border-gray-200">
+                @if($announcement->publish_date)
+                <div class="flex items-center text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <div>
+                        <p class="text-xs text-gray-500">Published</p>
+                        <p class="font-medium text-sm">{{ \Carbon\Carbon::parse($announcement->publish_date)->format('F d, Y') }}</p>
+                    </div>
+                </div>
+                @endif
+                @if($announcement->expiry_date)
+                <div class="flex items-center text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="text-xs text-gray-500">Expires</p>
+                        <p class="font-medium text-sm">{{ \Carbon\Carbon::parse($announcement->expiry_date)->format('F d, Y') }}</p>
+                    </div>
+                </div>
+                @endif
+            </div>
+
+            <!-- Main Content -->
+            <div class="prose max-w-none">
+                <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ $announcement->body }}</p>
+            </div>
+
+            <!-- Attachment -->
+            @if($announcement->attachment_path)
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                    Attachment
+                </h3>
+                <a href="{{ $announcement->attachment_url }}" target="_blank" 
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    <span>View Attachment (PDF)</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </a>
+            </div>
+            @endif
+        </div>
     </div>
 
-    <!-- Pagination -->
-    @if($announcements->hasPages())
-    <div class="mt-8 flex justify-center">
-        {{ $announcements->links() }}
-    </div>
-    @endif
-
-    <!-- Back to Home -->
-    <div class="mt-8 text-center">
-        <a href="{{ url('/') }}" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+    <!-- Back to Announcements Button -->
+    <div class="mt-6 text-center">
+        <a href="{{ url('/announcements') }}" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
             </svg>
-            Back to Home
+            View All Announcements
         </a>
     </div>
 </div>

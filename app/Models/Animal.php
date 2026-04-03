@@ -6,25 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Animal extends Model
 {
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'animals';
+    protected $primaryKey = 'animal_id';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
     protected $fillable = [
         'client_id',
         'name',
+        'animal_type',
         'species',
         'breed',
         'age',
         'gender',
+        'sex',
         'color',
         'weight',
         'vaccination_status',
@@ -37,6 +29,12 @@ class Animal extends Model
         'medical_history',
         'notes',
         'photo_url',
+        'is_stray',
+        'status',
+        'is_missing',
+        'missing_since',
+        'last_seen_location',
+        'contact_info',
         'created_at',
         'updated_at',
     ];

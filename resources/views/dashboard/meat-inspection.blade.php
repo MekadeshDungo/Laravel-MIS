@@ -115,6 +115,34 @@ $meatInspectionRoutePrefix = ($role === 'meat_inspector') ? 'meat-inspection.rep
         </div>
     </div>
 
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <a href="{{ route('meat-inspection.meat-shop.create') }}" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all duration-200 group">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition">
+                    <i class="bi bi-clipboard-check text-orange-600 text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">New Action</p>
+                    <p class="text-xl font-bold text-gray-800 mt-1">Shop Compliance</p>
+                    <p class="text-sm text-gray-500">Inspect meat shops for compliance</p>
+                </div>
+            </div>
+        </a>
+        <a href="{{ route('meat-inspection.establishments.create') }}" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all duration-200 group">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition">
+                    <i class="bi bi-shop-window text-blue-600 text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Register</p>
+                    <p class="text-xl font-bold text-gray-800 mt-1">New Establishment</p>
+                    <p class="text-sm text-gray-500">Add new meat shop or slaughterhouse</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
     <!-- Reports Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">

@@ -231,6 +231,12 @@
                 <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Livestock Management</p>
             </div>
 
+            <a href="{{ route('livestock.dashboard') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('livestock.dashboard') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-speedometer2 text-lg w-6"></i>
+                <span>Dashboard</span>
+            </a>
+
             <a href="{{ route('livestock.index') }}"
                class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('livestock.index') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-paw text-lg w-6"></i>
@@ -261,17 +267,16 @@
                 <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Meat Inspection</p>
             </div>
 
-{{-- [RESTORED] Meat Inspection Links --}}
-            <a href="{{ route('meat-inspection.reports.index') }}"
-               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('meat-inspection.reports.*') ? 'bg-green-600 text-white' : '' }}">
-                <i class="bi bi-clipboard-check text-lg w-6"></i>
-                <span>Inspection Reports</span>
+            <a href="{{ route('meat-inspection.meat-shop.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('meat-inspection.meat-shop.*') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-shop text-lg w-6"></i>
+                <span>Shop Inspections</span>
             </a>
 
-            <a href="{{ route('meat-inspection.reports.create') }}"
-               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('meat-inspection.reports.create') ? 'bg-green-600 text-white' : '' }}">
-                <i class="bi bi-plus-circle text-lg w-6"></i>
-                <span>New Report</span>
+            <a href="{{ route('meat-inspection.establishments.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('meat-inspection.establishments.*') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-shop-window text-lg w-6"></i>
+                <span>Register Shop</span>
             </a>
 
             <div class="pt-4 pb-2">
