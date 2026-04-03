@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
      * 1. super_admin - Super Administrator (IT)
      * 2. city_vet - City Veterinarian (Admin/Office Head)
      * 3. admin_asst - Administrative Assistant IV
-     * 4. veterinarian - Veterinarian III (Assistant Vet)
+     * 4. assistant_vet - Veterinarian III (Assistant Vet)
      * 5. livestock_inspector - Livestock Inspector
      * 6. meat_inspector - Meat & Post-Abattoir Inspector
      * 7. records_staff - Records Staff
@@ -83,11 +83,11 @@ class DatabaseSeeder extends Seeder
         // Medical records, vaccination
         // ==============================
         User::firstOrCreate(
-            ['email' => 'veterinarian@vetmis.gov'],
+            ['email' => 'assistant_vet@vetmis.gov'],
             [
                 'name' => 'Dr. Pedro Garcia',
                 'password' => bcrypt('password123'),
-                'role' => 'veterinarian',
+                'role' => 'assistant_vet',
                 'status' => 'active',
                 'contact_number' => '091234567893',
                 'address' => 'City Veterinary Office',
