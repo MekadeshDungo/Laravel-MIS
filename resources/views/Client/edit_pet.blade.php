@@ -140,7 +140,6 @@
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-900">Edit Pet</h2>
                 <p class="text-gray-600 mt-2">Update your pet's information</p>
-                <p class="text-gray-500 text-sm mt-1">Fields marked with <span class="text-red-500">*</span> are required</p>
             </div>
 
             <form id="petEditForm" method="POST" action="{{ route('pet.update', $pet->pet_id) }}" enctype="multipart/form-data">
@@ -166,7 +165,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="file" id="petImage" name="pet_image" accept="image/*" class="hidden" onchange="previewImage(event)">
+                        <input type="file" id="petImage" name="pet_photo" accept="image/*" class="hidden" onchange="previewImage(event)">
                         <div>
                             <p class="text-sm text-gray-600">Click the image to change photo</p>
                             <p class="text-xs text-gray-400">Leave empty to keep current photo</p>
@@ -281,10 +280,10 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Pet Age <span class="text-red-500">*</span></label>
                     <select id="estimatedAge" name="estimated_age" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
                         <option value="">Select estimated age</option>
-                        <option value="less_than_3_months" {{ $pet->estimated_age == 'less_than_3_months' ? 'selected' : '' }}>Less than 3 months old</option>
-                        <option value="3_to_12_months" {{ $pet->estimated_age == '3_to_12_months' ? 'selected' : '' }}>3 to 12 months old</option>
+                        <option value="less_than_3_months" {{ $pet->age == 'less_than_3_months' ? 'selected' : '' }}>Less than 3 months old</option>
+                        <option value="3_to_12_months" {{ $pet->age == '3_to_12_months' ? 'selected' : '' }}>3 to 12 months old</option>
                         @for($i = 1; $i <= 20; $i++)
-                        <option value="{{ $i }}_years" {{ $pet->estimated_age == $i . '_years' ? 'selected' : '' }}>{{ $i }} year{{ $i > 1 ? 's' : '' }} old</option>
+                        <option value="{{ $i }}_years" {{ $pet->age == $i . '_years' ? 'selected' : '' }}>{{ $i }} year{{ $i > 1 ? 's' : '' }} old</option>
                         @endfor
                     </select>
                 </div>
@@ -293,7 +292,7 @@
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Pet's Weight <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input type="text" id="petWeight" name="pet_weight" value="{{ $pet->pet_weight }}" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" oninput="updateWeightSuffix()">
+                        <input type="text" id="petWeight" name="pet_weight" value="{{ $pet->weight }}" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" oninput="updateWeightSuffix()">
                         <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium pointer-events-none"></span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">If you do not know, type "N/A"</p>

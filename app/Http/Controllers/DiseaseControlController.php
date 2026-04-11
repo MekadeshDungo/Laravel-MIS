@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\RabiesCase;
 use App\Models\BiteRabiesReport;
 use Carbon\Carbon;
 
@@ -51,14 +50,14 @@ class DiseaseControlController extends Controller
 
         // Combined stats
         $stats = [
-            'total_rabies_cases' => RabiesCase::count(),
-            'open_cases' => RabiesCase::where('status', 'open')->count(),
+            'total_rabies_cases' => BiteRabiesReport::count(),
+            'open_cases' => BiteRabiesReport::where('status', 'open')->count(),
             'total_reports' => $reportStats['total'],
             'report_stats' => $reportStats,
         ];
 
         // Get recent cases with relationships
-        $recentCases = RabiesCase::with(['barangay', 'user'])
+        $recentCases = BiteRabiesReport::with(['barangay'])
             ->latest()
             ->take(5)
             ->get();
@@ -78,7 +77,7 @@ class DiseaseControlController extends Controller
     public function indexCases(Request $request)
     {
         $user = Auth::user();
-        $query = RabiesCase::with(['barangay', 'user']);
+        $query = BiteRabiesReport::with(['barangay', 'user']);
 
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
@@ -146,7 +145,7 @@ class DiseaseControlController extends Controller
     /**
      * Show rabies case details.
      */
-    public function showCase(RabiesCase $case)
+    public function showCase(BiteRabiesReport $case)
     {
         $case->load(['barangay', 'user', 'rabiesReport']);
         return view('dashboard.rabies-cases.show', compact('case'));
@@ -158,7 +157,7 @@ class DiseaseControlController extends Controller
      * Module: Clinical Actions
      * Role: assistant_vet
      */
-    public function markComplete(RabiesCase $case)
+    public function markComplete(BiteRabiesReport $case)
     {
         $case->update(['status' => 'closed']);
         return redirect()->back()->with('success', 'Case marked as complete.');
@@ -251,7 +250,12 @@ class DiseaseControlController extends Controller
         $reports = \App\Models\SpayNeuterReport::with(['barangay'])
             ->latest()
             ->paginate(10);
-        return view('dashboard.spay-neuter.index', compact('reports'));
+        
+        $totalReports = \App\Models\SpayNeuterReport::count();
+        $completed = \App\Models\SpayNeuterReport::where('status', 'completed')->count();
+        $scheduled = \App\Models\SpayNeuterReport::where('status', 'scheduled')->count();
+        
+        return view('dashboard.spay-neuter', compact('reports', 'totalReports', 'completed', 'scheduled'));
     }
 
     /**
@@ -301,9 +305,9 @@ class DiseaseControlController extends Controller
 
         $query = BiteRabiesReport::with(['patientBarangay']);
 
-        // Filter by status
-        if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
+        // Filter by source (report_source)
+        if ($request->has('source') && $request->source) {
+            $query->where('report_source', $request->source);
         }
 
         // Get counts
@@ -375,7 +379,7 @@ class DiseaseControlController extends Controller
      *
      * Pre-fills form with data from the report.
      */
-    public function createRabiesCaseFromReport(BiteRabiesReport $rabiesReport)
+    public function createBiteRabiesReportFromReport(BiteRabiesReport $rabiesReport)
     {
         $barangays = \App\Models\Barangay::pluck('barangay_name', 'barangay_id');
 
@@ -397,7 +401,7 @@ class DiseaseControlController extends Controller
     /**
      * Store Rabies Case created from Bite & Rabies Report.
      */
-    public function storeRabiesCaseFromReport(Request $request, BiteRabiesReport $rabiesReport)
+    public function storeBiteRabiesReportFromReport(Request $request, BiteRabiesReport $rabiesReport)
     {
         $validated = $request->validate([
             'case_type' => 'required|string|in:positive,probable,suspect,negative',
@@ -424,7 +428,7 @@ class DiseaseControlController extends Controller
             $validated['case_number'] = 'RAB-' . date('Ymd') . '-' . strtoupper(substr(md5(uniqid()), 0, 6));
         }
 
-        $case = RabiesCase::create($validated);
+        $case = BiteRabiesReport::create($validated);
 
         // Update the report status
         $rabiesReport->update([
@@ -437,7 +441,7 @@ class DiseaseControlController extends Controller
     }
 
     /**
-     * Map species from RabiesReport to RabiesCase format.
+     * Map species from RabiesReport to BiteRabiesReport format.
      */
     private function mapSpecies(string $reportSpecies): string
     {

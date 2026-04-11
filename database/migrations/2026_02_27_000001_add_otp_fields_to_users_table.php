@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('admin_users', function (Blueprint $table) {
             $table->string('otp_code', 6)->nullable()->after('email');
             $table->timestamp('otp_expires_at')->nullable()->after('otp_code');
             $table->boolean('is_verified')->default(false)->after('otp_expires_at');
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('admin_users', function (Blueprint $table) {
             $table->dropColumn(['otp_code', 'otp_expires_at', 'is_verified']);
         });
     }

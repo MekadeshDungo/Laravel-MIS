@@ -16,7 +16,7 @@
     <div class="p-6 border-b border-gray-100">
         <div class="flex justify-between items-center">
             <h3 class="text-lg font-semibold text-gray-800">All Impound Records</h3>
-            <a href="{{ route('admin.reports.impounds.create') }}" class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition">
+            <a href="#" class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition">
                 <i class="bi bi-plus-circle mr-2"></i>New Impound Record
             </a>
         </div>

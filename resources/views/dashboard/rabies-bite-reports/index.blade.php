@@ -106,15 +106,6 @@ if ($rolePrefix === 'admin' && Route::has('admin.rabies-bite-reports.index')) {
     </div>
 
     <!-- Enhanced Filters -->
-    @if(auth()->user()->role === 'city_vet')
-    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-        <i class="bi bi-info-circle text-blue-600 text-xl"></i>
-        <div>
-            <p class="text-sm font-medium text-blue-800">View Only Mode</p>
-            <p class="text-xs text-blue-600">You can view rabies bite reports. Actions are available for Assistant Vet only.</p>
-        </div>
-    </div>
-    @endif
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
         <form method="GET" action="{{ route($rabiesReportsRoute) }}" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">

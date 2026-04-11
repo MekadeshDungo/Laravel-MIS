@@ -42,7 +42,7 @@ if ($rolePrefix === 'admin' && Route::has('admin.rabies-bite-reports.index')) {
     </div>
 
     <!-- Stats Cards - Interactive -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <a href="{{ route($rabiesReportsRoute) }}"
            class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md hover:scale-[1.03] transition-all duration-200 cursor-pointer group">
             <div class="flex items-center justify-between">
@@ -55,66 +55,9 @@ if ($rolePrefix === 'admin' && Route::has('admin.rabies-bite-reports.index')) {
                 </div>
             </div>
         </a>
-        <a href="{{ route($rabiesReportsRoute) }}?status=Pending Review"
-           class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md hover:scale-[1.03] transition-all duration-200 cursor-pointer group border-l-4 border-l-yellow-400">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm text-gray-500">Pending Review</p>
-                    <p class="text-xl md:text-2xl font-bold text-yellow-600">{{ $stats['pending'] }}</p>
-                </div>
-                <div class="w-10 md:w-12 h-10 md:h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                    <i class="bi bi-clock text-yellow-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
-        </a>
-        <a href="{{ route($rabiesReportsRoute) }}?status=Under Review"
-           class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md hover:scale-[1.03] transition-all duration-200 cursor-pointer group border-l-4 border-l-blue-400">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm text-gray-500">Under Review</p>
-                    <p class="text-xl md:text-2xl font-bold text-blue-600">{{ $stats['under_review'] }}</p>
-                </div>
-                <div class="w-10 md:w-12 h-10 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                    <i class="bi bi-search text-blue-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
-        </a>
-        <a href="{{ route($rabiesReportsRoute) }}?status=Resolved"
-           class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md hover:scale-[1.03] transition-all duration-200 cursor-pointer group border-l-4 border-l-green-400">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm text-gray-500">Resolved</p>
-                    <p class="text-xl md:text-2xl font-bold text-green-600">{{ $stats['resolved'] }}</p>
-                </div>
-                <div class="w-10 md:w-12 h-10 md:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                    <i class="bi bi-check-circle text-green-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
-        </a>
-        <a href="{{ route($rabiesReportsRoute) }}?status=Closed"
-           class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md hover:scale-[1.03] transition-all duration-200 cursor-pointer group border-l-4 border-l-gray-400">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs md:text-sm text-gray-500">Closed</p>
-                    <p class="text-xl md:text-2xl font-bold text-gray-600">{{ $stats['closed'] }}</p>
-                </div>
-                <div class="w-10 md:w-12 h-10 md:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                    <i class="bi bi-x-circle text-gray-600 text-lg md:text-xl"></i>
-                </div>
-            </div>
-        </a>
     </div>
 
-    <!-- Enhanced Filters -->
-    @if(auth()->user()->role === 'city_vet')
-    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-        <i class="bi bi-info-circle text-blue-600 text-xl"></i>
-        <div>
-            <p class="text-sm font-medium text-blue-800">View Only Mode</p>
-            <p class="text-xs text-blue-600">You can view rabies bite reports. Actions are available for Assistant Vet only.</p>
-        </div>
-    </div>
-    @endif
+    <!-- Filters -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
         <form method="GET" action="{{ route($rabiesReportsRoute) }}" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -143,15 +86,13 @@ if ($rolePrefix === 'admin' && Route::has('admin.rabies-bite-reports.index')) {
                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
                 </div>
 
-                <!-- Status -->
+                <!-- Source -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select name="status" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                        <option value="">All Status</option>
-                        <option value="Pending Review" {{ request('status') === 'Pending Review' ? 'selected' : '' }}>Pending Review</option>
-                        <option value="Under Review" {{ request('status') === 'Under Review' ? 'selected' : '' }}>Under Review</option>
-                        <option value="Resolved" {{ request('status') === 'Resolved' ? 'selected' : '' }}>Resolved</option>
-                        <option value="Closed" {{ request('status') === 'Closed' ? 'selected' : '' }}>Closed</option>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Source</label>
+                    <select name="source" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        <option value="">All Sources</option>
+                        <option value="clinic" {{ request('source') === 'clinic' ? 'selected' : '' }}>Clinic</option>
+                        <option value="hospital" {{ request('source') === 'hospital' ? 'selected' : '' }}>Hospital</option>
                     </select>
                 </div>
             </div>

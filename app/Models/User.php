@@ -15,7 +15,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      *
      * @var string
      */
-    protected $table = 'users';
+    protected $table = 'admin_users';
 
     /**
      * The attributes that are mass assignable.
@@ -70,6 +70,14 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     public function deviceTokens()
     {
         return $this->hasMany(DeviceToken::class);
+    }
+
+    /**
+     * Get the pet owner profile for this user.
+     */
+    public function petOwner()
+    {
+        return $this->hasOne(PetOwner::class, 'user_id');
     }
 
     /**
@@ -132,9 +140,13 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     public const ROLE_SUPER_ADMIN = 'super_admin';          // IT Personnel
     public const ROLE_CITY_VET = 'city_vet';               // City Veterinarian (Admin/Office Head)
     public const ROLE_ADMIN_STAFF = 'admin_staff';         // Administrative Assistant IV (Book Binder 4)
+    public const ROLE_ADMIN_ASST = 'admin_asst';           // Administrative Assistant (Gatekeeper)
     public const ROLE_ASSISTANT_VET = 'assistant_vet';     // Assistant Veterinarian (Vet 3)
+    public const ROLE_CLINIC = 'clinic';                   // External Vet Clinic/Hospital
     public const ROLE_LIVESTOCK_INSPECTOR = 'livestock_inspector'; // Livestock Inspector (Book Binder 1)
     public const ROLE_MEAT_INSPECTOR = 'meat_inspector';     // Meat & Post-Abattoir Inspector
+    public const ROLE_RECORDS_STAFF = 'records_staff';       // Records Management
+    public const ROLE_CITY_POUND = 'city_pound';             // City Pound Personnel
     public const ROLE_CITIZEN = 'citizen';                  // Pet owner/citizen portal
 
     /**
@@ -194,6 +206,14 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     }
 
     /**
+     * Check if user is admin assistant (gatekeeper).
+     */
+    public function isAdminAsst(): bool
+    {
+        return $this->role === self::ROLE_ADMIN_ASST;
+    }
+
+    /**
      * Check if user is a citizen.
      */
     public function isCitizen(): bool
@@ -250,7 +270,9 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
             self::ROLE_SUPER_ADMIN => 'Super Administrator (IT)',
             self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
             self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV',
-            self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian',
+            self::ROLE_ADMIN_ASST => 'Admin Assistant (Gatekeeper)',
+            self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian (Vet 3)',
+            self::ROLE_CLINIC => 'External Vet Clinic/Hospital',
             self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector',
             self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
             self::ROLE_RECORDS_STAFF => 'Records Staff',
@@ -269,7 +291,9 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
             self::ROLE_SUPER_ADMIN => 'Super Administrator (IT)',
             self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
             self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV (Book Binder 4)',
+            self::ROLE_ADMIN_ASST => 'Admin Assistant (Gatekeeper)',
             self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian (Vet 3)',
+            self::ROLE_CLINIC => 'External Vet Clinic/Hospital',
             self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector (Book Binder 1)',
             self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
             self::ROLE_RECORDS_STAFF => 'Records Staff',
@@ -287,7 +311,9 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
             self::ROLE_SUPER_ADMIN => 10,       // IT Personnel - Highest
             self::ROLE_CITY_VET => 8,           // Admin/Office Head
             self::ROLE_ADMIN_STAFF => 6,         // Administrative Assistant IV
+            self::ROLE_ADMIN_ASST => 5,         // Admin Assistant (Gatekeeper)
             self::ROLE_ASSISTANT_VET => 5,      // Assistant Veterinarian
+            self::ROLE_CLINIC => 4,              // External Vet Clinic/Hospital
             self::ROLE_LIVESTOCK_INSPECTOR => 4,// Livestock Inspector
             self::ROLE_MEAT_INSPECTOR => 4,     // Meat & Post-Abattoir Inspector
             self::ROLE_RECORDS_STAFF => 3,      // Records Management
@@ -397,6 +423,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
             self::ROLE_CITY_VET,
             self::ROLE_ADMIN_STAFF,
             self::ROLE_ASSISTANT_VET,
+            self::ROLE_CLINIC,
             self::ROLE_LIVESTOCK_INSPECTOR,
             self::ROLE_MEAT_INSPECTOR,
             self::ROLE_RECORDS_STAFF,
@@ -420,40 +447,63 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function pets()
     {
-        return $this->hasMany(Animal::class, 'owner_id');
+        return $this->hasMany(Pet::class, 'client_id');
     }
 
     /**
-     * Check if user has any of the given roles.
+     * Get the bite rabies reports reported by this user.
      */
-    public function hasAnyRole(array $roles): bool
+    public function biteRabiesReportsReported(): HasMany
     {
-        return in_array($this->role, $roles);
+        return $this->hasMany(BiteRabiesReport::class, 'reported_by', 'id');
     }
 
     /**
-     * Get the primary role name.
+     * Get the bite rabies reports approved by this user.
      */
-    public function getPrimaryRoleNameAttribute(): string
+    public function biteRabiesReportsApproved(): HasMany
     {
-        $roleNames = [
-            self::ROLE_SUPER_ADMIN => 'Super Admin (IT)',
-            self::ROLE_CITY_VET => 'City Veterinarian',
-            self::ROLE_ADMIN_ASST => 'Admin Assistant IV',
-            self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian',
-            self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector',
-            self::ROLE_MEAT_INSPECTOR => 'Meat Inspector',
-        ];
+        return $this->hasMany(BiteRabiesReport::class, 'approved_by', 'id');
+    }
 
-        return $roleNames[$this->role] ?? 'Unknown';
+    /**
+     * Get the announcements created by this user.
+     */
+    public function announcements(): HasMany
+    {
+        return $this->hasMany(Announcement::class, 'created_by', 'id');
+    }
+
+    /**
+     * Get livestock recorded by this user.
+     */
+    public function livestockRecorded(): HasMany
+    {
+        return $this->hasMany(Livestock::class, 'recorded_by', 'id');
+    }
+
+    /**
+     * Get system logs created by this user.
+     */
+    public function systemLogs(): HasMany
+    {
+        return $this->hasMany(SystemLog::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get notifications for this user.
+     */
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'user_id', 'id');
     }
 
     /**
      * Get all announcements read by this user.
      */
-    public function announcementReads()
+    public function announcementReads(): HasMany
     {
-        return $this->hasMany(AnnouncementRead::class);
+        return $this->hasMany(AnnouncementRead::class, 'user_id', 'id');
     }
 
     /**

@@ -14,6 +14,7 @@
         'livestock_inspector' => 'Livestock Inspector',
         'meat_inspector' => 'Meat Inspector',
         'records_staff' => 'Records Staff',
+        'city_pound' => 'City Pound Personnel',
         'citizen' => 'Citizen',
     ];
 

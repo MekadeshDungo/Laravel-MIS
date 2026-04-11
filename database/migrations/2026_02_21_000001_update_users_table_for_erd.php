@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('admin_users', function (Blueprint $table) {
             // Add full_name column after name (only if it doesn't exist)
-            if (!Schema::hasColumn('users', 'full_name')) {
+            if (!Schema::hasColumn('admin_users', 'full_name')) {
                 $table->string('full_name')->nullable()->after('name');
             }
 
             // Add role column if it doesn't exist (using enum in main users table)
-            if (!Schema::hasColumn('users', 'role')) {
+            if (!Schema::hasColumn('admin_users', 'role')) {
                 $table->enum('role', [
                     'super_admin',
                     'admin',
@@ -35,7 +35,7 @@ return new class extends Migration
             }
 
             // Add secondary_role column if it doesn't exist
-            if (!Schema::hasColumn('users', 'secondary_role')) {
+            if (!Schema::hasColumn('admin_users', 'secondary_role')) {
                 $table->enum('secondary_role', [
                     'super_admin',
                     'admin',
@@ -51,7 +51,7 @@ return new class extends Migration
             }
 
             // Add barangay_id foreign key (only if it doesn't exist)
-            if (!Schema::hasColumn('users', 'barangay_id')) {
+            if (!Schema::hasColumn('admin_users', 'barangay_id')) {
                 $table->unsignedBigInteger('barangay_id')->nullable();
                 $table->foreign('barangay_id')
                     ->references('barangay_id')
@@ -60,14 +60,9 @@ return new class extends Migration
             }
 
             // Add status column (only if it doesn't exist)
-            if (!Schema::hasColumn('users', 'status')) {
+            if (!Schema::hasColumn('admin_users', 'status')) {
                 $table->enum('status', ['active', 'inactive'])->default('active')->after('barangay_id');
             }
-
-            // Add indexes for common queries
-            $table->index('role');
-            $table->index('barangay_id');
-            $table->index('status');
         });
     }
 
@@ -76,7 +71,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('admin_users', function (Blueprint $table) {
             $table->dropForeign(['barangay_id']);
             $table->dropColumn(['full_name', 'role', 'secondary_role', 'barangay_id', 'status']);
             $table->dropIndex(['role']);

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('rabies_vaccination_reports', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('admin_users')->onDelete('cascade');
             $table->string('clinic_name');
             $table->string('patient_name');
             $table->string('patient_contact');

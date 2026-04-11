@@ -144,7 +144,7 @@
     <section class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @php
-                $pets = \App\Models\Animal::where('client_id', \App\Models\Client::where('email', auth()->user()->email)->first()->client_id ?? 0)->get();
+                $pets = \App\Models\Pet::where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
             @endphp
             
             @if($pets->count() > 0)
@@ -411,7 +411,7 @@
             
             // Calculate age
             let ageDisplay = 'Unknown';
-            if (pet.estimated_age) {
+            if (pet.age) {
                 const ageMap = {
                     'less_than_3_months': 'Less than 3 months',
                     '3_to_12_months': '3 to 12 months',
@@ -426,7 +426,7 @@
                     '9_years': '9 years old',
                     '10_years': '10 years old',
                 };
-                ageDisplay = ageMap[pet.estimated_age] || pet.estimated_age;
+                ageDisplay = ageMap[pet.age] || pet.age;
             } else if (pet.birthdate) {
                 const birthYear = new Date(pet.birthdate).getFullYear();
                 const age = new Date().getFullYear() - birthYear;
@@ -434,7 +434,7 @@
             }
             document.getElementById('modalPetAge').textContent = ageDisplay;
             
-            document.getElementById('modalPetWeight').textContent = pet.pet_weight ? pet.pet_weight + ' kg' : 'N/A';
+            document.getElementById('modalPetWeight').textContent = pet.weight ? pet.weight + ' kg' : 'N/A';
             document.getElementById('modalPetNeutered').textContent = pet.is_neutered === 'yes' ? 'Yes' : 'No';
             document.getElementById('modalPetCrossbreed').textContent = pet.is_crossbreed === 'yes' ? 'Yes' : 'No';
             

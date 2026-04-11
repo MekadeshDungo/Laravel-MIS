@@ -88,12 +88,7 @@
 
 <body class="bg-slate-50 m-0 p-0 min-h-screen">
 @php
-    $role = auth()->user()->role ?? 'admin';
-    $annPrefix = ($role === 'super_admin') ? 'super-admin' : 'admin';
-    $canManageAnnouncements = in_array($role, ['admin', 'super_admin']);
-    $unreadAnnouncements = \App\Models\Announcement::where('created_at', '>=', now()->subDays(7))
-        ->whereDoesntHave('reads', function($query) { $query->where('user_id', auth()->id()); })
-        ->count();
+    $role = auth()->check() ? auth()->user()->role : null;
 @endphp
 
     <!-- Mobile Header -->
@@ -139,13 +134,13 @@
         </div>
 
         @php
-            $role = auth()->user()->role ?? 'admin';
+            $role = auth()->check() ? auth()->user()->role : null;
             $routeMap = [
                 'super_admin'      => 'super-admin',
                 'admin'            => 'admin',
                 'city_vet'         => 'city-vet',
                 'admin_staff'      => 'admin-staff',
-                'admin_asst'       => 'admin-staff',
+                'admin_asst'       => 'admin-asst',
                 'assistant_vet'    => 'assistant-vet',
                 'livestock_inspector' => 'livestock',
                 'meat_inspector'   => 'meat-inspection',
@@ -164,7 +159,7 @@
                 <span>Dashboard</span>
             </a>
 
-            @if(auth()->user()->role === 'super_admin')
+            @if(auth()->check() && auth()->user()->role === 'super_admin')
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">System Admin</div>
 
@@ -178,7 +173,7 @@
                 <i class="bi bi-megaphone"></i><span>Announcements</span>
             </a>
 
-            @elseif(auth()->user()->role === 'admin')
+            @elseif(auth()->check() && auth()->user()->role === 'admin')
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Operations</div>
 
@@ -188,14 +183,11 @@
             <a href="{{ route('admin.system-logs.index') }}" class="nav-item {{ request()->routeIs('admin.system-logs.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-journal-text"></i><span>System Logs</span>
             </a>
-            <a href="{{ route('admin.announcements.index') }}" class="nav-item {{ request()->routeIs('admin.announcements.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-megaphone"></i><span>Announcements</span>
-            </a>
 
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Reports</div>
 
-            <a href="{{ route('admin.bite-reports.index') }}" class="nav-item {{ request()->routeIs('admin.bite-reports.*') ? 'active-nav' : '' }}">
+
                 <i class="bi bi-exclamation-triangle"></i><span>Animal Bite Reports</span>
             </a>
             <a href="{{ route('admin.vaccination-reports.index') }}" class="nav-item {{ request()->routeIs('admin.vaccination-reports.*') ? 'active-nav' : '' }}">
@@ -208,16 +200,20 @@
                 <i class="bi bi-file-earmark-bar-graph"></i><span>All Reports</span>
             </a>
 
-            @elseif(auth()->user()->role === 'city_vet')
+            @elseif(auth()->check() && auth()->user()->role === 'city_vet')
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Rabies Control</div>
 
             <a href="{{ route('city-vet.rabies-geomap') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-geomap') ? 'active-nav' : '' }}">
                 <i class="bi bi-map"></i><span>Rabies Geomap</span>
             </a>
-            <a href="{{ route('city-vet.rabies-cases.index') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-cases.*') ? 'active-nav' : '' }}">
+            <!-- TODO: Re-enable if needed -->
+            <!-- <a href="{{ route('city-vet.exposure-cases.index') }}" class="nav-item {{ request()->routeIs('city-vet.exposure-cases.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-shield-exclamation"></i><span>Exposure Cases</span>
+            </a> -->
+            <!-- <a href="{{ route('city-vet.rabies-cases.index') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-cases.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-exclamation-triangle"></i><span>Rabies Cases</span>
-            </a>
+            </a> -->
             <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-bite-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-virus"></i><span>Bite & Rabies Reports</span>
             </a>
@@ -243,7 +239,7 @@
                 <i class="bi bi-file-earmark-bar-graph"></i><span>Analytics & Reports</span>
             </a>
 
-            @elseif(auth()->user()->role === 'admin_staff')
+            @elseif(auth()->check() && auth()->user()->role === 'admin_staff')
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Records</div>
 
@@ -261,26 +257,36 @@
             </a>
 
             <div class="sidebar-divider"></div>
+            <div class="sidebar-section-label">Missing Pets</div>
+
+            <a href="{{ route('admin-staff.missing-pets.index') }}" class="nav-item {{ request()->routeIs('admin-staff.missing-pets.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-exclamation-triangle"></i><span>Missing Pets</span>
+            </a>
+
+            <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Adoption</div>
 
-            <a href="{{ route('admin-staff.adoptions.index') }}" class="nav-item {{ request()->routeIs('admin-staff.adoptions.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-hearts"></i><span>Adoption Requests</span>
+            <a href="{{ route('admin-staff.adoption-pets.index') }}" class="nav-item {{ request()->routeIs('admin-staff.adoption-pets.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-hearts"></i><span>Adoption Pets</span>
+            </a>
+            <a href="{{ route('admin-staff.adoption-pets.create') }}" class="nav-item {{ request()->routeIs('admin-staff.adoption-pets.create') ? 'active-nav' : '' }}">
+                <i class="bi bi-plus-circle"></i><span>Add Pet for Adoption</span>
             </a>
 
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Medical</div>
 
-            <a href="{{ route('admin-staff.medical-records.index') }}" class="nav-item {{ request()->routeIs('admin-staff.medical-records.*') ? 'active-nav' : '' }}">
+            <a href="{{ route('assistant-vet.medical-records.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.medical-records.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-file-medical"></i><span>Medical & Vaccination Records</span>
             </a>
 
-            @elseif(auth()->user()->role === 'assistant_vet')
+            @elseif(auth()->check() && auth()->user()->role === 'assistant_vet')
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Clinical</div>
 
-            <a href="{{ route('assistant-vet.rabies-cases.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.rabies-cases.*') ? 'active-nav' : '' }}">
+            <!-- <a href="{{ route('assistant-vet.rabies-cases.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.rabies-cases.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-exclamation-triangle"></i><span>Rabies Cases</span>
-            </a>
+            </a> -->
             <a href="{{ route('assistant-vet.rabies-bite-reports.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.rabies-bite-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-file-medical"></i><span>Bite Reports</span>
             </a>
@@ -291,54 +297,82 @@
                 <i class="bi bi-heart"></i><span>Spay/Neuter</span>
             </a>
 
-            @elseif(auth()->user()->role === 'meat_inspector')
+            @elseif(auth()->check() && auth()->user()->role === 'admin_asst')
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-label">Gatekeeper</div>
+
+            <a href="{{ route('admin-asst.pet-registrations.index') }}" class="nav-item {{ request()->routeIs('admin-asst.pet-registrations.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-paw"></i><span>Pet Registrations</span>
+            </a>
+            <a href="{{ route('admin-asst.adoptions.index') }}" class="nav-item {{ request()->routeIs('admin-asst.adoptions.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-heart-fill"></i><span>Adoptions</span>
+            </a>
+            <a href="{{ route('admin-asst.missing-pets.index') }}" class="nav-item {{ request()->routeIs('admin-asst.missing-pets.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-search"></i><span>Missing Pets</span>
+            </a>
+
+            @elseif(auth()->check() && auth()->user()->role === 'meat_inspector')
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Meat Inspection</div>
 
-            <a href="{{ route('meat-inspection.dashboard') }}" class="nav-item {{ request()->routeIs('meat-inspection.dashboard') ? 'active-nav' : '' }}">
-                <i class="bi bi-clipboard-check"></i><span>Inspection Reports</span>
+            <a href="{{ route('meat-inspection.meat-shop.index') }}" class="nav-item {{ request()->routeIs('meat-inspection.meat-shop.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-shop"></i><span>Shop Inspections</span>
             </a>
-            <a href="{{ route('meat-inspection.reports.create') }}" class="nav-item {{ request()->routeIs('meat-inspection.reports.create') ? 'active-nav' : '' }}">
-                <i class="bi bi-plus-circle"></i><span>New Inspection</span>
-            </a>
-            <a href="{{ route('meat-inspection.reports.index') }}" class="nav-item {{ request()->routeIs('meat-inspection.reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-list-ul"></i><span>All Reports</span>
-            </a>
-            <a href="{{ route('establishments.index') }}" class="nav-item {{ request()->routeIs('establishments.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-shop"></i><span>Meat Establishments</span>
+            <a href="{{ route('meat-inspection.establishments.index') }}" class="nav-item {{ request()->routeIs('meat-inspection.establishments.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-shop-window"></i><span>Register Shop</span>
             </a>
 
-            @elseif(auth()->user()->role === 'livestock_inspector')
+            @elseif(auth()->check() && auth()->user()->role === 'livestock_inspector')
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Livestock</div>
 
             <a href="{{ route('livestock.dashboard') }}" class="nav-item {{ request()->routeIs('livestock.dashboard') ? 'active-nav' : '' }}">
                 <i class="bi bi-speedometer2"></i><span>Dashboard</span>
             </a>
-            <a href="{{ route('livestock-census.index') }}" class="nav-item {{ request()->routeIs('livestock-census.*') ? 'active-nav' : '' }}">
+            <a href="{{ route('livestock.census') }}" class="nav-item {{ request()->routeIs('livestock.census') ? 'active-nav' : '' }}">
                 <i class="bi bi-bar-chart-line"></i><span>Livestock Census</span>
             </a>
-            <a href="{{ route('livestock.index') }}" class="nav-item {{ request()->routeIs('livestock.*') ? 'active-nav' : '' }}">
+            <a href="{{ route('livestock.index') }}" class="nav-item {{ request()->routeIs('livestock.index') ? 'active-nav' : '' }}">
                 <i class="bi bi-list-check"></i><span>Livestock Records</span>
             </a>
-            <a href="{{ route('establishments.index') }}" class="nav-item {{ request()->routeIs('establishments.*') ? 'active-nav' : '' }}">
+            <a href="{{ route('establishments.index') }}" class="nav-item {{ request()->routeIs('establishments.index') && !request()->routeIs('meat-inspection.establishments.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-shop"></i><span>Business Profiling</span>
+            </a>
+
+            @elseif(auth()->check() && auth()->user()->role === 'veterinarian')
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-label">Clinic Portal</div>
+
+            <a href="{{ route('clinic.dashboard') }}" class="nav-item {{ request()->routeIs('clinic.dashboard') ? 'active-nav' : '' }}">
+                <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+            </a>
+
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-label">Reports</div>
+
+            <a href="{{ route('clinic.bite-reports.index') }}" class="nav-item {{ request()->routeIs('clinic.bite-reports.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-exclamation-triangle"></i><span>Bite Reports</span>
+            </a>
+            <a href="{{ route('clinic.bite-reports.create') }}" class="nav-item {{ request()->routeIs('clinic.bite-reports.create') ? 'active-nav' : '' }}">
+                <i class="bi bi-plus-circle"></i><span>Submit Bite Report</span>
+            </a>
+            <a href="{{ route('clinic.vaccination-reports.index') }}" class="nav-item {{ request()->routeIs('clinic.vaccination-reports.*') ? 'active-nav' : '' }}">
+                <i class="bi bi-eyedropper"></i><span>Vaccination Reports</span>
+            </a>
+            <a href="{{ route('clinic.vaccination-reports.create') }}" class="nav-item {{ request()->routeIs('clinic.vaccination-reports.create') ? 'active-nav' : '' }}">
+                <i class="bi bi-plus-circle"></i><span>New Vaccination</span>
             </a>
 
             @else
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Information</div>
-
-            <a href="{{ route('announcements.portal.index') }}" class="nav-item {{ request()->routeIs('announcements.portal.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-megaphone"></i><span>Announcements</span>
-            </a>
             @endif
 
             <div class="sidebar-divider"></div>
-            <div class="px-2 pt-2">
+            <div class="px-2 pt-2 mt-auto flex justify-center">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="nav-item w-full">
+                    <button type="submit" class="nav-item">
                         <i class="bi bi-box-arrow-right"></i><span>Logout</span>
                     </button>
                 </form>
@@ -357,45 +391,6 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open; fetch('{{ route('announcements.markAsRead') }}', {method: 'POST', headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}});" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg relative transition">
-                            <i class="bi bi-bell text-lg"></i>
-                            @if($unreadAnnouncements > 0)
-                            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-                            @endif
-                        </button>
-
-                        <div x-show="open" @click.away="open = false"
-                             class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50"
-                             style="display: none;">
-                            <div class="px-4 py-2 border-b border-slate-100">
-                                <h4 class="font-semibold text-slate-800 text-sm">Announcements</h4>
-                            </div>
-                            <div class="max-h-64 overflow-y-auto">
-                                @forelse(\App\Models\Announcement::latest()->take(5)->get() as $announcement)
-                                    @if($canManageAnnouncements)
-                                        <a href="{{ route($annPrefix . '.announcements.show', $announcement->id) }}" class="block px-4 py-3 hover:bg-slate-50 border-b border-slate-50 last:border-0 transition">
-                                            <p class="text-sm font-semibold text-slate-800">{{ $announcement->title }}</p>
-                                            <p class="text-xs text-slate-500 mt-1">{{ Str::limit($announcement->content, 80) }}</p>
-                                            <p class="text-xs text-slate-400 mt-1">{{ $announcement->created_at->diffForHumans() }}</p>
-                                        </a>
-                                    @else
-                                        <a href="{{ route('announcements.portal.index') }}" class="block px-4 py-3 hover:bg-slate-50 border-b border-slate-50 last:border-0 transition">
-                                            <p class="text-sm font-semibold text-slate-800">{{ $announcement->title }}</p>
-                                            <p class="text-xs text-slate-500 mt-1">{{ Str::limit($announcement->content, 80) }}</p>
-                                            <p class="text-xs text-slate-400 mt-1">{{ $announcement->created_at->diffForHumans() }}</p>
-                                        </a>
-                                    @endif
-                                @empty
-                                <div class="px-4 py-8 text-center text-slate-400">
-                                    <i class="bi bi-bell-slash text-2xl mb-2 block"></i>
-                                    <p class="text-sm">No announcements</p>
-                                </div>
-                                @endforelse
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="flex items-center gap-2 pl-3 border-l border-slate-200">
                         <div class="w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center">
                             <span class="text-white text-xs font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>

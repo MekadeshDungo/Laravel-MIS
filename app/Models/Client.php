@@ -90,15 +90,15 @@ class Client extends Model
      */
     public function pets(): HasMany
     {
-        return $this->hasMany(Animal::class, 'client_id', 'client_id');
+        return $this->hasMany(Pet::class, 'client_id', 'client_id');
     }
 
     /**
-     * Get the animals owned by this client.
+     * Get the pets owned by this client.
      */
     public function animals(): HasMany
     {
-        return $this->hasMany(Animal::class, 'client_id', 'client_id');
+        return $this->hasMany(Pet::class, 'client_id', 'client_id');
     }
 
     /**

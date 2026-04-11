@@ -113,6 +113,20 @@ class OtpController extends Controller
 
         // Clear session
         session()->forget('email');
+        
+        // Check if this was from registration
+        $wasRegistration = session('registration_pending');
+        session()->forget('registration_pending');
+
+        if ($wasRegistration) {
+            // Send welcome email after verification
+            try {
+                Mail::to($user->email)->send(new \App\Mail\WelcomeMail($user));
+            } catch (\Exception $e) {
+                \Log::warning('Welcome email could not be sent: ' . $e->getMessage());
+            }
+            return redirect()->route('owner.dashboard')->with('success', 'Email verified successfully! Welcome to Vet MIS.');
+        }
 
         return redirect()->route('owner.dashboard')->with('success', 'Email verified successfully!');
     }

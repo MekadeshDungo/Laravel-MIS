@@ -9,32 +9,35 @@ class RabiesCase extends Model
 {
     use HasFactory;
 
-    protected $table = 'rabies_cases';
+    protected $table = 'bite_rabies_reports';
 
     protected $fillable = [
-        'case_number',
-        'case_type',
-        'species',
-        'animal_name',
-        'owner_id',
-        'owner_name',
-        'owner_contact',
-        'address',
+        'report_number',
+        'patient_name',
+        'age',
+        'gender',
+        'patient_address',
+        'patient_contact',
         'barangay_id',
-        'user_id',
-        'rabies_report_id',
         'incident_date',
-        'incident_location',
+        'exposure_type',
+        'bite_site',
+        'category',
+        'animal_type',
+        'animal_status',
+        'vaccination_status',
+        'animal_owner_name',
+        'animal_owner_contact',
+        'reported_by',
+        'user_id',
+        'wound_management',
+        'post_exposure_prophylaxis',
+        'notes',
         'status',
-        'date_submitted',
-        'findings',
-        'actions_taken',
-        'remarks',
     ];
 
     protected $casts = [
         'incident_date' => 'date',
-        'date_submitted' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -46,16 +49,25 @@ class RabiesCase extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function owner()
-    {
-        return $this->belongsTo(Owner::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function rabiesReport()
     {
-        return $this->belongsTo(BiteRabiesReport::class, 'rabies_report_id');
+        return $this->belongsTo(BiteRabiesReport::class, 'report_number', 'report_number');
+    }
+
+    public static function generateCaseNumber(): string
+    {
+        $year = date('Y');
+        $lastCase = self::whereYear('created_at', $year)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $nextNumber = $lastCase
+            ? (int) substr($lastCase->report_number, -5) + 1
+            : 1;
+
+        return 'RAB-' . $year . '-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
     }
 }

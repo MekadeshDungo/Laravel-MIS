@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('admin_users', function (Blueprint $table) {
             // Drop the enum constraint and change to string
             $table->dropColumn('role');
             $table->string('role', 50)->default('viewer')->after('password');
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('admin_users', function (Blueprint $table) {
             $table->dropColumn('role');
             $table->enum('role', [
                 'super_admin',

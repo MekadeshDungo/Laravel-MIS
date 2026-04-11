@@ -101,7 +101,7 @@
                                 <td class="px-4 py-3 text-sm font-medium">#{{ $report->id }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($report->bite_date)->format('M d, Y') }}</td>
                                 <td class="px-4 py-3 text-sm">{{ $report->reporter_name }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->barangay }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->barangay?->barangay_name ?? $report->patient_barangay_id ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-sm">{{ $report->victim_name }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ ucfirst($report->animal_type) }}</td>
                                 <td class="px-4 py-3">

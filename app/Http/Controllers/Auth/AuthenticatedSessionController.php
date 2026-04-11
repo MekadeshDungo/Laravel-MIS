@@ -30,6 +30,14 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
+        // Check if user has verified their email
+        if (!$user->is_verified && $user->role === 'citizen') {
+            // Store email in session and redirect to OTP verification
+            session(['email' => $user->email]);
+            Auth::logout();
+            return redirect()->route('otp.verify.form')->with('info', 'Please verify your email first. An OTP has been sent to your email.');
+        }
+
         // Redirect based on user role
         return $this->redirectToDashboard($user);
     }
@@ -47,13 +55,18 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->intended('/city-vet/dashboard')
                     ->with('success', 'Welcome back, City Veterinarian ' . $user->name . '!');
             case 'admin_staff':
-            case 'admin_asst':
                 return redirect()->intended('/admin-staff/dashboard')
                     ->with('success', 'Welcome back, Admin Staff ' . $user->name . '!');
+            case 'admin_asst':
+                return redirect()->intended('/admin-asst/dashboard')
+                    ->with('success', 'Welcome back, Admin Assistant ' . $user->name . '!');
             case 'assistant_vet':
             case 'disease_control':
                 return redirect()->intended('/assistant-vet/dashboard')
                     ->with('success', 'Welcome back, Assistant Veterinarian ' . $user->name . '!');
+            case 'clinic':
+                return redirect()->intended('/clinic/dashboard')
+                    ->with('success', 'Welcome back, Clinic ' . $user->name . '!');
             case 'livestock_inspector':
                 return redirect()->intended('/livestock/dashboard')
                     ->with('success', 'Welcome back, Livestock Inspector ' . $user->name . '!');
@@ -65,7 +78,7 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->intended('/assistant-vet/dashboard')
                     ->with('success', 'Welcome back, Assistant Veterinarian ' . $user->name . '!');
             case 'citizen':
-                return redirect()->intended('/client/dashboard')
+                return redirect()->intended(route('owner.dashboard'))
                     ->with('success', 'Welcome back, Citizen ' . $user->name . '!');
             case 'viewer':
                 return redirect()->intended('/viewer/dashboard')

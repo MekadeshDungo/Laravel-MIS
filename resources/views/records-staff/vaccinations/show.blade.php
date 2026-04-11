@@ -7,7 +7,7 @@
 @section('content')
 <div class="p-4 md:p-6">
     <div class="flex items-center gap-4 mb-6">
-        <a href="{{ route('records-staff.vaccinations.index') }}" class="p-2 hover:bg-gray-100 rounded-lg transition">
+        <a href="{{ route('admin-staff.vaccinations.index') }}" class="p-2 hover:bg-gray-100 rounded-lg transition">
             <i class="bi bi-arrow-left text-gray-600"></i>
         </a>
         <div>

@@ -334,14 +334,27 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    function normalizeBarangayName(name) {
+        return name.toLowerCase()
+            .replace(/\s+/g, '')
+            .replace(/\(.*\)/, '')
+            .replace(/i$/, '1')
+            .replace(/ii$/, '2')
+            .replace(/iii$/, '3')
+            .replace(/iv$/, '4')
+            .replace(/v$/, '5');
+    }
+
     function updateMap(heatmapData) {
         var caseData = {};
-        heatmapData.forEach(function(item) { caseData[item.name.toLowerCase()] = item.count; });
+        heatmapData.forEach(function(item) {
+            caseData[normalizeBarangayName(item.name)] = item.count;
+        });
 
         var copy = JSON.parse(JSON.stringify(geojsonData));
         copy.features.forEach(function(f) {
-            var n = (f.properties.name || f.properties.barangay_name || '').toLowerCase();
-            f.properties.cases = caseData[n] || 0;
+            var name = normalizeBarangayName(f.properties.name || '');
+            f.properties.cases = caseData[name] || 0;
         });
 
         var polygons = { type: 'FeatureCollection', features: copy.features.filter(function(f) { return f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon'; }) };

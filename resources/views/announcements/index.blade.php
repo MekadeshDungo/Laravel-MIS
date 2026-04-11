@@ -15,11 +15,10 @@
     $publishedCount = Announcement::where('status', 'Published')->count();
     $draftCount = Announcement::where('status', 'Draft')->count();
     $archivedCount = Announcement::where('status', 'Archived')->count();
-    $urgentCount = Announcement::where('priority', 'Urgent')->count();
 @endphp
 
 <!-- Stats Cards -->
-<div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
         <div class="flex items-center justify-between">
             <div>
@@ -67,23 +66,11 @@
             </div>
         </div>
     </div>
-
-    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-xs font-medium text-gray-500">Urgent</p>
-                <p class="text-2xl font-bold text-danger mt-1">{{ $urgentCount }}</p>
-            </div>
-            <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                <i class="bi bi-exclamation-triangle text-danger text-xl"></i>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- Announcements Grid -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    @forelse(Announcement::orderedByPriority()->orderBy('publish_date', 'desc')->get() as $announcement)
+    @forelse(Announcement::orderBy('publish_date', 'desc')->get() as $announcement)
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group">
             <!-- Card Header with Image -->
             <div class="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
@@ -99,17 +86,6 @@
 
                 <!-- Badges Overlay -->
                 <div class="absolute top-3 left-3 flex gap-2 flex-wrap">
-                    <!-- Priority Badge -->
-                    @if($announcement->priority === 'Urgent')
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-danger text-white shadow-lg">
-                            <i class="bi bi-exclamation-triangle mr-1"></i> Urgent
-                        </span>
-                    @elseif($announcement->priority === 'Important')
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-warning text-dark shadow-lg">
-                            <i class="bi bi-flag mr-1"></i> Important
-                        </span>
-                    @endif
-
                     <!-- Status Badge -->
                     @if($announcement->status === 'Published')
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-success text-white shadow-lg">
@@ -134,13 +110,10 @@
                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
                         {{ $announcement->type ?? 'General' }}
                     </span>
-                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800 ml-1">
-                        <i class="bi bi-people mr-1"></i>{{ $announcement->audience ?? 'Public' }}
-                    </span>
                 </div>
 
                 <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">{{ $announcement->title }}</h3>
-                <p class="text-gray-600 mb-3 line-clamp-2 text-sm">{{ $announcement->content }}</p>
+                <p class="text-gray-600 mb-3 line-clamp-2 text-sm">{{ $announcement->body }}</p>
 
                 <!-- Meta Info -->
                 <div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-4">

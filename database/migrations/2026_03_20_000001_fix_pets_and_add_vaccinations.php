@@ -36,8 +36,8 @@ return new class extends Migration
         });
 
         // Add foreign keys manually
-        DB::statement('ALTER TABLE vaccinations ADD CONSTRAINT vaccinations_pet_id_foreign FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE');
-        DB::statement('ALTER TABLE vaccinations ADD CONSTRAINT vaccinations_vaccinated_by_foreign FOREIGN KEY (vaccinated_by) REFERENCES users(id) ON DELETE CASCADE');
+        DB::statement('ALTER TABLE vaccinations ADD CONSTRAINT vaccinations_pet_id_foreign FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE');
+        DB::statement('ALTER TABLE vaccinations ADD CONSTRAINT vaccinations_vaccinated_by_foreign FOREIGN KEY (vaccinated_by) REFERENCES admin_users(id) ON DELETE CASCADE');
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }

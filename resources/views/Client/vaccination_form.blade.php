@@ -160,9 +160,9 @@
                                 <span class="text-gray-500 text-xs ml-2">(First name and Last name)</span>
                             </label>
                             <div class="grid grid-cols-2 gap-4">
-                                <input type="text" name="owner_first_name" placeholder="First Name" value="{{ old('owner_first_name', $client->first_name ?? '') }}"
+                                <input type="text" name="owner_first_name" placeholder="First Name" value="{{ old('owner_first_name', $petOwner->first_name ?? '') }}"
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                <input type="text" name="owner_last_name" placeholder="Last Name" value="{{ old('owner_last_name', $client->last_name ?? '') }}"
+                                <input type="text" name="owner_last_name" placeholder="Last Name" value="{{ old('owner_last_name', $petOwner->last_name ?? '') }}"
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
                         </div>
@@ -185,7 +185,7 @@
                                 <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
                                     +63
                                 </span>
-                                <input type="tel" name="owner_contact" placeholder="943 210 2012" maxlength="12" value="{{ old('owner_contact', $client->phone_number ?? '') }}"
+                                <input type="tel" name="owner_contact" placeholder="943 210 2012" maxlength="12" value="{{ old('owner_contact', $petOwner->phone_number ?? '') }}"
                                        class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
                         </div>
@@ -199,7 +199,7 @@
                                 <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
                                     +63
                                 </span>
-                                <input type="tel" name="alt_mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('alt_mobile_number', $client->phone_number ?? '') }}"
+                                <input type="tel" name="alt_mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('alt_mobile_number', $petOwner->alternate_phone_number ?? '') }}"
                                        class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
                         </div>
@@ -209,7 +209,7 @@
                             <label class="block text-sm font-medium mb-1.5">
                                 House No. / Unit No. <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="house_no" placeholder="House No. / Unit No." value="{{ old('house_no', $client->house_no ?? '') }}"
+                            <input type="text" name="house_no" placeholder="House No. / Unit No." value="{{ old('house_no', $petOwner->house_no ?? '') }}"
                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                         </div>
 
@@ -218,7 +218,7 @@
                             <label class="block text-sm font-medium mb-1.5">
                                 Street <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="street" placeholder="Street" value="{{ old('street', $client->street ?? '') }}"
+                            <input type="text" name="street" placeholder="Street" value="{{ old('street', $petOwner->street ?? '') }}"
                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                         </div>
 
@@ -227,7 +227,7 @@
                             <label class="block text-sm font-medium mb-1.5">
                                 Barangay <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $client->barangay_id ?? '') }}"
+                            <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $petOwner->barangay ?? '') }}"
                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                         </div>
                     </div>
@@ -348,13 +348,13 @@
                                         @php
                                             $speciesDisplay = isset($pet['species']) ? ucfirst($pet['species']) : 'Unknown';
                                         @endphp
-                                        <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet['id'] }}">
-                                            <input type="checkbox" name="selected_pets[]" value="{{ $pet['id'] }}" 
+                                        <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet['pet_id'] }}">
+                                            <input type="checkbox" name="selected_pets[]" value="{{ $pet['pet_id'] }}" 
                                                    class="mt-1 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary pet-checkbox"
                                                    onchange="togglePetSelection(this)">
                                             <div class="ml-3 flex-1">
                                                 <div class="flex items-center justify-between">
-                                                    <span class="font-semibold text-gray-900 pet-name">{{ $pet['name'] }}</span>
+                                                    <span class="font-semibold text-gray-900 pet-name">{{ $pet['pet_name'] }}</span>
                                                     <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">{{ $speciesDisplay }}</span>
                                                 </div>
                                                 <div class="mt-1 text-xs text-gray-500">
@@ -363,9 +363,9 @@
                                                     <div class="text-gray-600">Weight: {{ isset($pet['weight']) ? (str_contains(strtolower($pet['weight']), 'kg') || strtolower($pet['weight']) == 'n/a' ? $pet['weight'] : $pet['weight'] . ' kg') : 'Unknown' }}</div>
                                                 </div>
                                             </div>
-                                            @if(!empty($pet['image']))
+                                            @if(!empty($pet['pet_image']))
                                             <div class="ml-2 flex-shrink-0">
-                                                <img src="{{ asset('storage/' . $pet['image']) }}" alt="{{ $pet['name'] }}" class="w-12 h-12 rounded-full object-cover">
+                                                <img src="{{ asset('storage/' . $pet['pet_image']) }}" alt="{{ $pet['pet_name'] }}" class="w-12 h-12 rounded-full object-cover">
                                             </div>
                                             @endif
                                         </label>

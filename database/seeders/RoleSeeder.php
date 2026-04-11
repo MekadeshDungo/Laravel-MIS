@@ -59,6 +59,10 @@ class RoleSeeder extends Seeder
                 'description' => 'Veterinarian (Clinic) - Veterinary clinic operations',
             ],
             [
+                'role_name' => 'clinic',
+                'description' => 'External Vet Clinic/Hospital - Submit bite and vaccination reports',
+            ],
+            [
                 'role_name' => 'viewer',
                 'description' => 'Viewer (Read-only) - Can view reports and dashboards only',
             ],

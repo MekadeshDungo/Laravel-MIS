@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Client;
 
-use App\Models\Animal;
+use App\Models\Pet;
+use App\Models\PetOwner;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,76 +11,101 @@ use Illuminate\Support\Facades\Auth;
 class PetController extends Controller
 {
     /**
-     * API: Display a listing of the user's animals.
+     * API: Display a listing of the user's pets.
      */
     public function index()
     {
         $user = Auth::user();
+        $petOwner = $user->petOwner;
 
-        // Get animals directly from user relationship
-        $animals = $user->animals()->get();
+        if (!$petOwner) {
+            return response()->json([
+                'success' => true,
+                'data' => []
+            ]);
+        }
+
+        $pets = Pet::where('owner_id', $petOwner->owner_id)->get();
 
         return response()->json([
             'success' => true,
-            'data' => $animals
+            'data' => $pets
         ]);
     }
 
     /**
-     * API: Display the specified animal.
+     * API: Display the specified pet.
      */
     public function show($id)
     {
         $user = Auth::user();
+        $petOwner = $user->petOwner;
 
-        $animal = Animal::where('id', $id)
-            ->where('owner_id', $user->id)
-            ->first();
-
-        if (!$animal) {
+        if (!$petOwner) {
             return response()->json([
                 'success' => false,
-                'message' => 'Animal not found.'
+                'message' => 'Pet owner not found.'
+            ], 404);
+        }
+
+        $pet = Pet::where('pet_id', $id)
+            ->where('owner_id', $petOwner->owner_id)
+            ->first();
+
+        if (!$pet) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pet not found.'
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'data' => $animal
+            'data' => $pet
         ]);
     }
 
     /**
-     * Show the edit form for an animal.
+     * Show the edit form for a pet.
      */
     public function edit($id)
     {
         $user = Auth::user();
+        $petOwner = $user->petOwner;
 
-        $animal = Animal::where('id', $id)
-            ->where('owner_id', $user->id)
-            ->first();
-
-        if (!$animal) {
-            return redirect()->route('owner.pets')->with('error', 'Animal not found.');
+        if (!$petOwner) {
+            return redirect()->route('owner.pets')->with('error', 'Pet owner not found.');
         }
 
-        return view('Client.edit_pet', compact('animal'));
+        $pet = Pet::where('pet_id', $id)
+            ->where('owner_id', $petOwner->owner_id)
+            ->first();
+
+        if (!$pet) {
+            return redirect()->route('owner.pets')->with('error', 'Pet not found.');
+        }
+
+        return view('Client.edit_pet', compact('pet'));
     }
 
     /**
-     * Update the animal.
+     * Update the pet.
      */
     public function update(Request $request, $id)
     {
         $user = Auth::user();
+        $petOwner = $user->petOwner;
 
-        $animal = Animal::where('id', $id)
-            ->where('owner_id', $user->id)
+        if (!$petOwner) {
+            return redirect()->route('owner.pets')->with('error', 'Pet owner not found.');
+        }
+
+        $pet = Pet::where('pet_id', $id)
+            ->where('owner_id', $petOwner->owner_id)
             ->first();
 
-        if (!$animal) {
-            return redirect()->route('owner.pets')->with('error', 'Animal not found.');
+        if (!$pet) {
+            return redirect()->route('owner.pets')->with('error', 'Pet not found.');
         }
 
         $validated = $request->validate([
@@ -95,59 +121,63 @@ class PetController extends Controller
 
         // Handle file uploads with error handling
         try {
-            if ($request->hasFile('pet_image') && $request->file('pet_image')->isValid()) {
-                $animal->pet_image = $request->file('pet_image')->store('pets', 'public');
+            if ($request->hasFile('pet_photo') && $request->file('pet_photo')->isValid()) {
+                $pet->pet_image = $request->file('pet_photo')->store('pets', 'public');
             }
         } catch (\Exception $e) {
-            // Log error but continue with other fields
-            \Log::warning('Animal image upload failed: ' . $e->getMessage());
+            \Log::warning('Pet image upload failed: ' . $e->getMessage());
         }
 
         try {
             if ($request->hasFile('body_mark_image') && $request->file('body_mark_image')->isValid()) {
-                $animal->body_mark_image = $request->file('body_mark_image')->store('pets/body-marks', 'public');
+                $pet->body_mark_image = $request->file('body_mark_image')->store('pets/body-marks', 'public');
             }
         } catch (\Exception $e) {
-            // Log error but continue with other fields
             \Log::warning('Body mark image upload failed: ' . $e->getMessage());
         }
 
-        // Update animal - map fields to match Animal model schema
-        $animal->update([
-            'name' => $validated['pet_name'],
+        // Update pet - map fields to match Pet model schema
+        $pet->update([
+            'pet_name' => $validated['pet_name'],
             'species' => $validated['pet_type'],
             'breed' => $validated['pet_breed'],
-            'gender' => $validated['gender'],
+            'sex' => $validated['gender'],
             'age' => $validated['estimated_age'] ?? null,
             'weight' => $validated['pet_weight'] ?? null,
             'body_mark_details' => $validated['body_mark_details'] ?? null,
+            'birthdate' => $validated['pet_birthdate'] ?? null,
         ]);
 
-        return redirect()->route('owner.pets')->with('success', 'Animal updated successfully!');
+        return redirect()->route('owner.pets')->with('success', 'Pet updated successfully!');
     }
 
     /**
-     * Delete the animal.
+     * Delete the pet.
      */
     public function destroy($id)
     {
         $user = Auth::user();
+        $petOwner = $user->petOwner;
 
-        $animal = Animal::where('id', $id)
-            ->where('owner_id', $user->id)
+        if (!$petOwner) {
+            return redirect()->route('owner.pets')->with('error', 'Pet owner not found.');
+        }
+
+        $pet = Pet::where('pet_id', $id)
+            ->where('owner_id', $petOwner->owner_id)
             ->first();
 
-        if (!$animal) {
-            return redirect()->route('owner.pets')->with('error', 'Animal not found.');
+        if (!$pet) {
+            return redirect()->route('owner.pets')->with('error', 'Pet not found.');
         }
 
-        // Delete the animal image if exists
-        if ($animal->pet_image) {
-            \Storage::disk('public')->delete($animal->pet_image);
+        // Delete the pet image if exists
+        if ($pet->pet_image) {
+            \Storage::disk('public')->delete($pet->pet_image);
         }
 
-        $animal->delete();
+        $pet->delete();
 
-        return redirect()->route('owner.pets')->with('success', 'Animal deleted successfully!');
+        return redirect()->route('owner.pets')->with('success', 'Pet deleted successfully!');
     }
 }

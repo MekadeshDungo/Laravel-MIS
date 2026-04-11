@@ -12,7 +12,7 @@
             <p class="text-gray-500 mt-1">Manage all rabies vaccination records</p>
         </div>
         <div class="mt-4 md:mt-0">
-            <a href="{{ route('records-staff.vaccinations.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            <a href="{{ route('admin-staff.vaccinations.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                 <i class="bi bi-plus-lg"></i>
                 Encode New Vaccination
             </a>
@@ -22,7 +22,7 @@
     <!-- Search and Filters -->
     <div class="bg-white rounded-xl shadow-sm mb-6">
         <div class="p-6">
-            <form method="GET" action="{{ route('records-staff.vaccinations.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <form method="GET" action="{{ route('admin-staff.vaccinations.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
                     <input type="text" name="search" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Patient, pet, or vaccine..." value="{{ $search }}">
@@ -88,7 +88,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-gray-500 text-sm">{{ $vaccination->user->name ?? 'N/A' }}</td>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('records-staff.vaccinations.show', $vaccination) }}" class="p-2 text-info hover:bg-info hover:bg-opacity-10 rounded-lg transition" title="View">
+                                    <a href="{{ route('admin-staff.vaccinations.show', $vaccination) }}" class="p-2 text-info hover:bg-info hover:bg-opacity-10 rounded-lg transition" title="View">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                 </td>
@@ -103,7 +103,7 @@
                 <div class="text-center py-12">
                     <i class="bi bi-shield-check text-5xl text-gray-300 mb-4"></i>
                     <p class="text-gray-500 mb-4">No vaccination records found.</p>
-                    <a href="{{ route('records-staff.vaccinations.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    <a href="{{ route('admin-staff.vaccinations.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                         <i class="bi bi-plus-lg"></i>
                         Encode First Vaccination
                     </a>

@@ -7,10 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use App\Models\User;
-use App\Models\Animal;
+use App\Models\Pet;
 use App\Models\Announcement;
 use App\Models\SystemLog;
-use App\Models\RabiesCase;
 use App\Models\RabiesVaccinationReport;
 use App\Models\BiteRabiesReport;
 use App\Models\Barangay;
@@ -47,10 +46,10 @@ class SuperAdminController extends Controller
 
             // Client & Animal statistics
             'total_clients' => User::where('role', 'citizen')->count(),
-            'total_animals' => Animal::count(),
+            'total_animals' => Pet::count(),
 
             // Case statistics
-            'total_rabies_cases' => RabiesCase::whereYear('incident_date', $year)->count(),
+            'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
             'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
             'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
 
@@ -77,7 +76,7 @@ class SuperAdminController extends Controller
             ->toArray();
 
         // Get monthly rabies cases trend
-        $monthlyRabiesCases = RabiesCase::selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
+        $monthlyRabiesCases = BiteRabiesReport::selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
             ->whereYear('incident_date', $year)
             ->groupBy('month')
             ->pluck('count', 'month')
@@ -105,8 +104,8 @@ class SuperAdminController extends Controller
         $stats = [
             'total_users' => User::count(),
             'total_clients' => User::where('role', 'citizen')->count(),
-            'total_animals' => Animal::count(),
-            'total_rabies_cases' => RabiesCase::whereYear('incident_date', $year)->count(),
+            'total_animals' => Pet::count(),
+            'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
             'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
             'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
             'total_barangays' => Barangay::count(),
@@ -209,7 +208,7 @@ class SuperAdminController extends Controller
                 break;
 
             case 'rabies':
-                $data = RabiesCase::with('barangay')
+                $data = BiteRabiesReport::with('barangay')
                     ->whereYear('incident_date', $year)
                     ->get()
                     ->toArray();
@@ -237,8 +236,8 @@ class SuperAdminController extends Controller
                     'period' => $year,
                     'total_users' => User::count(),
                     'total_clients' => User::where('role', 'citizen')->count(),
-                    'total_animals' => Animal::count(),
-                    'total_rabies_cases' => RabiesCase::whereYear('incident_date', $year)->count(),
+                    'total_animals' => Pet::count(),
+            'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
                     'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
             'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
                     'total_barangays' => Barangay::count(),

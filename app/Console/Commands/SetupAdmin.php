@@ -20,11 +20,11 @@ class SetupAdmin extends Command
         $this->info('Sessions cleared.');
 
         // Delete any existing admin users
-        DB::table('users')->where('email', 'admin@vetmis.com')->delete();
+        DB::table('admin_users')->where('email', 'admin@vetmis.com')->delete();
         $this->info('Old admin user deleted.');
 
         // Create new admin user
-        DB::table('users')->insert([
+        DB::table('admin_users')->insert([
             'name' => 'Administrator',
             'email' => 'admin@vetmis.com',
             'password' => Hash::make('admin123'),

@@ -112,15 +112,15 @@
                         
                         <div class="mb-3">
                             <label class="form-label">Owner <span class="text-danger">*</span></label>
-                            <select name="owner_id" class="form-select @error('owner_id') is-invalid @enderror" required>
+                            <select name="client_id" class="form-select @error('client_id') is-invalid @enderror" required>
                                 <option value="">Select Owner</option>
                                 @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ old('owner_id') == $user->id ? 'selected' : '' }}>
+                                    <option value="{{ $user->id }}" {{ old('client_id') == $user->id ? 'selected' : '' }}>
                                         {{ $user->name }} @if($user->email)({{ $user->email }})@endif
                                     </option>
                                 @endforeach
                             </select>
-                            @error('owner_id')
+                            @error('client_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

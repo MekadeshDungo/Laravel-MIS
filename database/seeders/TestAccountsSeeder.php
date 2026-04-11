@@ -26,7 +26,7 @@ class TestAccountsSeeder extends Seeder
                 'password' => bcrypt('password123'),
                 'role' => 'super_admin',
                 'status' => 'active',
-                'contact_number' => '091988877701',
+                'contact_number' => '09198887701',
                 'address' => 'IT Department, City Hall',
             ]
         );
@@ -57,7 +57,6 @@ class TestAccountsSeeder extends Seeder
                 'role' => 'admin_staff',
                 'status' => 'active',
                 'contact_number' => '091988877703',
-                'division' => 'Records Division',
                 'address' => 'City Veterinary Office',
             ]
         );
@@ -88,7 +87,6 @@ class TestAccountsSeeder extends Seeder
                 'role' => 'livestock_inspector',
                 'status' => 'active',
                 'contact_number' => '091988877705',
-                'division' => 'Livestock Division',
                 'address' => 'City Veterinary Office',
             ]
         );
@@ -104,7 +102,6 @@ class TestAccountsSeeder extends Seeder
                 'role' => 'meat_inspector',
                 'status' => 'active',
                 'contact_number' => '091988877706',
-                'division' => 'Meat Inspection Division',
                 'address' => 'City Slaughterhouse',
             ]
         );
@@ -150,8 +147,22 @@ class TestAccountsSeeder extends Seeder
                 'role' => 'admin_asst', // Legacy alias for admin_staff
                 'status' => 'active',
                 'contact_number' => '091988877709',
-                'division' => 'Records Division',
                 'address' => 'City Veterinary Office',
+            ]
+        );
+
+        // ==============================
+        // CLINIC ACCOUNT (External Vet Clinic)
+        // ==============================
+        User::firstOrCreate(
+            ['email' => 'clinic@vetmis.gov'],
+            [
+                'name' => 'City Pet Hospital',
+                'password' => bcrypt('password123'),
+                'role' => 'clinic',
+                'status' => 'active',
+                'contact_number' => '091988877710',
+                'address' => '123 Main Street, Dasmariñas City',
             ]
         );
 

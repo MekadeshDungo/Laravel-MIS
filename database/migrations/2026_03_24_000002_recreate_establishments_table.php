@@ -42,7 +42,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('barangay_id')->references('barangay_id')->on('barangays')->onDelete('set null');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('user_id')->references('id')->on('admin_users')->onDelete('set null');
         });
     }
 

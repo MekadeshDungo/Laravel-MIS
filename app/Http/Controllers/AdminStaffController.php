@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\Animal;
+use App\Models\Pet;
 use App\Models\Client;
 use App\Models\AdoptionRequest;
 
@@ -49,7 +49,7 @@ class AdminStaffController extends Controller
         // Note: adoption_requests table was dropped in migration
         // Keeping this as 0 for now - can be restored if needed
         $stats = [
-            'total_animals' => Animal::count(),
+            'total_animals' => Pet::count(),
             'total_owners' => Client::count(),
             'pending_adoptions' => 0, // Table was dropped in migration
         ];

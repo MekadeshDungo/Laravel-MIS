@@ -25,7 +25,7 @@ return new class extends Migration
             $table->date('expiry_date')->nullable();
             $table->foreignId('barangay_id')->nullable()->references('barangay_id')->on('barangays')->onDelete('set null');
             $table->enum('status', ['Active', 'Inactive', 'Out of Stock'])->default('Active');
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('admin_users')->onDelete('set null');
             $table->timestamps();
             
             $table->index('category');
@@ -40,7 +40,7 @@ return new class extends Migration
             $table->enum('movement_type', ['In', 'Out', 'Adjustment', 'Transfer']);
             $table->integer('quantity');
             $table->text('reason')->nullable();
-            $table->foreignId('performed_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('performed_by')->nullable()->constrained('admin_users')->onDelete('set null');
             $table->foreignId('barangay_id')->nullable()->references('barangay_id')->on('barangays')->onDelete('set null');
             $table->timestamps();
             

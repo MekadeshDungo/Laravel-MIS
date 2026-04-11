@@ -7,18 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Vaccination extends Model
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'vaccinations';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
     protected $fillable = [
         'pet_id',
         'vaccinated_by',
@@ -30,32 +20,23 @@ class Vaccination extends Model
         'notes',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'vaccination_date' => 'date',
-            'next_vaccination_date' => 'date',
-        ];
-    }
+    protected $casts = [
+        'vaccination_date' => 'date',
+        'next_vaccination_date' => 'date',
+    ];
 
-    /**
-     * Get the pet that was vaccinated.
-     */
     public function pet(): BelongsTo
     {
-        return $this->belongsTo(Animal::class);
+        return $this->belongsTo(Pet::class, 'pet_id');
     }
 
-    /**
-     * Get the user who administered the vaccination.
-     */
     public function vaccinatedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'vaccinated_by');
+        return $this->belongsTo(User::class, 'vaccinated_by', 'id');
+    }
+
+    public function veterinarian(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'vaccinated_by', 'id');
     }
 }

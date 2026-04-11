@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <nav class="flex items-center space-x-4">
-                    <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                    <a href="{{ route('owner.dashboard') }}" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">Log Out</button>
@@ -86,7 +86,7 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="mb-6">
-            <a href="{{ route('dashboard') }}" class="inline-flex items-center text-primary hover:text-primary-light">
+            <a href="{{ route('owner.dashboard') }}" class="inline-flex items-center text-primary hover:text-primary-light">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -149,15 +149,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">First Name</label>
-                            <p class="text-gray-900 font-medium">{{ (\App\Models\Client::where("email", $user->email)->first()->first_name ?? "N/A") ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->first_name ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Middle Name</label>
-                            <p class="text-gray-900 font-medium">{{ (\App\Models\Client::where("email", $user->email)->first()->middle_name ?? "N/A") ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->middle_name ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Last Name</label>
-                            <p class="text-gray-900 font-medium">{{ (\App\Models\Client::where("email", $user->email)->first()->last_name ?? "N/A") ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->last_name ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Date of Birth</label>
@@ -171,7 +171,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
-                            <p class="text-gray-900 font-medium">{{ (\App\Models\Client::where("email", $user->email)->first()->phone_number ?? "N/A") ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->phone_number ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>
@@ -183,15 +183,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                            <input type="text" name="first_name" value="{{ (\App\Models\Client::where("email", $user->email)->first()->first_name ?? "N/A") ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" name="first_name" value="{{ $user->petOwner->first_name ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
-                            <input type="text" name="middle_name" value="{{ (\App\Models\Client::where("email", $user->email)->first()->middle_name ?? "N/A") ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" name="middle_name" value="{{ $user->petOwner->middle_name ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                            <input type="text" name="last_name" value="{{ (\App\Models\Client::where("email", $user->email)->first()->last_name ?? "N/A") ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" name="last_name" value="{{ $user->petOwner->last_name ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
@@ -221,7 +221,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                            <input type="text" name="phone_number" value="{{ (\App\Models\Client::where("email", $user->email)->first()->phone_number ?? "N/A") ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" name="phone_number" value="{{ $user->petOwner->phone_number ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                     </div>
                     <div class="flex items-center gap-4 mt-6">
@@ -247,27 +247,27 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Block/Lot/Phase/House No.</label>
-                            <p class="text-gray-900 font-medium">{{ (\App\Models\Client::where("email", $user->email)->first()->house_no ?? "N/A") ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->house_no ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Street Name</label>
-                            <p class="text-gray-900 font-medium">{{ (\App\Models\Client::where("email", $user->email)->first()->street ?? "N/A") ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->street ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Subdivision</label>
-                            <p class="text-gray-900 font-medium">{{ (\App\Models\Client::where("email", $user->email)->first()->subdivision ?? "N/A") ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->subdivision ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Barangay</label>
-                            <p class="text-gray-900 font-medium">{{ (\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->barangay ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">City</label>
-                            <p class="text-gray-900 font-medium">{{ (\App\Models\Client::where("email", $user->email)->first()->city ?? "Dasmariñas City") ?? 'Dasmariñas City' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->city ?? 'Dasmariñas City' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Province</label>
-                            <p class="text-gray-900 font-medium">{{ (\App\Models\Client::where("email", $user->email)->first()->province ?? "Cavite") ?? 'Cavite' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $user->petOwner->province ?? 'Cavite' }}</p>
                         </div>
                     </div>
                 </div>
@@ -279,95 +279,95 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Block/Lot/Phase/House No.</label>
-                            <input type="text" name="house_no" value="{{ (\App\Models\Client::where("email", $user->email)->first()->house_no ?? "N/A") ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" name="house_no" value="{{ $user->petOwner->house_no ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Street Name</label>
-                            <input type="text" name="street" value="{{ (\App\Models\Client::where("email", $user->email)->first()->street ?? "N/A") ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" name="street" value="{{ $user->petOwner->street ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Subdivision</label>
-                            <input type="text" name="subdivision" value="{{ (\App\Models\Client::where("email", $user->email)->first()->subdivision ?? "N/A") ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <input type="text" name="subdivision" value="{{ $user->petOwner->subdivision ?? '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
                             <select name="barangay" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent appearance-none bg-white">
                                 <option value="">Select Barangay</option>
-                                <option value="Burol I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Burol I' ? 'selected' : '' }}>Burol I</option>
-                                <option value="Burol II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Burol II' ? 'selected' : '' }}>Burol II</option>
-                                <option value="Burol III" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Burol III' ? 'selected' : '' }}>Burol III</option>
-                                <option value="Burol Main" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Burol Main' ? 'selected' : '' }}>Burol Main</option>
-                                <option value="Datu Esmael (Bago-A-Ingud)" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Datu Esmael (Bago-A-Ingud)' ? 'selected' : '' }}>Datu Esmael (Bago-A-Ingud)</option>
-                                <option value="Emmanuel Bergaod I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Emmanuel Bergaod I' ? 'selected' : '' }}>Emmanuel Bergaod I</option>
-                                <option value="Emmanuel Bergaod II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Emmanuel Bergaod II' ? 'selected' : '' }}>Emmanuel Bergaod II</option>
-                                <option value="Fatima I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Fatima I' ? 'selected' : '' }}>Fatima I</option>
-                                <option value="Fatima II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Fatima II' ? 'selected' : '' }}>Fatima II</option>
-                                <option value="Fatima III" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Fatima III' ? 'selected' : '' }}>Fatima III</option>
-                                <option value="H-2 (Sta. Veronica)" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'H-2 (Sta. Veronica)' ? 'selected' : '' }}>H-2 (Sta. Veronica)</option>
-                                <option value="Langkaan I (Humayao)" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Langkaan I (Humayao)' ? 'selected' : '' }}>Langkaan I (Humayao)</option>
-                                <option value="Langkaan II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Langkaan II' ? 'selected' : '' }}>Langkaan II</option>
-                                <option value="Luzviminda I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Luzviminda I' ? 'selected' : '' }}>Luzviminda I</option>
-                                <option value="Luzviminda II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Luzviminda II' ? 'selected' : '' }}>Luzviminda II</option>
-                                <option value="Paliparan I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Paliparan I' ? 'selected' : '' }}>Paliparan I</option>
-                                <option value="Paliparan II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Paliparan II' ? 'selected' : '' }}>Paliparan II</option>
-                                <option value="Paliparan III" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Paliparan III' ? 'selected' : '' }}>Paliparan III</option>
-                                <option value="Sabang" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Sabang' ? 'selected' : '' }}>Sabang</option>
-                                <option value="Saint Peter I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Saint Peter I' ? 'selected' : '' }}>Saint Peter I</option>
-                                <option value="Saint Peter II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Saint Peter II' ? 'selected' : '' }}>Saint Peter II</option>
-                                <option value="Salawag" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Salawag' ? 'selected' : '' }}>Salawag</option>
-                                <option value="Salitran I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Salitran I' ? 'selected' : '' }}>Salitran I</option>
-                                <option value="Salitran II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Salitran II' ? 'selected' : '' }}>Salitran II</option>
-                                <option value="Salitran III" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Salitran III' ? 'selected' : '' }}>Salitran III</option>
-                                <option value="Salitran IV" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Salitran IV' ? 'selected' : '' }}>Salitran IV</option>
-                                <option value="Sampaloc I (Pala-Pala)" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Sampaloc I (Pala-Pala)' ? 'selected' : '' }}>Sampaloc I (Pala-Pala)</option>
-                                <option value="Sampaloc II (Bucal/Malinta)" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Sampaloc II (Bucal/Malinta)' ? 'selected' : '' }}>Sampaloc II (Bucal/Malinta)</option>
-                                <option value="Sampaloc III (Piela)" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Sampaloc III (Piela)' ? 'selected' : '' }}>Sampaloc III (Piela)</option>
-                                <option value="Sampaloc IV (Talisayan/Bautista)" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Sampaloc IV (Talisayan/Bautista)' ? 'selected' : '' }}>Sampaloc IV (Talisayan/Bautista)</option>
-                                <option value="Sampaloc V (New Era)" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Sampaloc V (New Era)' ? 'selected' : '' }}>Sampaloc V (New Era)</option>
-                                <option value="San Augustin I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Augustin I' ? 'selected' : '' }}>San Augustin I</option>
-                                <option value="San Augustin II (R. Tirona)" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Augustin II (R. Tirona)' ? 'selected' : '' }}>San Augustin II (R. Tirona)</option>
-                                <option value="San Augustin III" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Augustin III' ? 'selected' : '' }}>San Augustin III</option>
-                                <option value="San Andres I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Andres I' ? 'selected' : '' }}>San Andres I</option>
-                                <option value="San Andres II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Andres II' ? 'selected' : '' }}>San Andres II</option>
-                                <option value="San Antonio De Padua I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Antonio De Padua I' ? 'selected' : '' }}>San Antonio De Padua I</option>
-                                <option value="San Antonio De Padua II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Antonio De Padua II' ? 'selected' : '' }}>San Antonio De Padua II</option>
-                                <option value="San Dionisio" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Dionisio' ? 'selected' : '' }}>San Dionisio</option>
-                                <option value="San Esteban" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Esteban' ? 'selected' : '' }}>San Esteban</option>
-                                <option value="San Fransisco I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Fransisco I' ? 'selected' : '' }}>San Fransisco I</option>
-                                <option value="San Fransisco II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Fransisco II' ? 'selected' : '' }}>San Fransisco II</option>
-                                <option value="San Isidro Labrador I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Isidro Labrador I' ? 'selected' : '' }}>San Isidro Labrador I</option>
-                                <option value="San Isidro Labrador II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Isidro Labrador II' ? 'selected' : '' }}>San Isidro Labrador II</option>
-                                <option value="San Jose" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Jose' ? 'selected' : '' }}>San Jose</option>
-                                <option value="San Juan" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Juan' ? 'selected' : '' }}>San Juan</option>
-                                <option value="San Lorenzo Ruiz I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Lorenzo Ruiz I' ? 'selected' : '' }}>San Lorenzo Ruiz I</option>
-                                <option value="San Lorenzo Ruiz II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Lorenzo Ruiz II' ? 'selected' : '' }}>San Lorenzo Ruiz II</option>
-                                <option value="San Luis I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Luis I' ? 'selected' : '' }}>San Luis I</option>
-                                <option value="San Luis II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Luis II' ? 'selected' : '' }}>San Luis II</option>
-                                <option value="San Manuel I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Manuel I' ? 'selected' : '' }}>San Manuel I</option>
-                                <option value="San Manuel II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Manuel II' ? 'selected' : '' }}>San Manuel II</option>
-                                <option value="San Mateo" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Mateo' ? 'selected' : '' }}>San Mateo</option>
-                                <option value="San Miguel I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Miguel I' ? 'selected' : '' }}>San Miguel I</option>
-                                <option value="San Miguel II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Miguel II' ? 'selected' : '' }}>San Miguel II</option>
-                                <option value="San Nicolas I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Nicolas I' ? 'selected' : '' }}>San Nicolas I</option>
-                                <option value="San Nicolas II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Nicolas II' ? 'selected' : '' }}>San Nicolas II</option>
-                                <option value="San Roque" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Roque' ? 'selected' : '' }}>San Roque</option>
-                                <option value="San Simon" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'San Simon' ? 'selected' : '' }}>San Simon</option>
-                                <option value="Santa Cristina I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Santa Cristina I' ? 'selected' : '' }}>Santa Cristina I</option>
-                                <option value="Santa Cristina II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Santa Cristina II' ? 'selected' : '' }}>Santa Cristina II</option>
-                                <option value="Santa Cruz I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Santa Cruz I' ? 'selected' : '' }}>Santa Cruz I</option>
-                                <option value="Santa Cruz II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Santa Cruz II' ? 'selected' : '' }}>Santa Cruz II</option>
-                                <option value="Santa Fe" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
-                                <option value="Santa Lucia" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Santa Lucia' ? 'selected' : '' }}>Santa Lucia</option>
-                                <option value="Santa Maria" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Santa Maria' ? 'selected' : '' }}>Santa Maria</option>
-                                <option value="Santo Cristo" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Santo Cristo' ? 'selected' : '' }}>Santo Cristo</option>
-                                <option value="Santo Niño I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Santo Niño I' ? 'selected' : '' }}>Santo Niño I</option>
-                                <option value="Santo Niño II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Santo Niño II' ? 'selected' : '' }}>Santo Niño II</option>
-                                <option value="Victoria Reyes" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Victoria Reyes' ? 'selected' : '' }}>Victoria Reyes</option>
-                                <option value="Zone I" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Zone I' ? 'selected' : '' }}>Zone I</option>
-                                <option value="Zone I-A" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Zone I-A' ? 'selected' : '' }}>Zone I-A</option>
-                                <option value="Zone II" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Zone II' ? 'selected' : '' }}>Zone II</option>
-                                <option value="Zone III" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Zone III' ? 'selected' : '' }}>Zone III</option>
-                                <option value="Zone IV" {{ ((\App\Models\Client::where("email", $user->email)->first()->barangay_id ?? "") ?? '') == 'Zone IV' ? 'selected' : '' }}>Zone IV</option>
+                                <option value="Burol I" {{ ($user->petOwner->barangay ?? '') == 'Burol I' ? 'selected' : '' }}>Burol I</option>
+                                <option value="Burol II" {{ ($user->petOwner->barangay ?? '') == 'Burol II' ? 'selected' : '' }}>Burol II</option>
+                                <option value="Burol III" {{ ($user->petOwner->barangay ?? '') == 'Burol III' ? 'selected' : '' }}>Burol III</option>
+                                <option value="Burol Main" {{ ($user->petOwner->barangay ?? '') == 'Burol Main' ? 'selected' : '' }}>Burol Main</option>
+                                <option value="Datu Esmael (Bago-A-Ingud)" {{ ($user->petOwner->barangay ?? '') == 'Datu Esmael (Bago-A-Ingud)' ? 'selected' : '' }}>Datu Esmael (Bago-A-Ingud)</option>
+                                <option value="Emmanuel Bergaod I" {{ ($user->petOwner->barangay ?? '') == 'Emmanuel Bergaod I' ? 'selected' : '' }}>Emmanuel Bergaod I</option>
+                                <option value="Emmanuel Bergaod II" {{ ($user->petOwner->barangay ?? '') == 'Emmanuel Bergaod II' ? 'selected' : '' }}>Emmanuel Bergaod II</option>
+                                <option value="Fatima I" {{ ($user->petOwner->barangay ?? '') == 'Fatima I' ? 'selected' : '' }}>Fatima I</option>
+                                <option value="Fatima II" {{ ($user->petOwner->barangay ?? '') == 'Fatima II' ? 'selected' : '' }}>Fatima II</option>
+                                <option value="Fatima III" {{ ($user->petOwner->barangay ?? '') == 'Fatima III' ? 'selected' : '' }}>Fatima III</option>
+                                <option value="H-2 (Sta. Veronica)" {{ ($user->petOwner->barangay ?? '') == 'H-2 (Sta. Veronica)' ? 'selected' : '' }}>H-2 (Sta. Veronica)</option>
+                                <option value="Langkaan I (Humayao)" {{ ($user->petOwner->barangay ?? '') == 'Langkaan I (Humayao)' ? 'selected' : '' }}>Langkaan I (Humayao)</option>
+                                <option value="Langkaan II" {{ ($user->petOwner->barangay ?? '') == 'Langkaan II' ? 'selected' : '' }}>Langkaan II</option>
+                                <option value="Luzviminda I" {{ ($user->petOwner->barangay ?? '') == 'Luzviminda I' ? 'selected' : '' }}>Luzviminda I</option>
+                                <option value="Luzviminda II" {{ ($user->petOwner->barangay ?? '') == 'Luzviminda II' ? 'selected' : '' }}>Luzviminda II</option>
+                                <option value="Paliparan I" {{ ($user->petOwner->barangay ?? '') == 'Paliparan I' ? 'selected' : '' }}>Paliparan I</option>
+                                <option value="Paliparan II" {{ ($user->petOwner->barangay ?? '') == 'Paliparan II' ? 'selected' : '' }}>Paliparan II</option>
+                                <option value="Paliparan III" {{ ($user->petOwner->barangay ?? '') == 'Paliparan III' ? 'selected' : '' }}>Paliparan III</option>
+                                <option value="Sabang" {{ ($user->petOwner->barangay ?? '') == 'Sabang' ? 'selected' : '' }}>Sabang</option>
+                                <option value="Saint Peter I" {{ ($user->petOwner->barangay ?? '') == 'Saint Peter I' ? 'selected' : '' }}>Saint Peter I</option>
+                                <option value="Saint Peter II" {{ ($user->petOwner->barangay ?? '') == 'Saint Peter II' ? 'selected' : '' }}>Saint Peter II</option>
+                                <option value="Salawag" {{ ($user->petOwner->barangay ?? '') == 'Salawag' ? 'selected' : '' }}>Salawag</option>
+                                <option value="Salitran I" {{ ($user->petOwner->barangay ?? '') == 'Salitran I' ? 'selected' : '' }}>Salitran I</option>
+                                <option value="Salitran II" {{ ($user->petOwner->barangay ?? '') == 'Salitran II' ? 'selected' : '' }}>Salitran II</option>
+                                <option value="Salitran III" {{ ($user->petOwner->barangay ?? '') == 'Salitran III' ? 'selected' : '' }}>Salitran III</option>
+                                <option value="Salitran IV" {{ ($user->petOwner->barangay ?? '') == 'Salitran IV' ? 'selected' : '' }}>Salitran IV</option>
+                                <option value="Sampaloc I (Pala-Pala)" {{ ($user->petOwner->barangay ?? '') == 'Sampaloc I (Pala-Pala)' ? 'selected' : '' }}>Sampaloc I (Pala-Pala)</option>
+                                <option value="Sampaloc II (Bucal/Malinta)" {{ ($user->petOwner->barangay ?? '') == 'Sampaloc II (Bucal/Malinta)' ? 'selected' : '' }}>Sampaloc II (Bucal/Malinta)</option>
+                                <option value="Sampaloc III (Piela)" {{ ($user->petOwner->barangay ?? '') == 'Sampaloc III (Piela)' ? 'selected' : '' }}>Sampaloc III (Piela)</option>
+                                <option value="Sampaloc IV (Talisayan/Bautista)" {{ ($user->petOwner->barangay ?? '') == 'Sampaloc IV (Talisayan/Bautista)' ? 'selected' : '' }}>Sampaloc IV (Talisayan/Bautista)</option>
+                                <option value="Sampaloc V (New Era)" {{ ($user->petOwner->barangay ?? '') == 'Sampaloc V (New Era)' ? 'selected' : '' }}>Sampaloc V (New Era)</option>
+                                <option value="San Augustin I" {{ ($user->petOwner->barangay ?? '') == 'San Augustin I' ? 'selected' : '' }}>San Augustin I</option>
+                                <option value="San Augustin II (R. Tirona)" {{ ($user->petOwner->barangay ?? '') == 'San Augustin II (R. Tirona)' ? 'selected' : '' }}>San Augustin II (R. Tirona)</option>
+                                <option value="San Augustin III" {{ ($user->petOwner->barangay ?? '') == 'San Augustin III' ? 'selected' : '' }}>San Augustin III</option>
+                                <option value="San Andres I" {{ ($user->petOwner->barangay ?? '') == 'San Andres I' ? 'selected' : '' }}>San Andres I</option>
+                                <option value="San Andres II" {{ ($user->petOwner->barangay ?? '') == 'San Andres II' ? 'selected' : '' }}>San Andres II</option>
+                                <option value="San Antonio De Padua I" {{ ($user->petOwner->barangay ?? '') == 'San Antonio De Padua I' ? 'selected' : '' }}>San Antonio De Padua I</option>
+                                <option value="San Antonio De Padua II" {{ ($user->petOwner->barangay ?? '') == 'San Antonio De Padua II' ? 'selected' : '' }}>San Antonio De Padua II</option>
+                                <option value="San Dionisio" {{ ($user->petOwner->barangay ?? '') == 'San Dionisio' ? 'selected' : '' }}>San Dionisio</option>
+                                <option value="San Esteban" {{ ($user->petOwner->barangay ?? '') == 'San Esteban' ? 'selected' : '' }}>San Esteban</option>
+                                <option value="San Fransisco I" {{ ($user->petOwner->barangay ?? '') == 'San Fransisco I' ? 'selected' : '' }}>San Fransisco I</option>
+                                <option value="San Fransisco II" {{ ($user->petOwner->barangay ?? '') == 'San Fransisco II' ? 'selected' : '' }}>San Fransisco II</option>
+                                <option value="San Isidro Labrador I" {{ ($user->petOwner->barangay ?? '') == 'San Isidro Labrador I' ? 'selected' : '' }}>San Isidro Labrador I</option>
+                                <option value="San Isidro Labrador II" {{ ($user->petOwner->barangay ?? '') == 'San Isidro Labrador II' ? 'selected' : '' }}>San Isidro Labrador II</option>
+                                <option value="San Jose" {{ ($user->petOwner->barangay ?? '') == 'San Jose' ? 'selected' : '' }}>San Jose</option>
+                                <option value="San Juan" {{ ($user->petOwner->barangay ?? '') == 'San Juan' ? 'selected' : '' }}>San Juan</option>
+                                <option value="San Lorenzo Ruiz I" {{ ($user->petOwner->barangay ?? '') == 'San Lorenzo Ruiz I' ? 'selected' : '' }}>San Lorenzo Ruiz I</option>
+                                <option value="San Lorenzo Ruiz II" {{ ($user->petOwner->barangay ?? '') == 'San Lorenzo Ruiz II' ? 'selected' : '' }}>San Lorenzo Ruiz II</option>
+                                <option value="San Luis I" {{ ($user->petOwner->barangay ?? '') == 'San Luis I' ? 'selected' : '' }}>San Luis I</option>
+                                <option value="San Luis II" {{ ($user->petOwner->barangay ?? '') == 'San Luis II' ? 'selected' : '' }}>San Luis II</option>
+                                <option value="San Manuel I" {{ ($user->petOwner->barangay ?? '') == 'San Manuel I' ? 'selected' : '' }}>San Manuel I</option>
+                                <option value="San Manuel II" {{ ($user->petOwner->barangay ?? '') == 'San Manuel II' ? 'selected' : '' }}>San Manuel II</option>
+                                <option value="San Mateo" {{ ($user->petOwner->barangay ?? '') == 'San Mateo' ? 'selected' : '' }}>San Mateo</option>
+                                <option value="San Miguel I" {{ ($user->petOwner->barangay ?? '') == 'San Miguel I' ? 'selected' : '' }}>San Miguel I</option>
+                                <option value="San Miguel II" {{ ($user->petOwner->barangay ?? '') == 'San Miguel II' ? 'selected' : '' }}>San Miguel II</option>
+                                <option value="San Nicolas I" {{ ($user->petOwner->barangay ?? '') == 'San Nicolas I' ? 'selected' : '' }}>San Nicolas I</option>
+                                <option value="San Nicolas II" {{ ($user->petOwner->barangay ?? '') == 'San Nicolas II' ? 'selected' : '' }}>San Nicolas II</option>
+                                <option value="San Roque" {{ ($user->petOwner->barangay ?? '') == 'San Roque' ? 'selected' : '' }}>San Roque</option>
+                                <option value="San Simon" {{ ($user->petOwner->barangay ?? '') == 'San Simon' ? 'selected' : '' }}>San Simon</option>
+                                <option value="Santa Cristina I" {{ ($user->petOwner->barangay ?? '') == 'Santa Cristina I' ? 'selected' : '' }}>Santa Cristina I</option>
+                                <option value="Santa Cristina II" {{ ($user->petOwner->barangay ?? '') == 'Santa Cristina II' ? 'selected' : '' }}>Santa Cristina II</option>
+                                <option value="Santa Cruz I" {{ ($user->petOwner->barangay ?? '') == 'Santa Cruz I' ? 'selected' : '' }}>Santa Cruz I</option>
+                                <option value="Santa Cruz II" {{ ($user->petOwner->barangay ?? '') == 'Santa Cruz II' ? 'selected' : '' }}>Santa Cruz II</option>
+                                <option value="Santa Fe" {{ ($user->petOwner->barangay ?? '') == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
+                                <option value="Santa Lucia" {{ ($user->petOwner->barangay ?? '') == 'Santa Lucia' ? 'selected' : '' }}>Santa Lucia</option>
+                                <option value="Santa Maria" {{ ($user->petOwner->barangay ?? '') == 'Santa Maria' ? 'selected' : '' }}>Santa Maria</option>
+                                <option value="Santo Cristo" {{ ($user->petOwner->barangay ?? '') == 'Santo Cristo' ? 'selected' : '' }}>Santo Cristo</option>
+                                <option value="Santo Niño I" {{ ($user->petOwner->barangay ?? '') == 'Santo Niño I' ? 'selected' : '' }}>Santo Niño I</option>
+                                <option value="Santo Niño II" {{ ($user->petOwner->barangay ?? '') == 'Santo Niño II' ? 'selected' : '' }}>Santo Niño II</option>
+                                <option value="Victoria Reyes" {{ ($user->petOwner->barangay ?? '') == 'Victoria Reyes' ? 'selected' : '' }}>Victoria Reyes</option>
+                                <option value="Zone I" {{ ($user->petOwner->barangay ?? '') == 'Zone I' ? 'selected' : '' }}>Zone I</option>
+                                <option value="Zone I-A" {{ ($user->petOwner->barangay ?? '') == 'Zone I-A' ? 'selected' : '' }}>Zone I-A</option>
+                                <option value="Zone II" {{ ($user->petOwner->barangay ?? '') == 'Zone II' ? 'selected' : '' }}>Zone II</option>
+                                <option value="Zone III" {{ ($user->petOwner->barangay ?? '') == 'Zone III' ? 'selected' : '' }}>Zone III</option>
+                                <option value="Zone IV" {{ ($user->petOwner->barangay ?? '') == 'Zone IV' ? 'selected' : '' }}>Zone IV</option>
                             </select>
                         </div>
                         <div>
@@ -397,7 +397,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <label class="block text-sm font-medium text-gray-500 mb-1">Total Pets Registered</label>
-                        <p class="text-3xl font-bold text-primary">{{ (\App\Models\Client::where("email", $user->email)->first()->pets->count() ?? 0) ?? 0 }}</p>
+                        <p class="text-3xl font-bold text-primary">{{ $user->petOwner->pets->count() ?? 0 }}</p>
                     </div>
                     <a href="{{ route('owner.pets') }}" class="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-light">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

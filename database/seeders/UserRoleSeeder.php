@@ -48,6 +48,14 @@ class UserRoleSeeder extends Seeder
                 'contact_number' => '091234567893',
             ],
             [
+                'name' => 'Paws Animal Clinic',
+                'email' => 'clinic@vetmis.gov',
+                'password' => Hash::make('password123'),
+                'role' => 'clinic',
+                'status' => 'active',
+                'contact_number' => '091234567890',
+            ],
+            [
                 'name' => 'Roberto Cruz',
                 'email' => 'livestock@vetmis.gov',
                 'password' => Hash::make('password123'),

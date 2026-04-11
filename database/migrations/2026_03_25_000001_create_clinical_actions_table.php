@@ -6,22 +6,30 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     * 
-     * Clinical Action Module - For tracking clinical tasks/actions
-     */
     public function up(): void
     {
         Schema::create('clinical_actions', function (Blueprint $table) {
             $table->id();
             $table->string('case_title');
+            $table->string('action_type')->nullable();
+            $table->unsignedBigInteger('animal_id')->nullable();
+            $table->string('animal_name')->nullable();
+            $table->string('species')->nullable();
+            $table->string('owner_name')->nullable();
+            $table->string('owner_contact')->nullable();
+            $table->date('action_date')->nullable();
             $table->text('description');
+            $table->text('diagnosis')->nullable();
+            $table->text('treatment_given')->nullable();
+            $table->string('medication')->nullable();
+            $table->date('follow_up_date')->nullable();
+            $table->string('outcome')->nullable();
+            $table->unsignedBigInteger('veterinarian_id')->nullable();
             $table->foreignId('barangay_id')->nullable()->references('barangay_id')->on('barangays')->onDelete('set null');
-            $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
+            $table->unsignedBigInteger('assigned_to')->nullable();
             $table->enum('status', ['Pending', 'In Review', 'Completed'])->default('Pending');
             $table->text('remarks')->nullable();
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
             
             $table->index('status');
@@ -29,9 +37,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('clinical_actions');

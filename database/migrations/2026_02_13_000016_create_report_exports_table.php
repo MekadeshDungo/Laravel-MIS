@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('report_type');
             $table->json('parameters')->nullable();
             $table->string('file_path')->nullable();
-            $table->foreignId('exported_by_user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('exported_by_user_id')->nullable()->constrained('admin_users')->onDelete('set null');
             $table->timestamp('exported_at')->useCurrent();
             $table->timestamps();
         });

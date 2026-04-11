@@ -64,31 +64,6 @@
             </div>
         </div>
 
-        <!-- Cruelty Reports Stats -->
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Cruelty Reports</h6>
-                            <h3 class="mb-0">{{ $totalCrueltyReports }}</h3>
-                        </div>
-                        <div class="icon-circle bg-danger bg-opacity-10 text-danger">
-                            <i class="fas fa-exclamation-triangle fa-2x"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <span class="badge bg-danger">{{ $pendingCrueltyReports }}</span>
-                        <small class="text-muted">Pending Action</small>
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent border-0">
-                    <a href="{{ route('admin-asst.cruelty-reports.index') }}" class="text-danger text-decoration-none small">
-                        Review Reports <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
 
         <!-- Inventory Stats -->
         <div class="col-xl-3 col-md-6">
@@ -244,47 +219,6 @@
             </div>
         </div>
 
-        <!-- Recent Cruelty Reports -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0"><i class="fas fa-exclamation-circle me-2 text-danger"></i>Recent Cruelty Reports</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Report #</th>
-                                    <th>Location</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($recentCrueltyReports as $report)
-                                <tr>
-                                    <td>{{ $report->report_number }}</td>
-                                    <td>{{ Str::limit($report->location, 20) }}</td>
-                                    <td>{{ $report->violation_type }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $report->status == 'pending' ? 'warning' : ($report->status == 'resolved' ? 'success' : 'secondary') }}">
-                                            {{ ucfirst($report->status) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">No recent reports</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Recent Adoption Requests -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
@@ -378,11 +312,6 @@
                         <div class="col-md-3">
                             <a href="{{ route('admin-asst.pet-registrations.create') }}" class="btn btn-outline-primary w-100">
                                 <i class="fas fa-plus-circle me-2"></i>Register New Pet
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="{{ route('admin-asst.cruelty-reports.create') }}" class="btn btn-outline-danger w-100">
-                                <i class="fas fa-flag me-2"></i>File Cruelty Report
                             </a>
                         </div>
                         <div class="col-md-3">

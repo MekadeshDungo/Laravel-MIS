@@ -2,260 +2,204 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Announcement;
+use Illuminate\Support\Facades\Validator;
 
 class AnnouncementController extends Controller
 {
-    /**
-     * Check if user can manage announcements (create/edit/delete).
-     * Roles: super_admin, city_vet, admin_staff can manage
-     */
     private function canManage()
     {
         $user = Auth::user();
-        return $user && in_array($user->role, ['super_admin', 'city_vet', 'admin_staff']);
+        return $user && in_array($user->role, ['super_admin', 'city_vet', 'admin_asst', 'admin_staff']);
     }
 
-    /**
-     * Check if user can view all announcements (admin view).
-     */
-    private function canViewAll()
-    {
-        $user = Auth::user();
-        return $user && !in_array($user->role, ['citizen']);
-    }
-
-    /**
-     * Get redirect route based on user role
-     */
     private function getAdminRedirectRoute()
     {
         $role = Auth::user()->role;
         return match($role) {
             'super_admin' => 'super-admin.announcements.index',
             'city_vet' => 'admin.announcements.index',
-            'admin_staff' => 'admin-staff.announcements.index',
-            default => 'announcements.portal.index',
+            'admin_asst', 'admin_staff' => 'admin-staff.announcements.index',
+            default => 'announcements.public.index',
         };
     }
 
-    /**
-     * Show announcements list (public/citizen view).
-     * Only show: status = Published, publish_date <= now, (expiry_date is null OR expiry_date >= now)
-     */
-    public function index()
+    public function index(Request $request)
     {
-        // Get published announcements (visible to public)
-        $announcements = Announcement::published()
-            ->orderedByPriority()
-            ->orderBy('publish_date', 'desc')
-            ->paginate(10);
+        $query = Announcement::with('createdBy');
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $announcements = $query->orderBy('created_at', 'desc')->paginate(15);
 
         return view('announcements.index', compact('announcements'));
     }
 
-    /**
-     * Show announcements for authenticated users (non-citizen portal).
-     */
-    public function publicIndex()
+    public function campaigns(Request $request)
     {
-        // If user can manage, show all (including drafts)
-        if ($this->canManage()) {
-            $announcements = Announcement::with('user')
-                ->orderedByPriority()
-                ->orderBy('publish_date', 'desc')
-                ->paginate(10);
-        } else {
-            // Show only published (visible) announcements
-            $announcements = Announcement::published()
-                ->orderedByPriority()
-                ->orderBy('publish_date', 'desc')
-                ->paginate(10);
+        $query = Announcement::with('createdBy')
+            ->where('category', 'campaign');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
-        return view('announcements.public-index', compact('announcements'));
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $campaigns = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        return view('public.campaigns.index', compact('campaigns'));
     }
 
-    /**
-     * Show a single announcement (public view).
-     */
+    public function events(Request $request)
+    {
+        $query = Announcement::with('createdBy')
+            ->where('category', 'event');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $events = $query->orderBy('event_date', 'asc')->paginate(15);
+
+        return view('public.events.index', compact('events'));
+    }
+
     public function show(Announcement $announcement)
     {
-        // Check if user can view this announcement
-        $user = Auth::user();
-        
-        // If announcement is not visible (not published or expired)
-        if (!$announcement->isVisible()) {
-            // Only admins can view unpublished/archived
-            if (!$this->canManage()) {
-                return redirect()->route('announcements.index')
-                    ->with('error', 'This announcement is not available.');
-            }
-        }
+        $announcement->load('createdBy');
 
         return view('announcements.show', compact('announcement'));
     }
 
-    /**
-     * Show the form for creating a new announcement.
-     * Only admin roles can access.
-     */
     public function create()
     {
-        if (!$this->canManage()) {
-            return redirect()->route('announcements.index')
-                ->with('error', 'You do not have permission to create announcements.');
-        }
-
         return view('announcements.create');
     }
 
-    /**
-     * Store a newly created announcement.
-     */
     public function store(Request $request)
     {
-        if (!$this->canManage()) {
-            return redirect()->route('announcements.index')
-                ->with('error', 'You do not have permission to create announcements.');
-        }
-
-        // Validation rules
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
-            'type' => 'required|string|in:' . implode(',', Announcement::getTypes()),
-            'audience' => 'required|string|in:' . implode(',', Announcement::getAudiences()),
-            'priority' => 'required|string|in:' . implode(',', Announcement::getPriorities()),
-            'status' => 'required|string|in:' . implode(',', Announcement::getStatuses()),
-            'publish_date' => 'required|date',
-            'expiry_date' => 'nullable|date|after_or_equal:publish_date',
             'content' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'attachment' => 'nullable|mimes:pdf|max:5120',
+            'category' => 'required|in:campaign,event',
+            'priority' => 'required|in:Urgent,Important,Normal',
+            'status' => 'required|in:draft,published,archived',
+            'is_active' => 'nullable|boolean',
+            'publish_date' => 'nullable|date',
+            'expiry_date' => 'nullable|date|after:publish_date',
+            'event_date' => 'nullable|required_if:category,event|date',
+            'event_time' => 'nullable',
+            'location' => 'nullable|required_if:category,event|string|max:255',
+            'contact_number' => 'nullable|string|max:15',
+            'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'attachment_path' => 'nullable|mimes:pdf|max:5120',
         ]);
 
-        // Handle file uploads
-        $imagePath = null;
-        if ($request->hasFile('photo')) {
-            $imagePath = $request->file('photo')->store('announcements', 'public');
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $photoPath = null;
+        if ($request->hasFile('photo_path')) {
+            $photoPath = $request->file('photo_path')->store('announcements', 'public');
         }
 
         $attachmentPath = null;
-        if ($request->hasFile('attachment')) {
-            $attachmentPath = $request->file('attachment')->store('announcements', 'public');
+        if ($request->hasFile('attachment_path')) {
+            $attachmentPath = $request->file('attachment_path')->store('announcements', 'public');
         }
 
-        // Create announcement with created_by = Auth::id()
-        Announcement::create([
-            'user_id' => Auth::id(), // created_by
-            'title' => $validated['title'],
-            'type' => $validated['type'],
-            'audience' => $validated['audience'],
-            'priority' => $validated['priority'],
-            'status' => $validated['status'],
-            'publish_date' => $validated['publish_date'],
-            'expiry_date' => $validated['expiry_date'] ?? null,
-            'content' => $validated['content'],
-            'image_path' => $imagePath,
-            'attachment_path' => $attachmentPath,
-            'is_active' => $validated['status'] === 'Published',
-        ]);
+        Announcement::create(array_merge(
+            $request->validated(),
+            [
+                'photo_path' => $photoPath,
+                'attachment_path' => $attachmentPath,
+                'created_by' => auth()->id(),
+            ]
+        ));
 
-        return redirect()->route($this->getAdminRedirectRoute())
-            ->with('success', 'Announcement created successfully!');
+        return redirect()->route('announcements.index')
+            ->with('success', 'Announcement created successfully.');
     }
 
-    /**
-     * Show the form for editing an announcement.
-     */
     public function edit(Announcement $announcement)
     {
-        if (!$this->canManage()) {
-            return redirect()->route('announcements.index')
-                ->with('error', 'You do not have permission to edit announcements.');
-        }
-
         return view('announcements.edit', compact('announcement'));
     }
 
-    /**
-     * Update an announcement.
-     */
     public function update(Request $request, Announcement $announcement)
     {
-        if (!$this->canManage()) {
-            return redirect()->route('announcements.index')
-                ->with('error', 'You do not have permission to edit announcements.');
-        }
-
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
-            'type' => 'required|string|in:' . implode(',', Announcement::getTypes()),
-            'audience' => 'required|string|in:' . implode(',', Announcement::getAudiences()),
-            'priority' => 'required|string|in:' . implode(',', Announcement::getPriorities()),
-            'status' => 'required|string|in:' . implode(',', Announcement::getStatuses()),
-            'publish_date' => 'required|date',
-            'expiry_date' => 'nullable|date|after_or_equal:publish_date',
             'content' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'attachment' => 'nullable|mimes:pdf|max:5120',
+            'category' => 'required|in:campaign,event',
+            'priority' => 'required|in:Urgent,Important,Normal',
+            'status' => 'required|in:draft,published,archived',
+            'is_active' => 'nullable|boolean',
+            'publish_date' => 'nullable|date',
+            'expiry_date' => 'nullable|date|after:publish_date',
+            'event_date' => 'nullable|required_if:category,event|date',
+            'event_time' => 'nullable',
+            'location' => 'nullable|required_if:category,event|string|max:255',
+            'contact_number' => 'nullable|string|max:15',
+            'photo_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'attachment_path' => 'nullable|mimes:pdf|max:5120',
         ]);
 
-        // Handle image upload
-        $imagePath = $announcement->image_path;
-        if ($request->hasFile('photo')) {
-            // Delete old image if exists
-            if ($announcement->image_path) {
-                Storage::disk('public')->delete($announcement->image_path);
-            }
-            $imagePath = $request->file('photo')->store('announcements', 'public');
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        // Handle attachment upload
-        $attachmentPath = $announcement->attachment_path;
-        if ($request->hasFile('attachment')) {
-            // Delete old attachment if exists
+        $data = $request->validated();
+
+        if ($request->hasFile('photo_path')) {
+            if ($announcement->photo_path) {
+                Storage::disk('public')->delete($announcement->photo_path);
+            }
+            $data['photo_path'] = $request->file('photo_path')->store('announcements', 'public');
+        }
+
+        if ($request->hasFile('attachment_path')) {
             if ($announcement->attachment_path) {
                 Storage::disk('public')->delete($announcement->attachment_path);
             }
-            $attachmentPath = $request->file('attachment')->store('announcements', 'public');
+            $data['attachment_path'] = $request->file('attachment_path')->store('announcements', 'public');
         }
 
-        // Update announcement
-        $announcement->update([
-            'title' => $validated['title'],
-            'type' => $validated['type'],
-            'audience' => $validated['audience'],
-            'priority' => $validated['priority'],
-            'status' => $validated['status'],
-            'publish_date' => $validated['publish_date'],
-            'expiry_date' => $validated['expiry_date'] ?? null,
-            'content' => $validated['content'],
-            'image_path' => $imagePath,
-            'attachment_path' => $attachmentPath,
-            'is_active' => $validated['status'] === 'Published',
-        ]);
+        $announcement->update($data);
 
-        return redirect()->route($this->getAdminRedirectRoute())
-            ->with('success', 'Announcement updated successfully!');
+        return redirect()->route('announcements.show', $announcement)
+            ->with('success', 'Announcement updated successfully.');
     }
 
-    /**
-     * Delete an announcement.
-     */
     public function destroy(Announcement $announcement)
     {
-        if (!$this->canManage()) {
-            return redirect()->route('announcements.index')
-                ->with('error', 'You do not have permission to delete announcements.');
-        }
-
-        // Delete associated files
-        if ($announcement->image_path) {
-            Storage::disk('public')->delete($announcement->image_path);
+        if ($announcement->photo_path) {
+            Storage::disk('public')->delete($announcement->photo_path);
         }
         if ($announcement->attachment_path) {
             Storage::disk('public')->delete($announcement->attachment_path);
@@ -263,73 +207,39 @@ class AnnouncementController extends Controller
 
         $announcement->delete();
 
-        return redirect()->route($this->getAdminRedirectRoute())
-            ->with('success', 'Announcement deleted successfully!');
+        return redirect()->route('announcements.index')
+            ->with('success', 'Announcement deleted successfully.');
     }
 
-    /**
-     * Mark recent announcements as read.
-     */
-    public function markAsRead()
+    public function publish(Announcement $announcement)
     {
-        $recentAnnouncements = Announcement::published()
-            ->where('created_at', '>=', now()->subDays(7))
-            ->get();
+        $announcement->update([
+            'status' => 'published',
+            'publish_date' => now(),
+        ]);
 
-        $markedCount = 0;
-        foreach ($recentAnnouncements as $announcement) {
-            $alreadyRead = \App\Models\AnnouncementRead::where('announcement_id', $announcement->id)
-                ->where('user_id', Auth::id())
-                ->exists();
+        return redirect()->back()->with('success', 'Announcement published successfully.');
+    }
 
-            if (!$alreadyRead) {
-                \App\Models\AnnouncementRead::create([
-                    'announcement_id' => $announcement->id,
-                    'user_id' => Auth::id(),
-                    'read_at' => now(),
-                ]);
-                $markedCount++;
-            }
+    public function archive(Announcement $announcement)
+    {
+        $announcement->update(['status' => 'archived']);
+
+        return redirect()->back()->with('success', 'Announcement archived successfully.');
+    }
+
+    public function publicShow(Announcement $announcement)
+    {
+        if ($announcement->status !== 'published') {
+            abort(404);
         }
 
-        return response()->json([
-            'success' => true,
-            'marked_count' => $markedCount,
-            'message' => 'Announcements marked as read'
-        ]);
-    }
+        $announcement->load('createdBy');
 
-    /**
-     * List all announcements (admin view).
-     */
-    public function list()
-    {
-        if (!$this->canManage()) {
-            return redirect()->route('announcements.index')
-                ->with('error', 'You do not have permission to view this page.');
-        }
+        $view = $announcement->category === 'event' 
+            ? 'public.events.show' 
+            : 'public.campaigns.show';
 
-        $announcements = Announcement::with('user')
-            ->orderedByPriority()
-            ->orderBy('publish_date', 'desc')
-            ->paginate(10);
-
-        return view('announcements.list', compact('announcements'));
-    }
-
-    /**
-     * API: Get published announcements (for mobile/public API).
-     */
-    public function apiPublished()
-    {
-        $announcements = Announcement::published()
-            ->orderedByPriority()
-            ->orderBy('publish_date', 'desc')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $announcements
-        ]);
+        return view($view, compact('announcement'));
     }
 }

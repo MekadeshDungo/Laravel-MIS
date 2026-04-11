@@ -7,7 +7,7 @@
 @section('content')
 <div class="p-4 md:p-6">
     <div class="flex items-center gap-4 mb-6">
-        <a href="{{ route('records-staff.pets.show', $pet) }}" class="p-2 hover:bg-gray-100 rounded-lg transition">
+        <a href="{{ route('admin-staff.pets.show', $pet) }}" class="p-2 hover:bg-gray-100 rounded-lg transition">
             <i class="bi bi-arrow-left text-gray-600"></i>
         </a>
         <div>
@@ -17,7 +17,7 @@
     </div>
 
     <div class="bg-white rounded-xl shadow-sm">
-        <form method="POST" action="{{ route('records-staff.pets.update', $pet) }}">
+        <form method="POST" action="{{ route('admin-staff.pets.update', $pet) }}">
             @csrf
             @method('PUT')
 
@@ -135,7 +135,7 @@
                 <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                     <i class="bi bi-check-lg mr-2"></i> Update Pet
                 </button>
-                <a href="{{ route('records-staff.pets.show', $pet) }}" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                <a href="{{ route('admin-staff.pets.show', $pet) }}" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
                     Cancel
                 </a>
             </div>

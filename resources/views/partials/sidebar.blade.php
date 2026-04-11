@@ -35,7 +35,7 @@
             'admin'            => 'admin',
             'city_vet'         => 'city-vet',
             'admin_staff'      => 'admin-staff',
-            'admin_asst'       => 'admin-staff',
+            'admin_asst'       => 'admin-asst',
             'assistant_vet'    => 'assistant-vet',
             'livestock_inspector' => 'livestock',
             'meat_inspector'   => 'meat-inspection',
@@ -46,7 +46,8 @@
 
         $isSuperAdmin = ($role === 'super_admin');
         $isAdmin = ($role === 'admin' || $role === 'city_vet');
-        $isAdminStaff = in_array($role, ['admin_staff', 'admin_asst']);
+        $isAdminStaff = ($role === 'admin_staff');
+        $isAdminAsst = ($role === 'admin_asst');
         $isAssistantVet = ($role === 'assistant_vet');
         $isLivestockInspector = ($role === 'livestock_inspector');
         $isMeatInspector = ($role === 'meat_inspector');
@@ -165,11 +166,11 @@
                 <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Clinical</p>
             </div>
 
-            <a href="{{ route('city-vet.rabies-cases.index') }}"
+            <!-- <a href="{{ route('city-vet.rabies-cases.index') }}"
                class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('city-vet.rabies-cases.*') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-exclamation-triangle text-lg w-6"></i>
                 <span>Rabies Cases</span>
-            </a>
+            </a> -->
 
             <a href="{{ route('city-vet.rabies-bite-reports.index') }}"
                class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('city-vet.rabies-bite-reports.*') ? 'bg-green-600 text-white' : '' }}">
@@ -197,11 +198,11 @@
                 }
             @endphp
 
-            <a href="{{ route('assistant-vet.rabies-cases.index') }}"
+            <!-- <a href="{{ route('assistant-vet.rabies-cases.index') }}"
                class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('assistant-vet.rabies-cases.*') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-exclamation-triangle text-lg w-6"></i>
                 <span>Rabies Cases</span>
-            </a>
+            </a> -->
 
             @if($reportsRoute)
             <a href="{{ $reportsRoute }}"
@@ -224,12 +225,44 @@
             </a>
 
         {{-- =========================
+            ADMIN ASST (GATEKEEPER) MENU
+           ========================= --}}
+        @elseif($isAdminAsst)
+            <div class="pt-4 pb-2">
+                <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Gatekeeper</p>
+            </div>
+
+            <a href="{{ route('admin-asst.pet-registrations.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin-asst.pet-registrations.*') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-paw text-lg w-6"></i>
+                <span>Pet Registrations</span>
+            </a>
+
+            <a href="{{ route('admin-asst.adoptions.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin-asst.adoptions.*') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-heart-fill text-lg w-6"></i>
+                <span>Adoptions</span>
+            </a>
+
+            <a href="{{ route('admin-asst.missing-pets.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin-asst.missing-pets.*') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-search text-lg w-6"></i>
+                <span>Missing Pets</span>
+            </a>
+
+        {{-- =========================
             LIVESTOCK INSPECTOR MENU
            ========================= --}}
         @elseif($isLivestockInspector)
             <div class="pt-4 pb-2">
                 <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Livestock Management</p>
             </div>
+
+            <a href="{{ route('livestock.dashboard') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('livestock.dashboard') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-speedometer2 text-lg w-6"></i>
+                <span>Dashboard</span>
+            </a>
 
             <a href="{{ route('livestock.index') }}"
                class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('livestock.index') ? 'bg-green-600 text-white' : '' }}">
@@ -261,17 +294,16 @@
                 <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Meat Inspection</p>
             </div>
 
-{{-- [RESTORED] Meat Inspection Links --}}
-            <a href="{{ route('meat-inspection.reports.index') }}"
-               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('meat-inspection.reports.*') ? 'bg-green-600 text-white' : '' }}">
-                <i class="bi bi-clipboard-check text-lg w-6"></i>
-                <span>Inspection Reports</span>
+            <a href="{{ route('meat-inspection.meat-shop.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('meat-inspection.meat-shop.*') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-shop text-lg w-6"></i>
+                <span>Shop Inspections</span>
             </a>
 
-            <a href="{{ route('meat-inspection.reports.create') }}"
-               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('meat-inspection.reports.create') ? 'bg-green-600 text-white' : '' }}">
-                <i class="bi bi-plus-circle text-lg w-6"></i>
-                <span>New Report</span>
+            <a href="{{ route('meat-inspection.establishments.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('meat-inspection.establishments.*') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-shop-window text-lg w-6"></i>
+                <span>Register Shop</span>
             </a>
 
             <div class="pt-4 pb-2">

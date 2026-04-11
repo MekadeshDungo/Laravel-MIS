@@ -121,7 +121,6 @@
         <div class="text-center mb-8">
             <h2 class="text-3xl font-bold text-gray-900">Pet Registration</h2>
             <p class="text-gray-600 mt-2">Register your pet with Dasmariñas City Veterinary Services</p>
-            <p class="text-gray-500 text-sm mt-1">Fields marked with <span class="text-red-500">*</span> are required</p>
         </div>
 
         <!-- Form Container -->

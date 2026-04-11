@@ -2,87 +2,77 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 
 class BiteRabiesReport extends Model
 {
-    use HasFactory;
-
     protected $table = 'bite_rabies_reports';
 
     protected $fillable = [
         'report_number',
-        'report_source',
-        'status',
-        'assigned_to_role',
-        'reporting_facility',
-        'facility_name',
-        'date_reported',
         'patient_name',
-        'patient_age',
-        'patient_gender',
-        'patient_barangay_id',
+        'age',
+        'gender',
+        'patient_address',
         'patient_contact',
+        'barangay_id',
         'incident_date',
-        'nature_of_incident',
+        'exposure_type',
         'bite_site',
-        'exposure_category',
-        'animal_species',
+        'category',
+        'animal_type',
         'animal_status',
+        'vaccination_status',
         'animal_owner_name',
-        'animal_vaccination_status',
-        'animal_current_condition',
+        'animal_owner_contact',
+        'reported_by',
         'wound_management',
         'post_exposure_prophylaxis',
         'notes',
-        'barangay_id',
-        'user_id',
     ];
 
     protected $casts = [
-        'patient_age' => 'integer',
-        'date_reported' => 'date',
         'incident_date' => 'date',
         'wound_management' => 'array',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
     ];
 
-    public function patientBarangay()
-    {
-        return $this->belongsTo(Barangay::class, 'patient_barangay_id', 'barangay_id');
-    }
-
-    public function barangay()
+    public function barangay(): BelongsTo
     {
         return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
     }
 
-    public function user()
+    public function reportedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'reported_by', 'id');
     }
 
-    public function rabiesCase()
+    public function notifications(): HasMany
     {
-        return $this->hasOne(RabiesCase::class, 'rabies_report_id');
+        return $this->hasMany(Notification::class, 'reference_id')
+            ->where('module', 'bite_rabies_report');
     }
 
-    public function notifications()
+    public function scopeByBarangay(Builder $query, int $barangayId): Builder
     {
-        return $this->hasMany(Notification::class, 'related_record_id')
-            ->where('related_module', 'bite_rabies_report');
+        return $query->where('barangay_id', $barangayId);
     }
 
-    public function getVaccinationStatusAttribute()
+    public function scopeByCategory(Builder $query, string $category): Builder
     {
-        return $this->animal_vaccination_status;
+        return $query->where('category', $category);
     }
 
-    public function getCurrentConditionAttribute()
+    public function scopeByAnimalType(Builder $query, string $type): Builder
     {
-        return $this->animal_current_condition;
+        return $query->where('animal_type', $type);
+    }
+
+    public function scopeByDateRange(Builder $query, string $from, string $to): Builder
+    {
+        return $query->whereBetween('incident_date', [$from, $to]);
     }
 
     public static function generateReportNumber(): string
@@ -97,21 +87,5 @@ class BiteRabiesReport extends Model
             : 1;
 
         return 'BR-' . $year . '-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
-    }
-
-    public static function notifyAssistantVets(string $reportNumber, int $reportId): void
-    {
-        $assistantVets = User::where('role', 'assistant_vet')->get();
-
-        foreach ($assistantVets as $vet) {
-            Notification::create([
-                'user_id' => $vet->id,
-                'title' => 'New Bite & Rabies Report',
-                'message' => "Report {$reportNumber} has been submitted and needs your review.",
-                'related_module' => 'bite_rabies_report',
-                'related_record_id' => $reportId,
-                'is_read' => false,
-            ]);
-        }
     }
 }

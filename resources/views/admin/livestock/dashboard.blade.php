@@ -2,6 +2,9 @@
 
 @section('title', 'Livestock Inspector Dashboard')
 
+@section('header', 'Livestock Inspector Dashboard')
+@section('subheader', 'Welcome back! Here\'s an overview of your livestock management activities.')
+
 @section('content')
 <div class="container mx-auto px-4 py-6">
     <!-- Header -->

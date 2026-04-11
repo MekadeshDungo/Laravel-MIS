@@ -216,9 +216,9 @@
                                     <span class="text-gray-500 text-xs ml-2">(First name and Last name)</span>
                                 </label>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <input type="text" name="first_name" placeholder="First Name" value="{{ old('first_name', $client->first_name ?? '') }}"
+                                    <input type="text" name="first_name" placeholder="First Name" value="{{ old('first_name', $petOwner->first_name ?? '') }}"
                                            class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                    <input type="text" name="last_name" placeholder="Last Name" value="{{ old('last_name', $client->last_name ?? '') }}"
+                                    <input type="text" name="last_name" placeholder="Last Name" value="{{ old('last_name', $petOwner->last_name ?? '') }}"
                                            class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                                 </div>
                             </div>
@@ -241,7 +241,7 @@
                                     <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
                                         +63
                                     </span>
-                                    <input type="tel" name="mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('mobile_number', $client->phone_number ?? '') }}"
+                                    <input type="tel" name="mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('mobile_number', $petOwner->phone_number ?? '') }}"
                                            class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                                 </div>
                             </div>
@@ -265,7 +265,7 @@
                                 <label class="block text-sm font-medium mb-1.5">
                                     House No. / Unit No. <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="house_no" placeholder="House No. / Unit No." value="{{ old('house_no', $client->house_no ?? '') }}"
+                                <input type="text" name="house_no" placeholder="House No. / Unit No." value="{{ old('house_no', $petOwner->house_no ?? '') }}"
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
 
@@ -274,7 +274,7 @@
                                 <label class="block text-sm font-medium mb-1.5">
                                     Street <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="street" placeholder="Street" value="{{ old('street', $client->street ?? '') }}"
+                                <input type="text" name="street" placeholder="Street" value="{{ old('street', $petOwner->street ?? '') }}"
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
 
@@ -283,7 +283,7 @@
                                 <label class="block text-sm font-medium mb-1.5">
                                     Barangay <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $client->barangay_id ?? '') }}"
+                                <input type="text" name="barangay" placeholder="Barangay" value="{{ old('barangay', $petOwner->barangay ?? '') }}"
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
                         </div>

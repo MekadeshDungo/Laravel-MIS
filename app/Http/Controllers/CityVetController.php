@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\RabiesCase;
 use App\Models\BiteRabiesReport;
 use App\Models\RabiesVaccinationReport;
 use App\Models\Barangay;
@@ -20,32 +19,32 @@ class CityVetController extends Controller
     {
         $user = Auth::user();
 
-        // Get statistics - use correct column name 'case_status' for rabies cases
+        // Get statistics - use bite_rabies_reports for counts
         $year = $request->year ?? date('Y');
 
         $stats = [
-            'total_rabies_cases' => RabiesCase::whereYear('incident_date', $year)->count(),
-            'open_cases' => RabiesCase::where('status', 'open')->whereYear('incident_date', $year)->count(),
-            'confirmed_cases' => RabiesCase::where('case_type', 'positive')->whereYear('incident_date', $year)->count(),
+            'total_rabies_cases' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
+            'open_cases' => BiteRabiesReport::where('status', 'Pending Review')->whereYear('incident_date', $year)->count(),
+            'confirmed_cases' => BiteRabiesReport::where('animal_status', 'Stray')->whereYear('incident_date', $year)->count(),
             'total_bite_reports' => BiteRabiesReport::whereYear('incident_date', $year)->count(),
             'total_vaccinations' => RabiesVaccinationReport::whereYear('vaccination_date', $year)->count(),
         ];
 
         // Get recent cases
-        $recentCases = RabiesCase::with('barangay')->latest()->take(5)->get();
+        $recentCases = BiteRabiesReport::with('barangay')->latest()->take(5)->get();
 
         // Get monthly trends for the year
-        $monthlyCases = RabiesCase::whereYear('incident_date', $year)
+        $monthlyCases = BiteRabiesReport::whereYear('incident_date', $year)
             ->selectRaw('MONTH(incident_date) as month, COUNT(*) as count')
             ->groupBy('month')
             ->pluck('count', 'month')
             ->toArray();
 
         // Get cases by type
-        $casesByType = RabiesCase::whereYear('incident_date', $year)
-            ->selectRaw('case_type, COUNT(*) as count')
-            ->groupBy('case_type')
-            ->pluck('count', 'case_type')
+        $casesByType = BiteRabiesReport::whereYear('incident_date', $year)
+            ->selectRaw('animal_species, COUNT(*) as count')
+            ->groupBy('animal_species')
+            ->pluck('count', 'animal_species')
             ->toArray();
 
         // Get heatmap data
@@ -106,11 +105,12 @@ class CityVetController extends Controller
      */
     private function getHeatmapData(int $year): array
     {
-        // Get cases grouped by barangay
-        $byBarangay = RabiesCase::whereYear('incident_date', $year)
-            ->whereNotNull('barangay_id')
-            ->selectRaw('barangay_id, COUNT(*) as count')
-            ->groupBy('barangay_id')
+        // Get cases grouped by barangay from bite_rabies_reports
+        // Use patient_barangay_id (where the bite incident occurred)
+        $byBarangay = BiteRabiesReport::whereYear('incident_date', $year)
+            ->whereNotNull('patient_barangay_id')
+            ->selectRaw('patient_barangay_id as barangay_id, COUNT(*) as count')
+            ->groupBy('patient_barangay_id')
             ->get();
 
         // Get ALL barangays with coordinates (not just those with cases)
@@ -141,14 +141,14 @@ class CityVetController extends Controller
     }
 
     /**
-     * Get case type breakdown (confirmed, suspected, probable).
+     * Get case type breakdown.
      */
     private function getCaseTypeBreakdown(int $year): array
     {
-        return RabiesCase::whereYear('incident_date', $year)
-            ->selectRaw('case_type, COUNT(*) as count')
-            ->groupBy('case_type')
-            ->pluck('count', 'case_type')
+        return BiteRabiesReport::whereYear('incident_date', $year)
+            ->selectRaw('animal_species, COUNT(*) as count')
+            ->groupBy('animal_species')
+            ->pluck('count', 'animal_species')
             ->toArray();
     }
 
@@ -162,7 +162,7 @@ class CityVetController extends Controller
         
         $data = [];
         foreach ($months as $monthName => $monthNum) {
-            $count = RabiesCase::whereYear('incident_date', $year)
+            $count = BiteRabiesReport::whereYear('incident_date', $year)
                 ->whereMonth('incident_date', $monthNum)
                 ->count();
             $data[$monthName] = $count;
@@ -176,8 +176,8 @@ class CityVetController extends Controller
      */
     private function getYearComparison(int $currentYear, int $previousYear): array
     {
-        $current = RabiesCase::whereYear('incident_date', $currentYear)->count();
-        $previous = RabiesCase::whereYear('incident_date', $previousYear)->count();
+        $current = BiteRabiesReport::whereYear('incident_date', $currentYear)->count();
+        $previous = BiteRabiesReport::whereYear('incident_date', $previousYear)->count();
         
         $change = $previous > 0 ? round((($current - $previous) / $previous) * 100, 1) : 0;
         
@@ -194,7 +194,7 @@ class CityVetController extends Controller
      */
     private function getHotspots(int $year): array
     {
-        return RabiesCase::whereYear('incident_date', $year)
+        return BiteRabiesReport::whereYear('incident_date', $year)
             ->with('barangay')
             ->selectRaw('barangay_id, COUNT(*) as count')
             ->groupBy('barangay_id')
@@ -220,6 +220,11 @@ class CityVetController extends Controller
         $month = $request->month ? (int) $request->month : null;
         $week = $request->week ? (int) $request->week : null;
 
+        // Debug: Check if data exists
+        $totalInDb = BiteRabiesReport::whereYear('incident_date', $year)->count();
+        $withBarangay = BiteRabiesReport::whereYear('incident_date', $year)
+            ->whereNotNull('patient_barangay_id')->count();
+
         $heatmapData = $this->getFilteredHeatmapData($year, $month, $week);
         $caseTypeBreakdown = $this->getFilteredCaseTypeBreakdown($year, $month, $week);
         $totalCases = collect($heatmapData)->sum('count');
@@ -241,6 +246,10 @@ class CityVetController extends Controller
             'year' => $year,
             'month' => $month,
             'week' => $week,
+            'debug' => [
+                'total_in_db' => $totalInDb,
+                'with_barangay' => $withBarangay,
+            ],
         ]);
     }
 
@@ -249,8 +258,8 @@ class CityVetController extends Controller
      */
     private function getFilteredHeatmapData(int $year, ?int $month = null, ?int $week = null): array
     {
-        $query = RabiesCase::whereYear('incident_date', $year)
-            ->whereNotNull('barangay_id');
+        $query = BiteRabiesReport::whereYear('incident_date', $year)
+            ->whereNotNull('patient_barangay_id');
 
         if ($month) {
             $query->whereMonth('incident_date', $month);
@@ -261,8 +270,8 @@ class CityVetController extends Controller
         }
 
         $byBarangay = $query
-            ->selectRaw('barangay_id, COUNT(*) as count')
-            ->groupBy('barangay_id')
+            ->selectRaw('patient_barangay_id as barangay_id, COUNT(*) as count')
+            ->groupBy('patient_barangay_id')
             ->get();
 
         $barangays = Barangay::whereNotNull('latitude')
@@ -276,7 +285,7 @@ class CityVetController extends Controller
             $count = $caseCount ? (int) $caseCount->count : 0;
 
             return [
-                'id' => 'rabies-' . $barangay->barangay_id,
+                'id' => 'bite-' . $barangay->barangay_id,
                 'barangay_id' => $barangay->barangay_id,
                 'barangay' => $barangay->barangay_name,
                 'name' => $barangay->barangay_name,
@@ -296,7 +305,7 @@ class CityVetController extends Controller
      */
     private function getFilteredCaseTypeBreakdown(int $year, ?int $month = null, ?int $week = null): array
     {
-        $query = RabiesCase::whereYear('incident_date', $year);
+        $query = BiteRabiesReport::whereYear('incident_date', $year);
 
         if ($month) {
             $query->whereMonth('incident_date', $month);
@@ -307,9 +316,9 @@ class CityVetController extends Controller
         }
 
         return $query
-            ->selectRaw('case_type, COUNT(*) as count')
-            ->groupBy('case_type')
-            ->pluck('count', 'case_type')
+            ->selectRaw('animal_species, COUNT(*) as count')
+            ->groupBy('animal_species')
+            ->pluck('count', 'animal_species')
             ->toArray();
     }
 }

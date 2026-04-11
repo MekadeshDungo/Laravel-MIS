@@ -195,5 +195,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             BarangaySeeder::class,
         ]);
+
+        // Run additional seeders (MissingPetSeeder disabled - uses wrong table)
+        $this->call([
+            // MissingPetSeeder::class, // Disabled - uses animals table instead of adoption_pets
+            AdoptionTraitsSeeder::class,
+            AdoptionPetsSeeder::class,
+        ]);
     }
 }

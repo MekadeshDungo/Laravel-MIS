@@ -39,15 +39,6 @@
                             </span>
                         </div>
                     </div>
-                    <!-- Priority Badge -->
-                    @if($announcement->priority)
-                    <span class="px-3 py-1 rounded-full text-sm font-semibold 
-                        @if($announcement->priority === 'Urgent') bg-danger text-white
-                        @elseif($announcement->priority === 'Important') bg-warning text-dark
-                        @else bg-secondary text-white @endif">
-                        {{ $announcement->priority }}
-                    </span>
-                    @endif
                 </div>
                 
                 <!-- Type and Status Badges -->
@@ -55,11 +46,6 @@
                     @if($announcement->type)
                     <span class="px-2 py-1 rounded text-xs font-medium bg-white/20">
                         {{ $announcement->type }}
-                    </span>
-                    @endif
-                    @if($announcement->audience)
-                    <span class="px-2 py-1 rounded text-xs font-medium bg-white/20">
-                        <i class="bi bi-people mr-1"></i>{{ $announcement->audience }}
                     </span>
                     @endif
                     @if($announcement->status)
@@ -110,7 +96,7 @@
 
                 <!-- Main Content -->
                 <div class="prose max-w-none">
-                    <div class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ $announcement->content }}</div>
+                    <div class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ $announcement->body }}</div>
                 </div>
 
                 <!-- Attachment -->

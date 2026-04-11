@@ -2,58 +2,44 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MedicalRecord extends Model
 {
-    use HasFactory;
+    protected $table = 'medical_records';
 
     protected $fillable = [
-        'record_type',
-        'animal_id',
+        'pet_id',
         'barangay_id',
-        'animal_name',
-        'species',
-        'breed',
-        'owner_name',
-        'owner_contact',
-        'record_date',
         'diagnosis',
         'treatment',
-        'vaccine_name',
-        'vaccination_date',
-        'next_vaccination_date',
-        'notes',
         'veterinarian_id',
         'created_by',
     ];
 
     protected $casts = [
-        'record_date' => 'date',
-        'vaccination_date' => 'date',
-        'next_vaccination_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
 
-    public function animal()
+    public function pet(): BelongsTo
     {
-        return $this->belongsTo(Animal::class, 'animal_id', 'animal_id');
+        return $this->belongsTo(Pet::class, 'pet_id');
     }
 
-    public function barangay()
+    public function barangay(): BelongsTo
     {
         return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
     }
 
-    public function veterinarian()
+    public function veterinarian(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'veterinarian_id');
+        return $this->belongsTo(User::class, 'veterinarian_id', 'id');
     }
 
-    public function createdBy()
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 }

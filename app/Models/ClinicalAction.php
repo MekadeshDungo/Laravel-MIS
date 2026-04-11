@@ -37,7 +37,7 @@ class ClinicalAction extends Model
 
     public function animal()
     {
-        return $this->belongsTo(Animal::class, 'animal_id', 'animal_id');
+        return $this->belongsTo(Pet::class, 'pet_id', 'pet_id');
     }
 
     public function barangay()

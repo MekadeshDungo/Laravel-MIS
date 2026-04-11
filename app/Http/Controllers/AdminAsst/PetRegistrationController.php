@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\AdminAsst;
 
 use App\Http\Controllers\Controller;
-use App\Models\Animal;
+use App\Models\Pet;
 use App\Models\Barangay;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PetRegistrationController extends Controller
 {
@@ -17,7 +18,7 @@ class PetRegistrationController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Animal::query()->with('userOwner');
+        $query = Pet::query()->with('userOwner');
 
         // Filter by status
         if ($request->filled('status')) {
@@ -54,9 +55,9 @@ class PetRegistrationController extends Controller
         $barangays = Barangay::orderBy('barangay_name')->get();
 
         // Statistics
-        $totalCount = Animal::count();
-        $registeredCount = Animal::whereNotNull('license_number')->count();
-        $pendingCount = Animal::whereNull('license_number')->count();
+        $totalCount = Pet::count();
+        $registeredCount = Pet::whereNotNull('license_number')->count();
+        $pendingCount = Pet::whereNull('license_number')->count();
 
         return view('admin-asst.pet-registrations.index', compact(
             'pets', 
@@ -91,7 +92,7 @@ class PetRegistrationController extends Controller
             'age' => 'nullable|string|max:100',
             'weight' => 'nullable|string|max:50',
             'color' => 'nullable|string|max:100',
-            'owner_id' => 'required|exists:users,id',
+            'client_id' => 'required|exists:users,id',
             'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'vaccination_status' => 'nullable|in:up_to_date,partial,none',
             'health_status' => 'nullable|string|max:255',
@@ -109,14 +110,14 @@ class PetRegistrationController extends Controller
         // Generate license number for registered pets
         $licenseNumber = null;
         if ($request->filled('generate_license')) {
-            $licenseNumber = 'LIC-' . date('Y') . '-' . str_pad(Animal::count() + 1, 6, '0', STR_PAD_LEFT);
+            $licenseNumber = 'LIC-' . date('Y') . '-' . str_pad(Pet::count() + 1, 6, '0', STR_PAD_LEFT);
         }
 
-        $validated['photo_url'] = $photoPath;
+        $validated['pet_image'] = $photoPath;
         $validated['license_number'] = $licenseNumber;
         $validated['license_expiry'] = $licenseNumber ? now()->addYear() : null;
 
-        Animal::create($validated);
+        Pet::create($validated);
 
         return redirect()->route('admin-asst.pet-registrations.index')
             ->with('success', 'Pet registered successfully!');
@@ -125,7 +126,7 @@ class PetRegistrationController extends Controller
     /**
      * Display the specified pet registration.
      */
-    public function show(Animal $pet)
+    public function show(Pet $pet)
     {
         $pet->load('userOwner', 'barangay');
         
@@ -135,7 +136,7 @@ class PetRegistrationController extends Controller
     /**
      * Show the form for editing the specified pet registration.
      */
-    public function edit(Animal $pet)
+    public function edit(Pet $pet)
     {
         $barangays = Barangay::orderBy('barangay_name')->get();
         $users = User::orderBy('name')->get();
@@ -146,7 +147,7 @@ class PetRegistrationController extends Controller
     /**
      * Update the specified pet registration.
      */
-    public function update(Request $request, Animal $pet)
+    public function update(Request $request, Pet $pet)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -156,7 +157,7 @@ class PetRegistrationController extends Controller
             'age' => 'nullable|string|max:100',
             'weight' => 'nullable|string|max:50',
             'color' => 'nullable|string|max:100',
-            'owner_id' => 'required|exists:users,id',
+            'client_id' => 'required|exists:users,id',
             'barangay_id' => 'nullable|exists:barangays,barangay_id',
             'vaccination_status' => 'nullable|in:up_to_date,partial,none',
             'health_status' => 'nullable|string|max:255',
@@ -170,10 +171,10 @@ class PetRegistrationController extends Controller
         // Handle file upload
         if ($request->hasFile('photo')) {
             // Delete old photo if exists
-            if ($pet->photo_url) {
-                \Storage::disk('public')->delete($pet->photo_url);
+            if ($pet->pet_image) {
+                \Storage::disk('public')->delete($pet->pet_image);
             }
-            $validated['photo_url'] = $request->file('photo')->store('pets', 'public');
+            $validated['pet_image'] = $request->file('photo')->store('pets', 'public');
         }
 
         $pet->update($validated);
@@ -185,11 +186,11 @@ class PetRegistrationController extends Controller
     /**
      * Remove the specified pet registration.
      */
-    public function destroy(Animal $pet)
+    public function destroy(Pet $pet)
     {
         // Delete photo if exists
-        if ($pet->photo_url) {
-            \Storage::disk('public')->delete($pet->photo_url);
+        if ($pet->pet_image) {
+            \Storage::disk('public')->delete($pet->pet_image);
         }
         
         $pet->delete();
@@ -201,9 +202,9 @@ class PetRegistrationController extends Controller
     /**
      * Approve/Register a pet (issue license).
      */
-    public function approve(Animal $pet)
+    public function approve(Pet $pet)
     {
-        $licenseNumber = 'LIC-' . date('Y') . '-' . str_pad(Animal::count() + 1, 6, '0', STR_PAD_LEFT);
+        $licenseNumber = 'LIC-' . date('Y') . '-' . str_pad(Pet::count() + 1, 6, '0', STR_PAD_LEFT);
         
         $pet->update([
             'license_number' => $licenseNumber,
@@ -219,10 +220,10 @@ class PetRegistrationController extends Controller
     public function stats()
     {
         $stats = [
-            'total' => Animal::count(),
-            'registered' => Animal::whereNotNull('license_number')->count(),
-            'pending' => Animal::whereNull('license_number')->count(),
-            'by_species' => Animal::select('species', DB::raw('count(*) as count'))
+            'total' => Pet::count(),
+            'registered' => Pet::whereNotNull('license_number')->count(),
+            'pending' => Pet::whereNull('license_number')->count(),
+            'by_species' => Pet::select('species', DB::raw('count(*) as count'))
                 ->groupBy('species')
                 ->pluck('count', 'species')
                 ->toArray(),

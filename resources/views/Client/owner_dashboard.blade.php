@@ -258,7 +258,7 @@
             </div>
             
             @php
-                $pets = \App\Models\Animal::where('client_id', \App\Models\Client::where('email', auth()->user()->email)->first()->client_id ?? 0)->get();
+                $pets = \App\Models\Pet::where('owner_id', auth()->user()->petOwner->owner_id ?? 0)->get();
             @endphp
             
             @if($pets->count() > 0)
@@ -282,7 +282,7 @@
                                 <p><strong>Gender:</strong> {{ ucfirst($pet->sex) }}</p>
                                 @php
                                     $ageDisplay = 'Unknown';
-                                    if ($pet->estimated_age) {
+                                    if ($pet->age) {
                                         $ageMap = [
                                             'less_than_3_months' => 'Less than 3 months',
                                             '3_to_12_months' => '3 to 12 months',
@@ -307,7 +307,7 @@
                                             '19_years' => '19 years old',
                                             '20_years' => '20 years old',
                                         ];
-                                        $ageDisplay = $ageMap[$pet->estimated_age] ?? $pet->estimated_age;
+                                        $ageDisplay = $ageMap[$pet->age] ?? $pet->age;
                                     } elseif ($pet->birthdate) {
                                         $birthYear = date('Y', strtotime($pet->birthdate));
                                         $age = date('Y') - $birthYear;
@@ -316,8 +316,8 @@
                                 @endphp
                                 <p><strong>Age:</strong> {{ $ageDisplay }}</p>
                                 <p><strong>Neutered:</strong> {{ $pet->is_neutered === 'yes' ? 'Yes' : 'No' }}</p>
-                                @if($pet->pet_weight)
-                                    <p><strong>Weight:</strong> {{ $pet->pet_weight }} kg</p>
+                                @if($pet->weight)
+                                    <p><strong>Weight:</strong> {{ $pet->weight }}</p>
                                 @endif
                             </div>
                         </div>
