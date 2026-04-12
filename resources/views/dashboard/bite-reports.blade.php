@@ -199,7 +199,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'disease-control');
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b border-gray-100">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Case ID</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Report No.</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Patient Name</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Barangay</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
@@ -220,12 +220,12 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'disease-control');
                                     </div>
                                     <div>
                                         <p class="font-medium text-gray-800">{{ $report->patient_name ?? 'Unknown' }}</p>
-                                        <p class="text-sm text-gray-500">{{ $report->patient_age ?? 'N/A' }} yrs old</p>
+                                        <p class="text-sm text-gray-500">{{ $report->age ?? 'N/A' }} yrs old</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <p class="text-gray-800">{{ $report->patientBarangay->barangay_name ?? 'N/A' }}</p>
+                                <p class="text-gray-800">{{ $report->barangay->barangay_name ?? ($report->patient_barangay ?? 'N/A') }}</p>
                             </td>
                             <td class="px-6 py-4">
                                 <p class="text-gray-600">{{ $report->created_at->format('M d, Y') }}</p>

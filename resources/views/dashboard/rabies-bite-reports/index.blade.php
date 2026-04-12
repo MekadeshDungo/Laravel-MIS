@@ -9,12 +9,7 @@
 $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
 
 // Get available route for rabies-bite-reports
-$rabiesReportsRoute = 'assistant-vet.rabies-bite-reports.index';
-if ($rolePrefix === 'admin' && Route::has('admin.rabies-bite-reports.index')) {
-    $rabiesReportsRoute = 'admin.rabies-bite-reports.index';
-} elseif ($rolePrefix === 'city-vet' && Route::has('city-vet.rabies-bite-reports.index')) {
-    $rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';
-}
+$rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';
 @endphp
 
 @section('content')
@@ -166,7 +161,7 @@ if ($rolePrefix === 'admin' && Route::has('admin.rabies-bite-reports.index')) {
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b border-gray-100">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Case ID</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Report No.</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Patient Name</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Barangay</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Incident Date</th>
@@ -179,7 +174,7 @@ if ($rolePrefix === 'admin' && Route::has('admin.rabies-bite-reports.index')) {
                         @foreach($reports as $report)
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="px-6 py-4">
-                                    <span class="font-medium text-gray-800">{{ $report->case_id ?? 'N/A' }}</span>
+                                    <span class="font-medium text-gray-800">{{ $report->report_number }}</span>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
@@ -188,20 +183,20 @@ if ($rolePrefix === 'admin' && Route::has('admin.rabies-bite-reports.index')) {
                                         </div>
                                         <div>
                                             <p class="font-medium text-gray-800">{{ $report->patient_name }}</p>
-                                            <p class="text-sm text-gray-500">Age: {{ $report->patient_age }}, {{ $report->patient_gender }}</p>
+                                            <p class="text-sm text-gray-500">Age: {{ $report->age ?? 'N/A' }}, {{ $report->gender ?? 'N/A' }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <p class="text-gray-800">{{ $report->patientBarangay->barangay_name ?? 'N/A' }}</p>
+                                    <p class="text-gray-800">{{ $report->barangay->barangay_name ?? ($report->patient_barangay ?? 'N/A') }}</p>
                                 </td>
                                 <td class="px-6 py-4">
                                     <p class="text-gray-600">{{ \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') }}</p>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div>
-                                        <p class="text-gray-800">{{ $report->animal_species }}</p>
-                                        <p class="text-sm text-gray-500">{{ $report->animal_status }}</p>
+                                        <p class="text-gray-800">{{ ucfirst($report->animal_type) }}</p>
+                                        <p class="text-sm text-gray-500">{{ ucfirst($report->animal_status) }}</p>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">

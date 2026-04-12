@@ -124,37 +124,9 @@
         </div>
         @endif
 
-        <!-- Content -->
-        <div class="px-6 py-8">
-            <!-- Date Info -->
-            <div class="flex flex-wrap gap-6 mb-6 pb-6 border-b border-gray-200">
-                @if($announcement->publish_date)
-                <div class="flex items-center text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <div>
-                        <p class="text-xs text-gray-500">Published</p>
-                        <p class="font-medium text-sm">{{ \Carbon\Carbon::parse($announcement->publish_date)->format('F d, Y') }}</p>
-                    </div>
-                </div>
-                @endif
-                @if($announcement->expiry_date)
-                <div class="flex items-center text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div>
-                        <p class="text-xs text-gray-500">Expires</p>
-                        <p class="font-medium text-sm">{{ \Carbon\Carbon::parse($announcement->expiry_date)->format('F d, Y') }}</p>
-                    </div>
-                </div>
-                @endif
-            </div>
-
-            <!-- Main Content -->
+<!-- Main Content -->
             <div class="prose max-w-none">
-                <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ $announcement->body }}</p>
+                <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ $announcement->content }}</p>
             </div>
 
             <!-- Attachment -->

@@ -12,7 +12,7 @@
                 Add Rabies Case
             @endif
         </h1>
-        <a href="{{ isset($rabiesReport) ? route('assistant-vet.rabies-bite-reports.show', $rabiesReport->id) : route('rabies-cases.index') }}" class="btn btn-secondary">
+        <a href="{{ isset($rabiesReport) ? route('city-vet.rabies-bite-reports.show', $rabiesReport->id) : route('city-vet.rabies-cases.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
     </div>
@@ -29,7 +29,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ isset($rabiesReport) ? route('assistant-vet.rabies-bite-reports.store-case', $rabiesReport->id) : route('rabies-cases.store') }}" method="POST">
+            <form action="{{ isset($rabiesReport) ? route('city-vet.rabies-bite-reports.store-case', $rabiesReport->id) : route('city-vet.rabies-cases.store') }}" method="POST">
                 @csrf
                 <div class="row">
                     <div class="col-md-6 mb-3">

@@ -111,6 +111,16 @@ class OtpController extends Controller
         // Log the user in
         Auth::login($user);
 
+        // System log for successful login
+        \App\Models\SystemLog::create([
+            'user_id' => $user->id,
+            'action' => 'login',
+            'module' => 'Authentication',
+            'description' => "User logged in via OTP verification",
+            'ip_address' => request()->ip(),
+            'status' => 'success',
+        ]);
+
         // Clear session
         session()->forget('email');
         

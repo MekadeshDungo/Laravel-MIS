@@ -8,7 +8,7 @@
 <div class="max-w-4xl mx-auto">
     <!-- Back Button -->
     <div class="mb-6">
-        <a href="{{ route('records-staff.pets.index') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition">
+        <a href="{{ route('admin-staff.pets.index') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition">
             <i class="bi bi-arrow-left"></i>
             <span>Back to Pets</span>
         </a>
@@ -20,7 +20,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="font-semibold text-gray-800">Pet Information</h3>
-                    <a href="{{ route('records-staff.pets.edit', $pet) }}" class="text-emerald-600 hover:text-emerald-700">
+                    <a href="{{ route('admin-staff.pets.edit', $pet) }}" class="text-emerald-600 hover:text-emerald-700">
                         <i class="bi bi-pencil"></i> Edit
                     </a>
                 </div>
@@ -112,7 +112,7 @@
                             <p class="font-medium">{{ $pet->owner->address }}</p>
                         </div>
                         @endif
-                        <a href="{{ route('records-staff.owners.show', $pet->owner) }}" class="mt-4 inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700">
+                        <a href="{{ route('admin-staff.owners.show', $pet->owner) }}" class="mt-4 inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700">
                             <span>View Owner Profile</span>
                             <i class="bi bi-arrow-right"></i>
                         </a>

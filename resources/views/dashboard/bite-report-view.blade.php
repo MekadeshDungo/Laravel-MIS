@@ -64,23 +64,15 @@
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div>
                     <p class="text-xs text-gray-500">Species</p>
-                    <p class="text-sm font-medium text-gray-800">{{ ucfirst($report->animal_species) }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ ucfirst($report->animal_type) }}</p>
                 </div>
                 <div>
-                    <p class="text-xs text-gray-500">Breed</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->animal_breed ?? 'Unknown' }}</p>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-500">Color/Markings</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->animal_color ?? 'Unknown' }}</p>
+                    <p class="text-xs text-gray-500">Status</p>
+                    <p class="text-sm font-medium text-gray-800">{{ ucfirst($report->animal_status) }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-gray-500">Vaccination Status</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->vaccination_status ?? 'Unknown' }}</p>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-500">Current Status</p>
-                    <p class="text-sm font-medium text-gray-800">{{ $report->animal_current_status ?? 'Unknown' }}</p>
+                    <p class="text-sm font-medium text-gray-800">{{ ucfirst($report->vaccination_status) }}</p>
                 </div>
             </div>
         </div>

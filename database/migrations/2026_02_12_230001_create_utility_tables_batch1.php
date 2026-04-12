@@ -61,9 +61,23 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('title');
             $table->text('message');
-            $table->enum('related_module', ['stray_report', 'impound', 'adoption', 'bite_rabies_report'])->nullable();
+            $table->enum('related_module', [
+                'stray_report', 
+                'impound', 
+                'adoption', 
+                'bite_rabies_report',
+                'pet_registration',
+                'spay_neuter',
+                'livestock',
+                'meat_inspection',
+                'inventory',
+                'user_management',
+                'announcement',
+                'rabies_case'
+            ])->nullable();
             $table->unsignedBigInteger('related_record_id')->nullable();
             $table->boolean('is_read')->default(false);
+            $table->string('priority')->default('normal')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('admin_users')->onDelete('cascade');
@@ -196,10 +210,20 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->timestamps();
 
+            $table->string('module')->nullable();
+            $table->string('action')->nullable();
+            $table->string('status')->nullable();
+            $table->unsignedBigInteger('record_id')->nullable();
+            $table->string('ip_address')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('role')->nullable();
+
             $table->index('subject_type');
             $table->index('subject_id');
             $table->index('event');
             $table->index('causer_id');
+            $table->index('module');
+            $table->index('action');
         });
 
         Schema::create('announcement_reads', function (Blueprint $table) {

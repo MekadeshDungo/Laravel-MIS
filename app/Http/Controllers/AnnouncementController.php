@@ -102,11 +102,7 @@ class AnnouncementController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category' => 'required|in:campaign,event',
-            'priority' => 'required|in:Urgent,Important,Normal',
-            'status' => 'required|in:draft,published,archived',
             'is_active' => 'nullable|boolean',
-            'publish_date' => 'nullable|date',
-            'expiry_date' => 'nullable|date|after:publish_date',
             'event_date' => 'nullable|required_if:category,event|date',
             'event_time' => 'nullable',
             'location' => 'nullable|required_if:category,event|string|max:255',
@@ -132,13 +128,15 @@ class AnnouncementController extends Controller
         }
 
         Announcement::create(array_merge(
-            $request->validated(),
+            $validator->validated(),
             [
                 'photo_path' => $photoPath,
                 'attachment_path' => $attachmentPath,
                 'created_by' => auth()->id(),
             ]
         ));
+
+        \App\Services\NotificationService::announcementCreated(Announcement::latest()->first()->id);
 
         return redirect()->route('announcements.index')
             ->with('success', 'Announcement created successfully.');
@@ -155,11 +153,7 @@ class AnnouncementController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category' => 'required|in:campaign,event',
-            'priority' => 'required|in:Urgent,Important,Normal',
-            'status' => 'required|in:draft,published,archived',
             'is_active' => 'nullable|boolean',
-            'publish_date' => 'nullable|date',
-            'expiry_date' => 'nullable|date|after:publish_date',
             'event_date' => 'nullable|required_if:category,event|date',
             'event_time' => 'nullable',
             'location' => 'nullable|required_if:category,event|string|max:255',
@@ -174,7 +168,7 @@ class AnnouncementController extends Controller
                 ->withInput();
         }
 
-        $data = $request->validated();
+        $data = $validator->validated();
 
         if ($request->hasFile('photo_path')) {
             if ($announcement->photo_path) {
@@ -211,29 +205,8 @@ class AnnouncementController extends Controller
             ->with('success', 'Announcement deleted successfully.');
     }
 
-    public function publish(Announcement $announcement)
-    {
-        $announcement->update([
-            'status' => 'published',
-            'publish_date' => now(),
-        ]);
-
-        return redirect()->back()->with('success', 'Announcement published successfully.');
-    }
-
-    public function archive(Announcement $announcement)
-    {
-        $announcement->update(['status' => 'archived']);
-
-        return redirect()->back()->with('success', 'Announcement archived successfully.');
-    }
-
     public function publicShow(Announcement $announcement)
     {
-        if ($announcement->status !== 'published') {
-            abort(404);
-        }
-
         $announcement->load('createdBy');
 
         $view = $announcement->category === 'event' 

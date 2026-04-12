@@ -97,21 +97,17 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
                             @if($announcement->type)
-                            <span class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                                {{ $announcement->type }}
+<span class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                                {{ ucfirst($announcement->category) }}
                             </span>
-                            @endif
                         </div>
-                        <span class="text-sm text-gray-500">
-                            {{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('M d, Y') : '' }}
-                        </span>
                     </div>
 
                     <!-- Title -->
                     <h2 class="text-xl font-bold text-gray-900 mb-2">{{ $announcement->title }}</h2>
 
                     <!-- Preview -->
-                    <p class="text-gray-600 mb-4 line-clamp-3">{{ Str::limit($announcement->body, 200) }}</p>
+                    <p class="text-gray-600 mb-4 line-clamp-3">{{ Str::limit($announcement->content, 200) }}</p>
 
                     <!-- Read More Button -->
                     <a href="{{ route('announcements.show', $announcement->id) }}" 

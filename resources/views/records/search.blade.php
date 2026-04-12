@@ -8,7 +8,7 @@
 <div class="max-w-4xl mx-auto">
     <!-- Search Form -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
-        <form method="GET" action="{{ route('records-staff.search') }}">
+        <form method="GET" action="{{ route('admin-staff.search') }}">
             <div class="flex gap-4">
                 <div class="flex-1">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Search Query</label>
@@ -47,7 +47,7 @@
                             <p class="text-sm text-gray-500">{{ ucfirst($pet->species) }} • {{ $pet->owner->name ?? 'No Owner' }}</p>
                         </div>
                     </div>
-                    <a href="{{ route('records-staff.pets.show', $pet) }}" class="text-emerald-600 hover:text-emerald-700">View Details</a>
+                    <a href="{{ route('admin-staff.pets.show', $pet) }}" class="text-emerald-600 hover:text-emerald-700">View Details</a>
                 </div>
                 @endforeach
             </div>
@@ -73,7 +73,7 @@
                             <p class="text-sm text-gray-500">{{ $owner->pets_count }} pets • {{ $owner->email }}</p>
                         </div>
                     </div>
-                    <a href="{{ route('records-staff.owners.show', $owner) }}" class="text-blue-600 hover:text-blue-700">View Profile</a>
+                    <a href="{{ route('admin-staff.owners.show', $owner) }}" class="text-blue-600 hover:text-blue-700">View Profile</a>
                 </div>
                 @endforeach
             </div>

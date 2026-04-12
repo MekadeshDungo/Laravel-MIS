@@ -93,6 +93,8 @@ class ImpoundController extends Controller
             'updated_by_user_id' => auth()->id(),
         ]);
 
+        \App\Services\NotificationService::impoundCreated($impound->impound_id);
+
         return redirect()->route('impounds.show', $impound)
             ->with('success', 'Impound record created successfully.');
     }

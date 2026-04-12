@@ -12,7 +12,7 @@
             <h2 class="text-xl font-semibold text-gray-800">Vaccination Records</h2>
             <p class="text-sm text-gray-500">View and manage all vaccination records</p>
         </div>
-        <a href="{{ route('records-staff.vaccinations.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+        <a href="{{ route('admin-staff.vaccinations.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
             <i class="bi bi-plus-lg"></i>
             Encode New Record
         </a>
@@ -85,7 +85,7 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="{{ route('records-staff.vaccinations.show', $vaccination) }}" class="text-blue-600 hover:text-blue-700">View</a>
+                        <a href="{{ route('admin-staff.vaccinations.show', $vaccination) }}" class="text-blue-600 hover:text-blue-700">View</a>
                     </td>
                 </tr>
                 @empty

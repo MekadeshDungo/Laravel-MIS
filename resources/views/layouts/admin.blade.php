@@ -228,7 +228,7 @@
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Management</div>
 
-            <a href="{{ route('city-vet.impound.index') }}" class="nav-item {{ request()->routeIs('city-vet.impound.*') ? 'active-nav' : '' }}">
+            <a href="{{ route('city-vet.impounds.index') }}" class="nav-item {{ request()->routeIs('city-vet.impounds.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-archive"></i><span>Impound Records</span>
             </a>
 
@@ -251,9 +251,6 @@
             </a>
             <a href="{{ route('admin-staff.vaccinations.index') }}" class="nav-item {{ request()->routeIs('admin-staff.vaccinations.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-shield-check"></i><span>Vaccination Encoding</span>
-            </a>
-            <a href="{{ route('admin-staff.search') }}" class="nav-item {{ request()->routeIs('admin-staff.search') ? 'active-nav' : '' }}">
-                <i class="bi bi-search"></i><span>Search Records</span>
             </a>
 
             <div class="sidebar-divider"></div>
@@ -287,7 +284,7 @@
             <!-- <a href="{{ route('assistant-vet.rabies-cases.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.rabies-cases.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-exclamation-triangle"></i><span>Rabies Cases</span>
             </a> -->
-            <a href="{{ route('assistant-vet.rabies-bite-reports.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.rabies-bite-reports.*') ? 'active-nav' : '' }}">
+            <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-bite-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-file-medical"></i><span>Bite Reports</span>
             </a>
             <a href="{{ route('assistant-vet.vaccinations.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.vaccinations.*') ? 'active-nav' : '' }}">
@@ -391,6 +388,57 @@
                 </div>
 
                 <div class="flex items-center gap-3">
+                    <!-- Notifications -->
+                    @php
+                        $unreadNotifications = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->latest()->take(10)->get();
+                        $unreadCount = $unreadNotifications->count();
+                    @endphp
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="relative p-2 rounded-lg hover:bg-slate-100 transition">
+                            <i class="bi bi-bell text-xl text-slate-600"></i>
+                            @if($unreadCount > 0)
+                                <span class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
+                            @endif
+                        </button>
+                        <!-- Dropdown -->
+                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-slate-200 z-50 hidden" style="display: none;">
+                            <div class="p-3 border-b border-slate-100">
+                                <h3 class="font-semibold text-slate-800">Notifications</h3>
+                            </div>
+                            <div class="max-h-80 overflow-y-auto">
+                                @forelse($unreadNotifications as $notification)
+                                    <a href="#" class="block p-3 hover:bg-slate-50 border-b border-slate-50 last:border-0">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 {{ $notification->priority === 'high' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }}">
+                                                <i class="bi bi-bell-fill text-sm"></i>
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <p class="text-sm font-medium text-slate-800 truncate">{{ $notification->title }}</p>
+                                                <p class="text-xs text-slate-500 truncate">{{ $notification->message }}</p>
+                                                <p class="text-[10px] text-slate-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="p-4 text-center text-slate-500">
+                                        <i class="bi bi-bell-slash text-2xl mb-2"></i>
+                                        <p class="text-sm">No new notifications</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                            @if($unreadCount > 0)
+                                <div class="p-2 border-t border-slate-100">
+                                    <form action="{{ route('notifications.mark-all-read') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full text-center text-sm text-blue-600 hover:text-blue-800 py-1">
+                                            Mark all as read
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="flex items-center gap-2 pl-3 border-l border-slate-200">
                         <div class="w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center">
                             <span class="text-white text-xs font-bold">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>

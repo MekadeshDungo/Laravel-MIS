@@ -79,13 +79,15 @@ class BiteRabiesReportController extends Controller
 
         $reportNumber = BiteRabiesReport::generateReportNumber();
 
-        BiteRabiesReport::create(array_merge(
+        $report = BiteRabiesReport::create(array_merge(
             $request->validated(),
             [
                 'report_number' => $reportNumber,
                 'reported_by' => auth()->id(),
             ]
         ));
+
+        \App\Services\NotificationService::biteReportCreated($report->id);
 
         return redirect()->route('bite-rabies-reports.index')
             ->with('success', 'Bite/Rabies report created successfully.');

@@ -98,11 +98,11 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'city-vet');
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-gray-500">Age</dt>
-                    <dd class="font-medium text-gray-900">{{ $exposureCase->patient_age ?? 'N/A' }}</dd>
+                    <dd class="font-medium text-gray-900">{{ $exposureCase->age ?? 'N/A' }} years old</dd>
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-gray-500">Gender</dt>
-                    <dd class="font-medium text-gray-900">{{ $exposureCase->patient_gender ?? 'N/A' }}</dd>
+                    <dd class="font-medium text-gray-900">{{ $exposureCase->gender ?? 'N/A' }}</dd>
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-gray-500">Contact</dt>
@@ -110,7 +110,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'city-vet');
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-gray-500">Barangay</dt>
-                    <dd class="font-medium text-gray-900">{{ $exposureCase->patientBarangay?->barangay_name ?? 'N/A' }}</dd>
+                    <dd class="font-medium text-gray-900">{{ $exposureCase->barangay->barangay_name ?? ($exposureCase->patient_barangay ?? 'N/A') }}</dd>
                 </div>
             </dl>
         </div>
@@ -127,7 +127,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'city-vet');
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-gray-500">Nature of Incident</dt>
-                    <dd class="font-medium text-gray-900">{{ $exposureCase->nature_of_incident ?? 'N/A' }}</dd>
+                    <dd class="font-medium text-gray-900">{{ ucfirst($exposureCase->exposure_type) ?? 'N/A' }}</dd>
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-gray-500">Bite Site</dt>
@@ -135,11 +135,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'city-vet');
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-gray-500">Exposure Category</dt>
-                    <dd class="font-medium text-gray-900">{{ $exposureCase->exposure_category ?? 'N/A' }}</dd>
-                </div>
-                <div class="flex justify-between">
-                    <dt class="text-gray-500">Barangay</dt>
-                    <dd class="font-medium text-gray-900">{{ $exposureCase->barangay?->barangay_name ?? 'N/A' }}</dd>
+                    <dd class="font-medium text-gray-900">{{ $exposureCase->category ? 'Category ' . $exposureCase->category : 'N/A' }}</dd>
                 </div>
             </dl>
         </div>
@@ -152,11 +148,15 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'city-vet');
             <dl class="space-y-3">
                 <div class="flex justify-between">
                     <dt class="text-gray-500">Species</dt>
-                    <dd class="font-medium text-gray-900">{{ $exposureCase->animal_species ?? 'N/A' }}</dd>
+                    <dd class="font-medium text-gray-900">{{ ucfirst($exposureCase->animal_type) ?? 'N/A' }}</dd>
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-gray-500">Status</dt>
-                    <dd class="font-medium text-gray-900">{{ $exposureCase->animal_status ?? 'N/A' }}</dd>
+                    <dd class="font-medium text-gray-900">{{ ucfirst($exposureCase->animal_status) ?? 'N/A' }}</dd>
+                </div>
+                <div class="flex justify-between">
+                    <dt class="text-gray-500">Vaccination Status</dt>
+                    <dd class="font-medium text-gray-900">{{ ucfirst($exposureCase->vaccination_status) ?? 'N/A' }}</dd>
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-gray-500">Owner Name</dt>

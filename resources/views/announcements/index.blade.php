@@ -70,12 +70,12 @@
 
 <!-- Announcements Grid -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    @forelse(Announcement::orderBy('publish_date', 'desc')->get() as $announcement)
+    @forelse(Announcement::orderBy('created_at', 'desc')->get() as $announcement)
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group">
             <!-- Card Header with Image -->
             <div class="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-                @if($announcement->image_path)
-                    <img src="{{ $announcement->image_url }}" alt="{{ $announcement->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                @if($announcement->photo_path)
+                    <img src="{{ $announcement->photo_url }}" alt="{{ $announcement->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 @else
                     <div class="absolute inset-0 flex items-center justify-center">
                         <div class="w-16 h-16 bg-white/50 rounded-full flex items-center justify-center backdrop-blur-sm">
@@ -83,54 +83,26 @@
                         </div>
                     </div>
                 @endif
-
-                <!-- Badges Overlay -->
-                <div class="absolute top-3 left-3 flex gap-2 flex-wrap">
-                    <!-- Status Badge -->
-                    @if($announcement->status === 'Published')
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-success text-white shadow-lg">
-                            <i class="bi bi-check-circle mr-1"></i> Published
-                        </span>
-                    @elseif($announcement->status === 'Draft')
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-secondary text-white shadow-lg">
-                            <i class="bi bi-pencil mr-1"></i> Draft
-                        </span>
-                    @else
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-dark text-white shadow-lg">
-                            <i class="bi bi-archive mr-1"></i> Archived
-                        </span>
-                    @endif
-                </div>
             </div>
 
             <!-- Card Body -->
             <div class="p-6">
-                <!-- Type Badge -->
+                <!-- Category Badge -->
                 <div class="mb-2">
                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                        {{ $announcement->type ?? 'General' }}
+                        {{ ucfirst($announcement->category) }}
                     </span>
                 </div>
 
                 <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">{{ $announcement->title }}</h3>
-                <p class="text-gray-600 mb-3 line-clamp-2 text-sm">{{ $announcement->body }}</p>
+                <p class="text-gray-600 mb-3 line-clamp-2 text-sm">{{ $announcement->content }}</p>
 
                 <!-- Meta Info -->
                 <div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-4">
                     <span class="inline-flex items-center px-2 py-1 bg-gray-100 rounded-lg">
                         <i class="bi bi-person mr-1 text-blue-500"></i>
-                        {{ $announcement->user->name ?? 'Unknown' }}
+                        {{ $announcement->createdBy->name ?? 'Unknown' }}
                     </span>
-                    <span class="inline-flex items-center px-2 py-1 bg-gray-100 rounded-lg">
-                        <i class="bi bi-calendar-check mr-1 text-green-500"></i>
-                        {{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('M d, Y') : 'Not set' }}
-                    </span>
-                    @if($announcement->expiry_date)
-                    <span class="inline-flex items-center px-2 py-1 bg-red-50 rounded-lg text-red-600">
-                        <i class="bi bi-calendar-x mr-1"></i>
-                        Expires: {{ \Carbon\Carbon::parse($announcement->expiry_date)->format('M d, Y') }}
-                    </span>
-                    @endif
                 </div>
 
                 <!-- Action Buttons -->

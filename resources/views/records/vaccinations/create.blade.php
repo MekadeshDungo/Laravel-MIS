@@ -8,7 +8,7 @@
 <div class="max-w-4xl mx-auto">
     <!-- Back Button -->
     <div class="mb-6">
-        <a href="{{ route('records-staff.dashboard') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition">
+        <a href="{{ route('admin-staff.dashboard') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition">
             <i class="bi bi-arrow-left"></i>
             <span>Back to Dashboard</span>
         </a>
@@ -21,7 +21,7 @@
             <p class="text-sm text-gray-500">Fill in the information below to record a vaccination</p>
         </div>
 
-        <form action="{{ route('records-staff.vaccinations.store') }}" method="POST" class="p-6">
+        <form action="{{ route('admin-staff.vaccinations.store') }}" method="POST" class="p-6">
             @csrf
 
             <!-- Owner/Patient Info -->
@@ -211,7 +211,7 @@
 
             <!-- Form Actions -->
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
-                <a href="{{ route('records-staff.dashboard') }}" class="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition">
+                <a href="{{ route('admin-staff.dashboard') }}" class="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition">
                     Cancel
                 </a>
                 <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition shadow-sm">

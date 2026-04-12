@@ -12,7 +12,7 @@
             <h2 class="text-xl font-semibold text-gray-800">Pet Registrations</h2>
             <p class="text-sm text-gray-500">View and manage all registered pets</p>
         </div>
-        <a href="{{ route('records-staff.pets.create') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+        <a href="{{ route('admin-staff.pets.create') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
             <i class="bi bi-plus-lg"></i>
             Register New Pet
         </a>
@@ -97,8 +97,8 @@
                         {{ $pet->created_at->format('M d, Y') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="{{ route('records-staff.pets.show', $pet) }}" class="text-emerald-600 hover:text-emerald-700 mr-3">View</a>
-                        <a href="{{ route('records-staff.pets.edit', $pet) }}" class="text-blue-600 hover:text-blue-700">Edit</a>
+                        <a href="{{ route('admin-staff.pets.show', $pet) }}" class="text-emerald-600 hover:text-emerald-700 mr-3">View</a>
+                        <a href="{{ route('admin-staff.pets.edit', $pet) }}" class="text-blue-600 hover:text-blue-700">Edit</a>
                     </td>
                 </tr>
                 @empty

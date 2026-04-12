@@ -173,7 +173,7 @@
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
         <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
         <div class="space-y-3">
-            <a href="{{ route('city-vet.vaccination-reports.index') }}" class="flex items-center gap-3 p-3 bg-red-50 hover:bg-red-100 rounded-xl transition group">
+            <a href="{{ route('admin.vaccination-reports.index') }}" class="flex items-center gap-3 p-3 bg-red-50 hover:bg-red-100 rounded-xl transition group">
                 <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
                     <i class="bi bi-eyedropper text-white"></i>
                 </div>
@@ -185,19 +185,19 @@
                 </div>
                 <span class="text-sm font-medium text-gray-700">Rabies Cases</span>
             </a> -->
-            <a href="{{ route('city-vet.bite-reports.index') }}" class="flex items-center gap-3 p-3 bg-yellow-50 hover:bg-yellow-100 rounded-xl transition group">
+            <a href="{{ route('admin.bite-reports.index') }}" class="flex items-center gap-3 p-3 bg-yellow-50 hover:bg-yellow-100 rounded-xl transition group">
                 <div class="w-10 h-10 bg-yellow-600 rounded-lg flex items-center justify-center">
                     <i class="bi bi-file-earmark-medical text-white"></i>
                 </div>
                 <span class="text-sm font-medium text-gray-700">Bite Reports</span>
             </a>
-            <a href="{{ route('city-vet.impound.index') }}" class="flex items-center gap-3 p-3 bg-amber-50 hover:bg-amber-100 rounded-xl transition group">
+            <a href="{{ route('city-vet.impounds.index') }}" class="flex items-center gap-3 p-3 bg-amber-50 hover:bg-amber-100 rounded-xl transition group">
                 <div class="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center">
                     <i class="bi bi-paw text-white"></i>
                 </div>
                 <span class="text-sm font-medium text-gray-700">Impound Monitoring</span>
             </a>
-            <a href="{{ route('city-vet.all-reports') }}" class="flex items-center gap-3 p-3 bg-green-50 hover:bg-green-100 rounded-xl transition group">
+            <a href="{{ route('admin.all-reports') }}" class="flex items-center gap-3 p-3 bg-green-50 hover:bg-green-100 rounded-xl transition group">
                 <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
                     <i class="bi bi-file-earmark-bar-graph text-white"></i>
                 </div>

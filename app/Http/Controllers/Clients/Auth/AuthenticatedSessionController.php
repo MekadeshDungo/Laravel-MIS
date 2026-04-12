@@ -67,9 +67,9 @@ class AuthenticatedSessionController extends Controller
                 case 'livestock_inspector':
                     return redirect()->route('livestock.dashboard')
                         ->with('success', 'Welcome back, Livestock Inspector ' . $user->name . '!');
-                case 'records_staff':
-                    return redirect()->route('records-staff.dashboard')
-                        ->with('success', 'Welcome back, Records Staff ' . $user->name . '!');
+                case 'admin_staff':
+                    return redirect()->route('admin-staff.dashboard')
+                        ->with('success', 'Welcome back, Admin Staff ' . $user->name . '!');
                 case 'disease_control':
                     return redirect()->route('assistant-vet.dashboard')
                         ->with('success', 'Welcome back, Assistant Veterinary Personnel ' . $user->name . '!');
@@ -89,6 +89,9 @@ class AuthenticatedSessionController extends Controller
                 case 'clinic':
                     return redirect()->route('clinic.dashboard')
                         ->with('success', 'Welcome back, Clinic User ' . $user->name . '!');
+                case 'hospital':
+                    return redirect()->route('hospital.dashboard')
+                        ->with('success', 'Welcome back, Hospital User ' . $user->name . '!');
                 case 'viewer':
                     return redirect()->route('viewer.dashboard')
                         ->with('success', 'Welcome back, Viewer ' . $user->name . '!');

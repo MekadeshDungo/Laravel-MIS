@@ -8,7 +8,7 @@
 <div class="max-w-5xl mx-auto">
     <!-- Back Button -->
     <div class="mb-6">
-        <a href="{{ route('records-staff.owners.index') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition">
+        <a href="{{ route('admin-staff.owners.index') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition">
             <i class="bi bi-arrow-left"></i>
             <span>Back to Owners</span>
         </a>
@@ -63,7 +63,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="font-semibold text-gray-800">Registered Pets</h3>
-                    <a href="{{ route('records-staff.pets.create') }}?owner_id={{ $owner->id }}" class="text-emerald-600 hover:text-emerald-700 text-sm">
+                    <a href="{{ route('admin-staff.pets.create') }}?owner_id={{ $owner->id }}" class="text-emerald-600 hover:text-emerald-700 text-sm">
                         <i class="bi bi-plus"></i> Add Pet
                     </a>
                 </div>
@@ -83,14 +83,14 @@
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $pet->vaccination_status === 'vaccinated' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                 {{ ucfirst($pet->vaccination_status) }}
                             </span>
-                            <a href="{{ route('records-staff.pets.show', $pet) }}" class="block mt-1 text-sm text-emerald-600 hover:text-emerald-700">View Details</a>
+                            <a href="{{ route('admin-staff.pets.show', $pet) }}" class="block mt-1 text-sm text-emerald-600 hover:text-emerald-700">View Details</a>
                         </div>
                     </div>
                     @empty
                     <div class="px-6 py-12 text-center text-gray-500">
                         <i class="bi bi-inbox text-4xl mb-2"></i>
                         <p>No pets registered yet</p>
-                        <a href="{{ route('records-staff.pets.create') }}?owner_id={{ $owner->id }}" class="text-emerald-600 hover:text-emerald-700 mt-2 inline-block">
+                        <a href="{{ route('admin-staff.pets.create') }}?owner_id={{ $owner->id }}" class="text-emerald-600 hover:text-emerald-700 mt-2 inline-block">
                             Register a pet for this owner
                         </a>
                     </div>

@@ -64,6 +64,8 @@ class SpayNeuterController extends Controller
 
         SpayNeuterReport::create($validated);
 
+        \App\Services\NotificationService::spayNeuterCreated(SpayNeuterReport::latest()->first()->id);
+
         return redirect()->route('spay-neuter.reports.index')
             ->with('success', 'Spay/Neuter report submitted successfully!');
     }

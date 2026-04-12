@@ -34,17 +34,17 @@ $rolePrefix = 'clinic';
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Age *</label>
-                        <input type="number" name="patient_age" value="{{ old('patient_age') }}" required min="0" max="150"
+                        <input type="number" name="age" value="{{ old('age') }}" required min="0" max="150"
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
-                        <select name="patient_gender" required
+                        <select name="gender" required
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             <option value="">Select Gender</option>
-                            <option value="Male" {{ old('patient_gender') === 'Male' ? 'selected' : '' }}>Male</option>
-                            <option value="Female" {{ old('patient_gender') === 'Female' ? 'selected' : '' }}>Female</option>
-                            <option value="Other" {{ old('patient_gender') === 'Other' ? 'selected' : '' }}>Other</option>
+                            <option value="Male" {{ old('gender') === 'Male' ? 'selected' : '' }}>Male</option>
+                            <option value="Female" {{ old('gender') === 'Female' ? 'selected' : '' }}>Female</option>
+                            <option value="Other" {{ old('gender') === 'Other' ? 'selected' : '' }}>Other</option>
                         </select>
                     </div>
                     <div>
@@ -54,17 +54,17 @@ $rolePrefix = 'clinic';
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Full Address</label>
-                        <input type="text" name="patient_full_address" value="{{ old('patient_full_address') }}"
+                        <input type="text" name="patient_address" value="{{ old('patient_address') }}"
                             placeholder="House No., Street, City, Province"
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Barangay (for heatmap) *</label>
-                        <select name="patient_barangay_id" required
+                        <select name="barangay_id" required
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             <option value="">Select Barangay</option>
                             @foreach($barangays as $brgy)
-                                <option value="{{ $brgy->barangay_id }}" {{ old('patient_barangay_id') == $brgy->barangay_id ? 'selected' : '' }}>
+                                <option value="{{ $brgy->barangay_id }}" {{ old('barangay_id') == $brgy->barangay_id ? 'selected' : '' }}>
                                     {{ $brgy->barangay_name }}
                                 </option>
                             @endforeach
@@ -84,12 +84,12 @@ $rolePrefix = 'clinic';
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Nature of Incident *</label>
-                        <select name="nature_of_incident" required
+                        <select name="exposure_type" required
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             <option value="">Select Nature</option>
-                            <option value="Bitten" {{ old('nature_of_incident') === 'Bitten' ? 'selected' : '' }}>Bitten</option>
-                            <option value="Scratched" {{ old('nature_of_incident') === 'Scratched' ? 'selected' : '' }}>Scratched</option>
-                            <option value="Licked (Open Wound)" {{ old('nature_of_incident') === 'Licked (Open Wound)' ? 'selected' : '' }}>Licked (Open Wound)</option>
+                            <option value="bite" {{ old('exposure_type') === 'bite' ? 'selected' : '' }}>Bitten</option>
+                            <option value="scratch" {{ old('exposure_type') === 'scratch' ? 'selected' : '' }}>Scratched</option>
+                            <option value="lick" {{ old('exposure_type') === 'lick' ? 'selected' : '' }}>Licked (Open Wound)</option>
                         </select>
                     </div>
                     <div>
@@ -105,12 +105,12 @@ $rolePrefix = 'clinic';
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Exposure Category *</label>
-                        <select name="exposure_category" required
+                        <select name="category" required
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             <option value="">Select Category</option>
-                            <option value="Category I (Lick)" {{ old('exposure_category') === 'Category I (Lick)' ? 'selected' : '' }}>Category I - Touch/feed animal</option>
-                            <option value="Category II (Scratch)" {{ old('exposure_category') === 'Category II (Scratch)' ? 'selected' : '' }}>Category II - Nibble, minor scratch</option>
-                            <option value="Category III (Bite / Deep)" {{ old('exposure_category') === 'Category III (Bite / Deep)' ? 'selected' : '' }}>Category III - Break in skin, licks on mucous membrane</option>
+                            <option value="I" {{ old('category') === 'I' ? 'selected' : '' }}>Category I - Touch/feed animal</option>
+                            <option value="II" {{ old('category') === 'II' ? 'selected' : '' }}>Category II - Nibble, minor scratch</option>
+                            <option value="III" {{ old('category') === 'III' ? 'selected' : '' }}>Category III - Break in skin, licks on mucous membrane</option>
                         </select>
                     </div>
                 </div>
@@ -122,12 +122,12 @@ $rolePrefix = 'clinic';
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Animal Species *</label>
-                        <select name="animal_species" required
+                        <select name="animal_type" required
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             <option value="">Select Species</option>
-                            <option value="Dog" {{ old('animal_species') === 'Dog' ? 'selected' : '' }}>Dog</option>
-                            <option value="Cat" {{ old('animal_species') === 'Cat' ? 'selected' : '' }}>Cat</option>
-                            <option value="Other" {{ old('animal_species') === 'Other' ? 'selected' : '' }}>Other</option>
+                            <option value="dog" {{ old('animal_type') === 'dog' ? 'selected' : '' }}>Dog</option>
+                            <option value="cat" {{ old('animal_type') === 'cat' ? 'selected' : '' }}>Cat</option>
+                            <option value="others" {{ old('animal_type') === 'others' ? 'selected' : '' }}>Other</option>
                         </select>
                     </div>
                     <div>
@@ -135,9 +135,9 @@ $rolePrefix = 'clinic';
                         <select name="animal_status" required
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             <option value="">Select Status</option>
-                            <option value="Owned" {{ old('animal_status') === 'Owned' ? 'selected' : '' }}>Owned</option>
-                            <option value="Stray" {{ old('animal_status') === 'Stray' ? 'selected' : '' }}>Stray</option>
-                            <option value="Wild" {{ old('animal_status') === 'Wild' ? 'selected' : '' }}>Wild</option>
+                            <option value="owned" {{ old('animal_status') === 'owned' ? 'selected' : '' }}>Owned</option>
+                            <option value="stray" {{ old('animal_status') === 'stray' ? 'selected' : '' }}>Stray</option>
+                            <option value="wild" {{ old('animal_status') === 'wild' ? 'selected' : '' }}>Wild</option>
                         </select>
                     </div>
                     <div>
@@ -147,24 +147,14 @@ $rolePrefix = 'clinic';
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Vaccination Status</label>
-                        <select name="animal_vaccination_status"
+                        <select name="vaccination_status"
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             <option value="">Select Status</option>
-                            <option value="Vaccinated" {{ old('animal_vaccination_status') === 'Vaccinated' ? 'selected' : '' }}>Vaccinated</option>
-                            <option value="Unvaccinated" {{ old('animal_vaccination_status') === 'Unvaccinated' ? 'selected' : '' }}>Unvaccinated</option>
-                            <option value="Unknown" {{ old('animal_vaccination_status') === 'Unknown' ? 'selected' : '' }}>Unknown</option>
+                            <option value="vaccinated" {{ old('vaccination_status') === 'vaccinated' ? 'selected' : '' }}>Vaccinated</option>
+                            <option value="unvaccinated" {{ old('vaccination_status') === 'unvaccinated' ? 'selected' : '' }}>Unvaccinated</option>
+                            <option value="unknown" {{ old('vaccination_status') === 'unknown' ? 'selected' : '' }}>Unknown</option>
                         </select>
                     </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Current Condition</label>
-                        <select name="animal_current_condition"
-                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                            <option value="">Select Condition</option>
-                            <option value="Healthy / Alive" {{ old('animal_current_condition') === 'Healthy / Alive' ? 'selected' : '' }}>Healthy / Alive</option>
-                            <option value="Dead" {{ old('animal_current_condition') === 'Dead' ? 'selected' : '' }}>Dead</option>
-                            <option value="Missing / Escaped" {{ old('animal_current_condition') === 'Missing / Escaped' ? 'selected' : '' }}>Missing / Escaped</option>
-                            <option value="Euthanized" {{ old('animal_current_condition') === 'Euthanized' ? 'selected' : '' }}>Euthanized</option>
-                        </select>
                     </div>
                 </div>
             </div>

@@ -66,7 +66,7 @@
                         {{ $owner->created_at->format('M d, Y') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="{{ route('records-staff.owners.show', $owner) }}" class="text-emerald-600 hover:text-emerald-700">View Profile</a>
+                        <a href="{{ route('admin-staff.owners.show', $owner) }}" class="text-emerald-600 hover:text-emerald-700">View Profile</a>
                     </td>
                 </tr>
                 @empty

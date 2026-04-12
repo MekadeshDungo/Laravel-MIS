@@ -68,7 +68,7 @@
 
 <!-- Quick Actions -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <a href="{{ route('records-staff.pets.create') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl p-6 transition shadow-sm flex items-center gap-4">
+    <a href="{{ route('admin-staff.pets.create') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl p-6 transition shadow-sm flex items-center gap-4">
         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
             <i class="bi bi-plus-circle text-2xl"></i>
         </div>
@@ -78,7 +78,7 @@
         </div>
     </a>
 
-    <a href="{{ route('records-staff.vaccinations.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-6 transition shadow-sm flex items-center gap-4">
+    <a href="{{ route('admin-staff.vaccinations.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-6 transition shadow-sm flex items-center gap-4">
         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
             <i class="bi bi-eyedropper text-2xl"></i>
         </div>
@@ -88,7 +88,7 @@
         </div>
     </a>
 
-    <a href="{{ route('records-staff.owners.index') }}" class="bg-purple-600 hover:bg-purple-700 text-white rounded-xl p-6 transition shadow-sm flex items-center gap-4">
+    <a href="{{ route('admin-staff.owners.index') }}" class="bg-purple-600 hover:bg-purple-700 text-white rounded-xl p-6 transition shadow-sm flex items-center gap-4">
         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
             <i class="bi bi-person-badge text-2xl"></i>
         </div>
@@ -98,7 +98,7 @@
         </div>
     </a>
 
-    <a href="{{ route('records-staff.search') }}" class="bg-gray-600 hover:bg-gray-700 text-white rounded-xl p-6 transition shadow-sm flex items-center gap-4">
+    <a href="{{ route('admin-staff.search') }}" class="bg-gray-600 hover:bg-gray-700 text-white rounded-xl p-6 transition shadow-sm flex items-center gap-4">
         <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
             <i class="bi bi-search text-2xl"></i>
         </div>
@@ -115,7 +115,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h3 class="font-semibold text-gray-800">Recent Pet Registrations</h3>
-            <a href="{{ route('records-staff.pets.index') }}" class="text-sm text-emerald-600 hover:text-emerald-700">View All</a>
+            <a href="{{ route('admin-staff.pets.index') }}" class="text-sm text-emerald-600 hover:text-emerald-700">View All</a>
         </div>
         <div class="divide-y divide-gray-100">
             @forelse($recentPets as $pet)
@@ -149,7 +149,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h3 class="font-semibold text-gray-800">Recent Vaccinations</h3>
-            <a href="{{ route('records-staff.vaccinations.index') }}" class="text-sm text-blue-600 hover:text-blue-700">View All</a>
+            <a href="{{ route('admin-staff.vaccinations.index') }}" class="text-sm text-blue-600 hover:text-blue-700">View All</a>
         </div>
         <div class="divide-y divide-gray-100">
             @forelse($recentVaccinations as $vaccination)

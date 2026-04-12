@@ -106,11 +106,12 @@ class CityVetController extends Controller
     private function getHeatmapData(int $year): array
     {
         // Get cases grouped by barangay from bite_rabies_reports
-        // Use patient_barangay_id (where the bite incident occurred)
+        // Use barangay_id (where the bite incident occurred)
         $byBarangay = BiteRabiesReport::whereYear('incident_date', $year)
-            ->whereNotNull('patient_barangay_id')
-            ->selectRaw('patient_barangay_id as barangay_id, COUNT(*) as count')
-            ->groupBy('patient_barangay_id')
+            ->whereNotNull('barangay_id')
+            ->where('barangay_id', '!=', '')
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
             ->get();
 
         // Get ALL barangays with coordinates (not just those with cases)
@@ -219,18 +220,22 @@ class CityVetController extends Controller
         $year = (int) ($request->year ?? date('Y'));
         $month = $request->month ? (int) $request->month : null;
         $week = $request->week ? (int) $request->week : null;
+        $dateFrom = $request->date_from ?: null;
+        $dateTo = $request->date_to ?: null;
 
         // Debug: Check if data exists
         $totalInDb = BiteRabiesReport::whereYear('incident_date', $year)->count();
         $withBarangay = BiteRabiesReport::whereYear('incident_date', $year)
-            ->whereNotNull('patient_barangay_id')->count();
+            ->whereNotNull('barangay_id')->count();
 
-        $heatmapData = $this->getFilteredHeatmapData($year, $month, $week);
-        $caseTypeBreakdown = $this->getFilteredCaseTypeBreakdown($year, $month, $week);
+        $heatmapData = $this->getFilteredHeatmapData($year, $month, $week, $dateFrom, $dateTo);
+        $caseTypeBreakdown = $this->getFilteredCaseTypeBreakdown($year, $month, $week, $dateFrom, $dateTo);
         $totalCases = collect($heatmapData)->sum('count');
 
         $filterLabel = $year;
-        if ($month && $week) {
+        if ($dateFrom && $dateTo) {
+            $filterLabel = \Carbon\Carbon::parse($dateFrom)->format('M d') . ' - ' . \Carbon\Carbon::parse($dateTo)->format('M d, Y');
+        } elseif ($month && $week) {
             $monthName = date('F', mktime(0, 0, 0, $month, 1));
             $filterLabel = "Week $week, $monthName $year";
         } elseif ($month) {
@@ -246,6 +251,8 @@ class CityVetController extends Controller
             'year' => $year,
             'month' => $month,
             'week' => $week,
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
             'debug' => [
                 'total_in_db' => $totalInDb,
                 'with_barangay' => $withBarangay,
@@ -256,10 +263,18 @@ class CityVetController extends Controller
     /**
      * Get filtered heatmap data by year, month, and/or week.
      */
-    private function getFilteredHeatmapData(int $year, ?int $month = null, ?int $week = null): array
+    private function getFilteredHeatmapData(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null): array
     {
         $query = BiteRabiesReport::whereYear('incident_date', $year)
-            ->whereNotNull('patient_barangay_id');
+            ->whereNotNull('barangay_id')
+            ->where('barangay_id', '!=', '');
+
+        if ($dateFrom) {
+            $query->where('incident_date', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $query->where('incident_date', '<=', $dateTo);
+        }
 
         if ($month) {
             $query->whereMonth('incident_date', $month);
@@ -270,8 +285,8 @@ class CityVetController extends Controller
         }
 
         $byBarangay = $query
-            ->selectRaw('patient_barangay_id as barangay_id, COUNT(*) as count')
-            ->groupBy('patient_barangay_id')
+            ->selectRaw('barangay_id, COUNT(*) as count')
+            ->groupBy('barangay_id')
             ->get();
 
         $barangays = Barangay::whereNotNull('latitude')
@@ -303,9 +318,16 @@ class CityVetController extends Controller
     /**
      * Get filtered case type breakdown by year, month, and/or week.
      */
-    private function getFilteredCaseTypeBreakdown(int $year, ?int $month = null, ?int $week = null): array
+    private function getFilteredCaseTypeBreakdown(int $year, ?int $month = null, ?int $week = null, ?string $dateFrom = null, ?string $dateTo = null): array
     {
         $query = BiteRabiesReport::whereYear('incident_date', $year);
+
+        if ($dateFrom) {
+            $query->where('incident_date', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $query->where('incident_date', '<=', $dateTo);
+        }
 
         if ($month) {
             $query->whereMonth('incident_date', $month);
@@ -316,9 +338,9 @@ class CityVetController extends Controller
         }
 
         return $query
-            ->selectRaw('animal_species, COUNT(*) as count')
-            ->groupBy('animal_species')
-            ->pluck('count', 'animal_species')
+            ->selectRaw('animal_type, COUNT(*) as count')
+            ->groupBy('animal_type')
+            ->pluck('count', 'animal_type')
             ->toArray();
     }
 }

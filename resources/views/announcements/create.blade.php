@@ -39,7 +39,7 @@
             </div>
 
             <!-- Type Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <!-- Category -->
                 <div>
                     <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category <span class="text-red-500">*</span></label>
@@ -54,63 +54,6 @@
                     @enderror
                 </div>
 
-                <!-- Priority -->
-                <div>
-                    <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">Priority <span class="text-red-500">*</span></label>
-                    <select name="priority" id="priority" 
-                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('priority') border-red-500 @enderror" required>
-                        <option value="">Select priority</option>
-                        <option value="Urgent" {{ old('priority') == 'Urgent' ? 'selected' : '' }}>Urgent</option>
-                        <option value="Important" {{ old('priority') == 'Important' ? 'selected' : '' }}>Important</option>
-                        <option value="Normal" {{ old('priority') == 'Normal' ? 'selected' : '' }}>Normal</option>
-                    </select>
-                    @error('priority')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Status and Dates Row -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <!-- Status -->
-                <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status <span class="text-red-500">*</span></label>
-                    <select name="status" id="status" 
-                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('status') border-red-500 @enderror" required>
-                        <option value="">Select status</option>
-                        <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
-                        <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Archived</option>
-                    </select>
-                    @error('status')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Publish Date -->
-                <div>
-                    <label for="publish_date" class="block text-sm font-medium text-gray-700 mb-2">Publish Date <span class="text-red-500">*</span></label>
-                    <input type="datetime-local" name="publish_date" id="publish_date" value="{{ old('publish_date') }}" 
-                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('publish_date') border-red-500 @enderror"
-                        required>
-                    @error('publish_date')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Expiry Date -->
-                <div>
-                    <label for="expiry_date" class="block text-sm font-medium text-gray-700 mb-2">Expiry Date (Optional)</label>
-                    <input type="datetime-local" name="expiry_date" id="expiry_date" value="{{ old('expiry_date') }}" 
-                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('expiry_date') border-red-500 @enderror">
-                    @error('expiry_date')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Event Details (Optional) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <!-- Event Date -->
                 <div>
                     <label for="event_date" class="block text-sm font-medium text-gray-700 mb-2">Event Date (Optional)</label>

@@ -8,7 +8,7 @@
 <div class="max-w-4xl mx-auto">
     <!-- Back Button -->
     <div class="mb-6">
-        <a href="{{ route('records-staff.vaccinations.index') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition">
+        <a href="{{ route('admin-staff.vaccinations.index') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition">
             <i class="bi bi-arrow-left"></i>
             <span>Back to Records</span>
         </a>

@@ -42,6 +42,28 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // Create pet owner record
+        $nameParts = explode(' ', $request->name);
+        $firstName = array_shift($nameParts);
+        $lastName = implode(' ', $nameParts) ?: '';
+
+        \App\Models\PetOwner::create([
+            'user_id' => $user->id,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'email' => $request->email,
+        ]);
+
+        // System log for registration
+        \App\Models\SystemLog::create([
+            'user_id' => $user->id,
+            'action' => 'register',
+            'module' => 'Authentication',
+            'description' => "New user registered via client portal",
+            'ip_address' => request()->ip(),
+            'status' => 'success',
+        ]);
+
         Auth::login($user);
 
         return redirect()->to('/client');

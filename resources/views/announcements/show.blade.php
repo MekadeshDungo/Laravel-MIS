@@ -68,35 +68,9 @@
             </div>
             @endif
 
-            <!-- Content -->
-            <div class="px-6 py-8">
-                <!-- Dates -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
-                    <div class="flex items-center">
-                        <i class="bi bi-calendar-check text-green-600 text-xl mr-3"></i>
-                        <div>
-                            <p class="text-sm text-gray-500">Publish Date</p>
-                            <p class="font-medium text-gray-900">
-                                {{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('F d, Y g:i A') : 'Not set' }}
-                            </p>
-                        </div>
-                    </div>
-                    @if($announcement->expiry_date)
-                    <div class="flex items-center">
-                        <i class="bi bi-calendar-x text-red-600 text-xl mr-3"></i>
-                        <div>
-                            <p class="text-sm text-gray-500">Expiry Date</p>
-                            <p class="font-medium text-gray-900">
-                                {{ \Carbon\Carbon::parse($announcement->expiry_date)->format('F d, Y g:i A') }}
-                            </p>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-
-                <!-- Main Content -->
+            <!-- Main Content -->
                 <div class="prose max-w-none">
-                    <div class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ $announcement->body }}</div>
+                    <div class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ $announcement->content }}</div>
                 </div>
 
                 <!-- Attachment -->

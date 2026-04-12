@@ -91,6 +91,8 @@ class PetController extends Controller
 
         Pet::create($request->validated());
 
+        \App\Services\NotificationService::petRegistrationCreated(Pet::latest()->first()->id);
+
         return redirect()->route('pets.index')
             ->with('success', 'Pet registered successfully.');
     }

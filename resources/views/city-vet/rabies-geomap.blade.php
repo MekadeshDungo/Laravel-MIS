@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
 @section('title', 'Rabies Geomap')
-@section('header', 'Rabies Case Distribution')
-@section('subheader', 'Dasmariñas City Disease Surveillance')
+@section('header', '')
+@section('subheader', '')
 
 @php
     $currentYear = 2026;
@@ -33,24 +33,15 @@
         </div>
     </div>
 
-    {{-- Floating: Title Only (Hidden for now) --}}
-    <div class="absolute top-3 left-3 z-[1000] map-ui-layer" style="display: none;">
-        <div class="flex items-center gap-2 backdrop-blur bg-white/90 rounded-lg px-3 py-2 shadow-sm border border-slate-200/60">
+    {{-- Filter Bar (centered, below header) --}}
+    <div class="absolute top-16 left-1/2 -translate-x-1/2 z-[1000] map-ui-layer">
+        <div class="flex items-center gap-3 backdrop-blur-xl bg-white/95 rounded-2xl px-5 py-2.5 shadow-lg border border-slate-200/60">
             <div class="flex items-center gap-2 pr-4 border-r border-slate-200/60">
-                <div class="w-8 h-8 bg-green-50 rounded-md flex items-center justify-center">
-                    <i class="bi bi-map text-green-600 text-sm"></i>
+                <div class="w-9 h-9 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-sm">
+                    <i class="bi bi-map text-white text-sm"></i>
                 </div>
-                <div class="hidden sm:block min-w-[120px]">
-                    <p class="text-xs font-semibold text-slate-700 leading-tight">Geographic Distribution</p>
-                    <p class="text-[10px] text-green-600 font-bold leading-tight" id="mapSubtitle">{{ $selectedYear }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Hidden Filter Controls (For Future Use) --}}
-                <div class="hidden sm:block min-w-[120px]">
-                    <p class="text-xs font-semibold text-slate-700 leading-tight">Geographic Distribution</p>
+                <div>
+                    <p class="text-xs font-bold text-slate-700 leading-tight">Distribution</p>
                     <p class="text-[10px] text-green-600 font-bold leading-tight" id="mapSubtitle">{{ $selectedYear }}</p>
                 </div>
             </div>
@@ -58,7 +49,7 @@
             {{-- Year --}}
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open" @click.away="open = false" class="filter-btn" id="yearFilterBtn">
-                    <i class="bi bi-calendar3 text-[10px]"></i>
+                    <i class="bi bi-calendar3 text-[10px] text-green-600"></i>
                     <span id="yearLabel">{{ $selectedYear }}</span>
                     <i class="bi bi-chevron-down text-[8px] opacity-40"></i>
                 </button>
@@ -72,7 +63,7 @@
             {{-- Month --}}
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open" @click.away="open = false" class="filter-btn" id="monthFilterBtn">
-                    <i class="bi bi-calendar-range text-[10px]"></i>
+                    <i class="bi bi-calendar-range text-[10px] text-blue-500"></i>
                     <span id="monthLabel">All Months</span>
                     <i class="bi bi-chevron-down text-[8px] opacity-40"></i>
                 </button>
@@ -87,7 +78,7 @@
             {{-- Week --}}
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open" @click.away="open = false" class="filter-btn" id="weekFilterBtn">
-                    <i class="bi bi-clock-history text-[10px]"></i>
+                    <i class="bi bi-clock-history text-[10px] text-purple-500"></i>
                     <span id="weekLabel">All Weeks</span>
                     <i class="bi bi-chevron-down text-[8px] opacity-40"></i>
                 </button>
@@ -101,13 +92,27 @@
 
             <div class="w-px h-5 bg-slate-200/60"></div>
 
-            <button id="resetViewBtn" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 rounded-md transition">
-                <i class="bi bi-arrows-fullscreen text-[10px]"></i> Reset
+            {{-- Date From --}}
+            <div>
+                <input type="date" id="dateFrom" class="filter-btn px-3 py-1.5 text-[11px] bg-slate-50" placeholder="From">
+            </div>
+
+            {{-- Date To --}}
+            <div>
+                <input type="date" id="dateTo" class="filter-btn px-3 py-1.5 text-[11px] bg-slate-50" placeholder="To">
+            </div>
+
+            <button onclick="applyDateFilter()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium bg-green-500 text-white hover:bg-green-600 rounded-lg shadow-sm transition">
+                <i class="bi bi-funnel text-[10px]"></i> Filter
+            </button>
+
+            <button id="resetViewBtn" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-md transition">
+                <i class="bi bi-arrow-counterclockwise text-[10px]"></i>
             </button>
         </div>
 
         {{-- Active Filter Tags (below bar) --}}
-        <div id="filterSummary" class="hidden">
+        <div id="filterSummary" class="hidden mt-2">
             <div class="backdrop-blur bg-white/90 rounded-lg px-3 py-1.5 shadow-sm border border-slate-200/60 flex items-center gap-1.5">
                 <div id="filterTags" class="flex items-center gap-1.5"></div>
                 <button onclick="clearAllFilters()" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-medium ml-1">Clear</button>
@@ -116,7 +121,7 @@
     </div>
 
     {{-- Floating: Stats Pills (top-right) --}}
-    <div class="absolute top-3 right-3 z-[1000] flex items-center gap-2 map-ui-layer">
+    <div class="absolute top-16 right-4 z-[1000] flex items-center gap-2 map-ui-layer">
         <div class="backdrop-blur bg-white/90 rounded-lg px-3 py-2 shadow-sm border border-slate-200/60 flex items-center gap-3">
             <div class="flex items-center gap-1.5">
                 <div class="w-2 h-2 rounded-full bg-red-500"></div>
@@ -315,6 +320,8 @@ document.addEventListener('DOMContentLoaded', function() {
         params.append('year', filters.year);
         if (filters.month) params.append('month', filters.month);
         if (filters.week) params.append('week', filters.week);
+        if (document.getElementById('dateFrom').value) params.append('date_from', document.getElementById('dateFrom').value);
+        if (document.getElementById('dateTo').value) params.append('date_to', document.getElementById('dateTo').value);
 
         var baseUrl = window.location.pathname.replace(/\/$/, '');
         fetch(baseUrl + '/data?' + params.toString())
@@ -332,6 +339,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 showLoading(false);
                 document.getElementById('mapError').classList.remove('hidden');
             });
+    }
+
+    function applyDateFilter() {
+        fetchFilteredData();
+    }
+
+    function clearDateFilter() {
+        document.getElementById('dateFrom').value = '';
+        document.getElementById('dateTo').value = '';
+        fetchFilteredData();
     }
 
     function normalizeBarangayName(name) {

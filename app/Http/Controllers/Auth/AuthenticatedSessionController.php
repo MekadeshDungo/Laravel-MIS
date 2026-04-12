@@ -67,6 +67,9 @@ class AuthenticatedSessionController extends Controller
             case 'clinic':
                 return redirect()->intended('/clinic/dashboard')
                     ->with('success', 'Welcome back, Clinic ' . $user->name . '!');
+            case 'hospital':
+                return redirect()->intended('/hospital/dashboard')
+                    ->with('success', 'Welcome back, Hospital ' . $user->name . '!');
             case 'livestock_inspector':
                 return redirect()->intended('/livestock/dashboard')
                     ->with('success', 'Welcome back, Livestock Inspector ' . $user->name . '!');

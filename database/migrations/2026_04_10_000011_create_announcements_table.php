@@ -24,16 +24,7 @@ return new class extends Migration
             // Category (campaign or event)
             $table->enum('category', ['campaign', 'event'])->default('event');
 
-            // Status
-            $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
             $table->boolean('is_active')->default(true);
-
-            // Priority
-            $table->enum('priority', ['Urgent', 'Important', 'Normal'])->default('Normal');
-
-            // Publishing
-            $table->datetime('publish_date')->nullable();
-            $table->datetime('expiry_date')->nullable();
 
             // Event-specific fields (nullable for campaigns)
             $table->date('event_date')->nullable();
@@ -55,8 +46,6 @@ return new class extends Migration
 
             // Indexes
             $table->index('category');
-            $table->index('status');
-            $table->index('publish_date');
             $table->index('created_by');
         });
     }

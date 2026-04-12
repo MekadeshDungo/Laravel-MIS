@@ -158,25 +158,6 @@
             </div>
             @endif
 
-            <!-- Status -->
-            <div class="mb-8">
-                <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
-                    <i class="bi bi-toggle-on text-blue-600"></i> Account Status
-                </h4>
-                <div class="flex items-center gap-4">
-                    <label class="flex items-center gap-3 cursor-pointer">
-                        <input type="radio" name="status" value="active" {{ old('status', $user->status) == 'active' ? 'checked' : '' }}
-                            class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500">
-                        <span class="text-sm text-gray-700">Active</span>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer">
-                        <input type="radio" name="status" value="inactive" {{ old('status', $user->status) == 'inactive' ? 'checked' : '' }}
-                            class="w-4 h-4 text-red-600 border-gray-300 focus:ring-red-500">
-                        <span class="text-sm text-gray-700">Inactive</span>
-                    </label>
-                </div>
-            </div>
-
             <!-- Form Actions -->
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
                 <a href="{{ route('admin.users.index') }}" class="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition">

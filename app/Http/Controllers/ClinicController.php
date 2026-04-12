@@ -56,7 +56,8 @@ class ClinicController extends Controller
     public function createBiteReport()
     {
         $barangays = Barangay::orderBy('barangay_name')->get();
-        return view('dashboard.clinic-bite-report-create', compact('barangays'));
+        $caseNumber = 'BITE-' . date('Y') . '-' . str_pad(BiteRabiesReport::count() + 1, 5, '0', STR_PAD_LEFT);
+        return view('reports.animal_bite_form', compact('barangays', 'caseNumber'));
     }
 
     /**
@@ -65,35 +66,67 @@ class ClinicController extends Controller
     public function storeBiteReport(Request $request)
     {
         $validated = $request->validate([
-            'patient_name' => 'required|string|max:255',
-            'patient_age' => 'required|integer|min:0|max:150',
-            'patient_gender' => 'required|in:Male,Female,Other',
-            'patient_barangay_id' => 'required|exists:barangays,barangay_id',
-            'patient_contact' => 'required|string|max:255',
-            'patient_full_address' => 'nullable|string|max:500',
+            'victim_last_name' => 'required|string|max:255',
+            'victim_first_name' => 'required|string|max:255',
+            'victim_middle_name' => 'nullable|string|max:255',
+            'victim_suffix' => 'nullable|string|max:50',
+            'victim_case_id' => 'nullable|string|max:50',
+            'victim_age' => 'required|integer|min:0|max:150',
+            'victim_sex' => 'required|in:male,female',
+            'victim_contact' => 'nullable|string|max:11',
+            'victim_address' => 'required|string|max:500',
+            'victim_barangay' => 'nullable|string|max:255',
+            'incident_barangay' => 'required|string|max:255',
+            'exact_location' => 'nullable|string|max:500',
             'incident_date' => 'required|date',
-            'nature_of_incident' => 'required|in:Bitten,Scratched,Licked (Open Wound)',
-            'bite_site' => 'required|in:Head/Neck,Upper Extremities,Trunk,Lower Extremities',
-            'exposure_category' => 'required|in:Category I (Lick),Category II (Scratch),Category III (Bite / Deep)',
-            'animal_species' => 'required|in:Dog,Cat,Others',
-            'animal_status' => 'required|in:Stray,Owned,Wild',
-            'animal_owner_name' => 'nullable|string|max:255',
-            'animal_vaccination_status' => 'nullable|in:Vaccinated,Unvaccinated,Unknown',
-            'animal_current_condition' => 'nullable|in:Healthy / Alive,Dead,Missing / Escaped,Euthanized',
+            'animal_type' => 'required|in:dog,cat,others',
+            'ownership_status' => 'required|in:owned,stray,wild',
+            'vaccination_status' => 'nullable|in:vaccinated,unvaccinated,unknown',
+            'bite_category' => 'required|in:category_i,category_ii,category_iii',
+            'body_part' => 'required|string|max:255',
+            'location_description' => 'nullable|string|max:500',
+            'pep' => 'nullable|in:yes,no',
             'wound_management' => 'nullable|array',
-            'post_exposure_prophylaxis' => 'nullable|in:Yes,No',
-            'notes' => 'nullable|string',
+            'hospital_referred' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
         ]);
 
+        $patientName = trim($validated['victim_first_name'] . ' ' . 
+            ($validated['victim_middle_name'] ? $validated['victim_middle_name'] . ' ' : '') . 
+            $validated['victim_last_name']);
+
+        $reportNumber = $validated['victim_case_id'] 
+            ? $validated['victim_case_id'] 
+            : ($request->input('case_number') ?? BiteRabiesReport::generateReportNumber());
+        
         $report = BiteRabiesReport::create([
-            'report_number' => BiteRabiesReport::generateReportNumber(),
-            'report_source' => 'clinic',
-            'status' => 'Under Review', // Auto-approved for clinics
-            'reporting_facility' => 'Registered Veterinary Clinics',
-            'facility_name' => Auth::user()->name,
+            'report_number' => $reportNumber,
+            'status' => 'Pending Review',
             'date_reported' => now()->toDateString(),
+            'reporting_facility' => Auth::user()->name,
             'reported_by' => Auth::id(),
-            ...$validated,
+            'patient_name' => $patientName,
+            'patient_first_name' => $validated['victim_first_name'],
+            'patient_middle_name' => $validated['victim_middle_name'] ?? null,
+            'patient_suffix' => $validated['victim_suffix'] ?? null,
+            'age' => $validated['victim_age'],
+            'gender' => ucfirst($validated['victim_sex']),
+            'patient_contact' => $validated['victim_contact'] ?? '',
+            'patient_address' => $validated['victim_address'],
+            'barangay_id' => $validated['barangay_id'] ?? null,
+            'patient_barangay_id' => $validated['barangay_id'] ?? null,
+            'incident_date' => \Carbon\Carbon::parse($validated['incident_date'])->toDateString(),
+            'incident_barangay' => $validated['incident_barangay'] ?? null,
+            'exact_location' => $validated['exact_location'] ?? null,
+            'exposure_type' => 'bite',
+            'bite_site' => $validated['body_part'],
+            'category' => strtoupper(str_replace('category_', '', $validated['bite_category'])),
+            'animal_type' => $validated['animal_type'],
+            'animal_status' => $validated['ownership_status'],
+            'vaccination_status' => $validated['vaccination_status'] ?? 'unknown',
+            'wound_management' => $validated['wound_management'] ?? [],
+            'post_exposure_prophylaxis' => $validated['pep'] ?? 'No',
+            'notes' => $validated['remarks'] ?? '',
         ]);
 
         return redirect()->route('clinic.bite-reports.index')

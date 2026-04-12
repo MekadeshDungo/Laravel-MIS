@@ -108,7 +108,7 @@
         <div class="bg-white rounded-xl shadow-sm">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                 <h5 class="font-semibold text-gray-800">Recent Pet Registrations</h5>
-                <a href="{{ route('records-staff.pets.index') }}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
+                <a href="{{ route('admin-staff.pets.index') }}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
             </div>
             <div class="p-6">
                 @if($recentPets->count() > 0)
@@ -147,7 +147,7 @@
         <div class="bg-white rounded-xl shadow-sm">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                 <h5 class="font-semibold text-gray-800">Recent Vaccinations</h5>
-                <a href="{{ route('records-staff.vaccinations.index') }}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
+                <a href="{{ route('admin-staff.vaccinations.index') }}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
             </div>
             <div class="p-6">
                 @if($recentVaccinations->count() > 0)
@@ -190,25 +190,25 @@
         </div>
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <a href="{{ route('records-staff.pets.create') }}" class="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition">
+                <a href="{{ route('admin-staff.pets.create') }}" class="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition">
                     <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                         <i class="bi bi-plus-lg text-white"></i>
                     </div>
                     <span class="font-medium text-gray-800">Register New Pet</span>
                 </a>
-                <a href="{{ route('records-staff.vaccinations.create') }}" class="flex items-center gap-3 p-4 bg-success bg-opacity-10 hover:bg-success hover:bg-opacity-20 rounded-lg transition">
+                <a href="{{ route('admin-staff.vaccinations.create') }}" class="flex items-center gap-3 p-4 bg-success bg-opacity-10 hover:bg-success hover:bg-opacity-20 rounded-lg transition">
                     <div class="w-10 h-10 bg-success rounded-lg flex items-center justify-center">
                         <i class="bi bi-syringe text-white"></i>
                     </div>
                     <span class="font-medium text-gray-800">Encode Vaccination</span>
                 </a>
-                <a href="{{ route('records-staff.owners.index') }}" class="flex items-center gap-3 p-4 bg-info bg-opacity-10 hover:bg-info hover:bg-opacity-20 rounded-lg transition">
+                <a href="{{ route('admin-staff.owners.index') }}" class="flex items-center gap-3 p-4 bg-info bg-opacity-10 hover:bg-info hover:bg-opacity-20 rounded-lg transition">
                     <div class="w-10 h-10 bg-info rounded-lg flex items-center justify-center">
                         <i class="bi bi-people text-white"></i>
                     </div>
                     <span class="font-medium text-gray-800">View Owners</span>
                 </a>
-                <a href="{{ route('records-staff.search') }}" class="flex items-center gap-3 p-4 bg-gray-100 hover:bg-gray-200 rounded-lg transition">
+                <a href="{{ route('admin-staff.search') }}" class="flex items-center gap-3 p-4 bg-gray-100 hover:bg-gray-200 rounded-lg transition">
                     <div class="w-10 h-10 bg-gray-600 rounded-lg flex items-center justify-center">
                         <i class="bi bi-search text-white"></i>
                     </div>

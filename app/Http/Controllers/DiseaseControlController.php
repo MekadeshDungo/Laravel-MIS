@@ -164,36 +164,12 @@ class DiseaseControlController extends Controller
     }
 
     /**
-     * Show bite report details.
+     * Show rabies bite report details.
      */
-    public function showBiteReport(BiteRabiesReport $report)
+    public function showRabiesReport(BiteRabiesReport $rabiesReport)
     {
-        $report->load(['patientBarangay', 'barangay', 'user']);
-        return view('dashboard.bite-reports.show', compact('report'));
-    }
-
-    /**
-     * Mark bite report as complete.
-     *
-     * Module: Clinical Actions
-     * Role: assistant_vet
-     */
-    public function markBiteComplete(BiteRabiesReport $report)
-    {
-        $report->update(['status' => 'Under Review']);
-        return redirect()->back()->with('success', 'Report checked and acknowledged.');
-    }
-
-    /**
-     * Check/Acknowledge rabies report.
-     *
-     * Module: Clinical Actions
-     * Role: assistant_vet
-     */
-    public function checkRabiesReport(BiteRabiesReport $rabiesReport)
-    {
-        $rabiesReport->update(['status' => 'Under Review']);
-        return redirect()->back()->with('success', 'Report checked and acknowledged.');
+        $rabiesReport->load(['patientBarangay', 'barangay']);
+        return view('dashboard.bite-rabies-reports.show', compact('rabiesReport'));
     }
 
     /**
@@ -322,15 +298,6 @@ class DiseaseControlController extends Controller
         $reports = $query->latest()->paginate(10);
 
         return view('dashboard.bite-rabies-reports.index', compact('user', 'reports', 'stats'));
-    }
-
-    /**
-     * Show rabies bite report details.
-     */
-    public function showRabiesReport(BiteRabiesReport $rabiesReport)
-    {
-        $rabiesReport->load(['patientBarangay', 'barangay']);
-        return view('dashboard.bite-rabies-reports.show', compact('rabiesReport'));
     }
 
     /**

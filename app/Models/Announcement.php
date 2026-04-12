@@ -11,10 +11,6 @@ class Announcement extends Model
     const CATEGORY_CAMPAIGN = 'campaign';
     const CATEGORY_EVENT = 'event';
 
-    const STATUS_DRAFT = 'draft';
-    const STATUS_PUBLISHED = 'published';
-    const STATUS_ARCHIVED = 'archived';
-
     protected $table = 'announcements';
 
     protected $fillable = [
@@ -23,11 +19,7 @@ class Announcement extends Model
         'attachment_path',
         'photo_path',
         'category',
-        'status',
         'is_active',
-        'priority',
-        'publish_date',
-        'expiry_date',
         'event_date',
         'event_time',
         'location',
@@ -36,10 +28,7 @@ class Announcement extends Model
     ];
 
     protected $casts = [
-        'publish_date' => 'datetime',
-        'expiry_date' => 'datetime',
         'event_date' => 'date',
-        'event_time' => 'time',
         'is_active' => 'boolean',
     ];
 
@@ -51,15 +40,6 @@ class Announcement extends Model
         ];
     }
 
-    public static function getStatuses(): array
-    {
-        return [
-            self::STATUS_DRAFT,
-            self::STATUS_PUBLISHED,
-            self::STATUS_ARCHIVED,
-        ];
-    }
-
     public function scopeCampaigns($query)
     {
         return $query->where('category', self::CATEGORY_CAMPAIGN);
@@ -68,19 +48,6 @@ class Announcement extends Model
     public function scopeEvents($query)
     {
         return $query->where('category', self::CATEGORY_EVENT);
-    }
-
-    public function scopePublished($query)
-    {
-        return $query->where('status', self::STATUS_PUBLISHED)
-            ->where(function ($q) {
-                $q->whereNull('publish_date')
-                    ->orWhere('publish_date', '<=', now());
-            })
-            ->where(function ($q) {
-                $q->whereNull('expiry_date')
-                    ->orWhere('expiry_date', '>=', now());
-            });
     }
 
     public function createdBy(): BelongsTo

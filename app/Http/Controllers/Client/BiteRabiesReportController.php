@@ -29,7 +29,7 @@ class BiteRabiesReportController extends Controller
 
         $report = $this->createReport($request);
 
-        BiteRabiesReport::notifyAssistantVets($report->report_number, $report->id);
+        \App\Services\NotificationService::biteReportCreated($report->id);
 
         return redirect()->route('bite-rabies-report.success', ['report_number' => $report->report_number]);
     }

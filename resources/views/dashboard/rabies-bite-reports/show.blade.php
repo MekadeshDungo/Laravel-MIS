@@ -9,20 +9,8 @@
 $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
 
 // Get available route for rabies-bite-reports
-$rabiesReportsIndexRoute = 'assistant-vet.rabies-bite-reports.index';
-$rabiesReportsShowRoute = 'assistant-vet.rabies-bite-reports.show';
-$rabiesReportsAcceptRoute = 'assistant-vet.rabies-bite-reports.accept';
-$rabiesReportsResolveRoute = 'assistant-vet.rabies-bite-reports.resolve';
-$rabiesReportsDeclineRoute = 'assistant-vet.rabies-bite-reports.decline';
-
-if ($rolePrefix === 'admin') {
-    if (Route::has('admin.rabies-bite-reports.index')) {
-        $rabiesReportsIndexRoute = 'admin.rabies-bite-reports.index';
-        $rabiesReportsShowRoute = 'admin.rabies-bite-reports.show';
-        $rabiesReportsAcceptRoute = 'admin.rabies-bite-reports.accept';
-        $rabiesReportsResolveRoute = 'admin.rabies-bite-reports.resolve';
-        $rabiesReportsDeclineRoute = 'admin.rabies-bite-reports.decline';
-    }
+$rabiesReportsIndexRoute = 'city-vet.rabies-bite-reports.index';
+$rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
 } elseif ($rolePrefix === 'city-vet') {
     if (Route::has('city-vet.rabies-bite-reports.index')) {
         $rabiesReportsIndexRoute = 'city-vet.rabies-bite-reports.index';
@@ -121,24 +109,24 @@ if ($rolePrefix === 'admin') {
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Full Name / Case ID</label>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Patient Name</label>
                             <p class="text-gray-900 font-medium">{{ $rabiesReport->patient_name }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Age</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient_age }} years old</p>
+                            <p class="text-gray-900 font-medium">{{ $rabiesReport->age }} years old</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Gender</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient_gender }}</p>
+                            <p class="text-gray-900 font-medium">{{ $rabiesReport->gender }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Address (Barangay)</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patientBarangay->barangay_name ?? 'N/A' }}</p>
+                            <p class="text-gray-900 font-medium">{{ $rabiesReport->barangay->barangay_name ?? ($rabiesReport->patient_barangay ?? 'N/A') }}</p>
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-500 mb-1">Contact Number</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient_contact }}</p>
+                            <p class="text-gray-900 font-medium">{{ $rabiesReport->patient_contact ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>
@@ -158,22 +146,22 @@ if ($rolePrefix === 'admin') {
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Nature of Incident</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->nature_of_incident }}</p>
+                            <p class="text-gray-900 font-medium">{{ ucfirst($rabiesReport->exposure_type) }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Bite Site (Body Part)</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->bite_site }}</p>
+                            <p class="text-gray-900 font-medium">{{ $rabiesReport->bite_site ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Exposure Category</label>
                             <p class="text-gray-900 font-medium">
                                 <span class="px-3 py-1 text-xs font-semibold rounded-full
-                                    @switch($rabiesReport->exposure_category)
-                                        @case('Category I (Lick)') bg-gray-200 text-gray-800
-                                        @case('Category II (Scratch)') bg-yellow-200 text-yellow-800
-                                        @case('Category III (Bite / Deep)') bg-red-200 text-red-800
+                                    @switch($rabiesReport->category)
+                                        @case('I') bg-gray-200 text-gray-800
+                                        @case('II') bg-yellow-200 text-yellow-800
+                                        @case('III') bg-red-200 text-red-800
                                     @endswitch">
-                                    {{ $rabiesReport->exposure_category }}
+                                    Category {{ $rabiesReport->category }}
                                 </span>
                             </p>
                         </div>
@@ -191,19 +179,15 @@ if ($rolePrefix === 'admin') {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Animal Species</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->animal_species }}</p>
+                            <p class="text-gray-900 font-medium">{{ ucfirst($rabiesReport->animal_type) }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Animal Status</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->animal_status }}</p>
+                            <p class="text-gray-900 font-medium">{{ ucfirst($rabiesReport->animal_status) }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Vaccination Status</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->vaccination_status }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Current Condition</label>
-                            <p class="text-gray-900 font-medium">{{ $rabiesReport->current_condition }}</p>
+                            <p class="text-gray-900 font-medium">{{ ucfirst($rabiesReport->vaccination_status) }}</p>
                         </div>
                     </div>
                 </div>
@@ -267,7 +251,7 @@ if ($rolePrefix === 'admin') {
                         <div class="space-y-3 text-sm">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-500">Case ID:</span>
-                                <span class="text-gray-900 font-medium">{{ $rabiesReport->case_id ?? 'N/A' }}</span>
+                                <span class="text-gray-900 font-medium">{{ $rabiesReport->report_number }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-500">Submitted:</span>

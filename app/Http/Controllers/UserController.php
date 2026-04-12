@@ -91,7 +91,7 @@ class UserController extends Controller
             return back()->with('error', 'You cannot create Super Administrator accounts.');
         }
 
-        User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
@@ -102,7 +102,37 @@ class UserController extends Controller
             'status' => 'active',
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
+        if ($validated['role'] === User::ROLE_CITIZEN) {
+            $nameParts = explode(' ', $validated['name']);
+            $firstName = array_shift($nameParts);
+            $lastName = implode(' ', $nameParts) ?: '';
+
+            \App\Models\PetOwner::create([
+                'user_id' => $user->id,
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'phone_number' => $validated['contact_number'] ?? null,
+                'email' => $validated['email'],
+                'barangay' => $validated['barangay'] ?? null,
+                'house_no' => null,
+                'street' => null,
+                'subdivision' => null,
+            ]);
+        }
+
+        \App\Models\SystemLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'create_user',
+            'module' => 'User Management',
+            'description' => "Created new user: {$validated['name']} with role: {$validated['role']}",
+            'ip_address' => request()->ip(),
+            'status' => 'success',
+        ]);
+
+        \App\Services\NotificationService::userCreated($user);
+
+        $redirectRoute = request()->routeIs('super-admin.*') ? 'super-admin.users.index' : 'admin.users.index';
+        return redirect()->route($redirectRoute)->with('success', 'User created successfully.');
     }
 
     /**
@@ -195,6 +225,15 @@ class UserController extends Controller
 
         $user->update($updateData);
 
+        \App\Models\SystemLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'update_user',
+            'module' => 'User Management',
+            'description' => "Updated user: {$user->name} (ID: {$user->id})",
+            'ip_address' => request()->ip(),
+            'status' => 'success',
+        ]);
+
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
@@ -230,6 +269,15 @@ class UserController extends Controller
 
         $user->delete();
 
+        \App\Models\SystemLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'delete_user',
+            'module' => 'User Management',
+            'description' => "Deleted user: {$user->name} (ID: {$user->id})",
+            'ip_address' => request()->ip(),
+            'status' => 'success',
+        ]);
+
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 
@@ -256,6 +304,15 @@ class UserController extends Controller
         // Toggle status
         $newStatus = $user->status === 'active' ? 'inactive' : 'active';
         $user->update(['status' => $newStatus]);
+
+        \App\Models\SystemLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'toggle_user_status',
+            'module' => 'User Management',
+            'description' => "Changed status of user {$user->name} to {$newStatus}",
+            'ip_address' => request()->ip(),
+            'status' => 'success',
+        ]);
 
         $statusText = $newStatus === 'active' ? 'activated' : 'deactivated';
         return back()->with('success', "User {$statusText} successfully.");

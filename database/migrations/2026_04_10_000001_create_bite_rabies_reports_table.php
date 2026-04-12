@@ -20,11 +20,15 @@ return new class extends Migration
             $table->string('patient_address')->nullable();
             $table->string('patient_contact', 11)->nullable();
             
+            // Patient Barangay
+            $table->string('patient_barangay')->nullable();
+            
             // Location
             $table->foreignId('barangay_id')->nullable()->constrained('barangays', 'barangay_id')->onDelete('set null');
-            $table->foreignId('patient_barangay_id')->nullable()->constrained('barangays', 'barangay_id')->onDelete('set null');
             
             // Incident Details
+            $table->string('incident_barangay')->nullable();
+            $table->string('exact_location')->nullable();
             $table->date('incident_date');
             $table->enum('exposure_type', ['bite', 'scratch', 'lick']);
             $table->string('bite_site')->nullable();
@@ -39,6 +43,9 @@ return new class extends Migration
             
             // Reporting
             $table->foreignId('reported_by')->nullable()->constrained('admin_users', 'id')->onDelete('set null');
+            
+            // Reporting Facility
+            $table->string('reporting_facility')->nullable();
             
             // Additional
             $table->json('wound_management')->nullable();

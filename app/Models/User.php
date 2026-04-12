@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\PetOwner;
 
 class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
 {
@@ -142,7 +143,8 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     public const ROLE_ADMIN_STAFF = 'admin_staff';         // Administrative Assistant IV (Book Binder 4)
     public const ROLE_ADMIN_ASST = 'admin_asst';           // Administrative Assistant (Gatekeeper)
     public const ROLE_ASSISTANT_VET = 'assistant_vet';     // Assistant Veterinarian (Vet 3)
-    public const ROLE_CLINIC = 'clinic';                   // External Vet Clinic/Hospital
+    public const ROLE_CLINIC = 'clinic';                   // External Vet Clinic
+    public const ROLE_HOSPITAL = 'hospital';                // External Vet Hospital
     public const ROLE_LIVESTOCK_INSPECTOR = 'livestock_inspector'; // Livestock Inspector (Book Binder 1)
     public const ROLE_MEAT_INSPECTOR = 'meat_inspector';     // Meat & Post-Abattoir Inspector
     public const ROLE_RECORDS_STAFF = 'records_staff';       // Records Management
@@ -272,7 +274,8 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
             self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV',
             self::ROLE_ADMIN_ASST => 'Admin Assistant (Gatekeeper)',
             self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian (Vet 3)',
-            self::ROLE_CLINIC => 'External Vet Clinic/Hospital',
+            self::ROLE_CLINIC => 'External Vet Clinic',
+            self::ROLE_HOSPITAL => 'External Vet Hospital',
             self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector',
             self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
             self::ROLE_RECORDS_STAFF => 'Records Staff',
@@ -293,7 +296,8 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
             self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV (Book Binder 4)',
             self::ROLE_ADMIN_ASST => 'Admin Assistant (Gatekeeper)',
             self::ROLE_ASSISTANT_VET => 'Assistant Veterinarian (Vet 3)',
-            self::ROLE_CLINIC => 'External Vet Clinic/Hospital',
+            self::ROLE_CLINIC => 'External Vet Clinic',
+            self::ROLE_HOSPITAL => 'External Vet Hospital',
             self::ROLE_LIVESTOCK_INSPECTOR => 'Livestock Inspector (Book Binder 1)',
             self::ROLE_MEAT_INSPECTOR => 'Meat & Post-Abattoir Inspector',
             self::ROLE_RECORDS_STAFF => 'Records Staff',
@@ -313,7 +317,8 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
             self::ROLE_ADMIN_STAFF => 6,         // Administrative Assistant IV
             self::ROLE_ADMIN_ASST => 5,         // Admin Assistant (Gatekeeper)
             self::ROLE_ASSISTANT_VET => 5,      // Assistant Veterinarian
-            self::ROLE_CLINIC => 4,              // External Vet Clinic/Hospital
+            self::ROLE_CLINIC => 4,              // External Vet Clinic
+            self::ROLE_HOSPITAL => 4,              // External Vet Hospital
             self::ROLE_LIVESTOCK_INSPECTOR => 4,// Livestock Inspector
             self::ROLE_MEAT_INSPECTOR => 4,     // Meat & Post-Abattoir Inspector
             self::ROLE_RECORDS_STAFF => 3,      // Records Management
@@ -447,7 +452,9 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function pets()
     {
-        return $this->hasMany(Pet::class, 'client_id');
+        // User → pet_owners → pets (through pet_owners table)
+        return $this->hasManyThrough(Pet::class, PetOwner::class, 'user_id', 'owner_id')
+            ->orderBy('pet_name');
     }
 
     /**

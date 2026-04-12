@@ -157,12 +157,27 @@ class TestAccountsSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'clinic@vetmis.gov'],
             [
-                'name' => 'City Pet Hospital',
+                'name' => 'Happy Paws Veterinary Clinic',
                 'password' => bcrypt('password123'),
                 'role' => 'clinic',
                 'status' => 'active',
                 'contact_number' => '091988877710',
                 'address' => '123 Main Street, Dasmariñas City',
+            ]
+        );
+
+        // ==============================
+        // HOSPITAL ACCOUNT (External Vet Hospital)
+        // ==============================
+        User::firstOrCreate(
+            ['email' => 'hospital@vetmis.gov'],
+            [
+                'name' => 'City Pet Hospital',
+                'password' => bcrypt('password123'),
+                'role' => 'hospital',
+                'status' => 'active',
+                'contact_number' => '091988877711',
+                'address' => '456 Health Ave, Dasmariñas City',
             ]
         );
 
@@ -181,9 +196,13 @@ class TestAccountsSeeder extends Seeder
         $this->command->info('6. meatinspector@vetmis.gov - Meat Inspector (password123)');
         $this->command->info('7. citizen@test.com - Citizen/Pet Owner (password123)');
         $this->command->info('');
+        $this->command->info('🔄 EXTERNAL ACCOUNTS:');
+        $this->command->info('8. clinic@vetmis.gov - Vet Clinic (password123)');
+        $this->command->info('9. hospital@vetmis.gov - Vet Hospital (password123)');
+        $this->command->info('');
         $this->command->info('🔄 LEGACY ACCOUNTS (Backward Compatible):');
-        $this->command->info('8. diseasecontrol@vetmis.gov - Assistant Veterinary (password123)');
-        $this->command->info('9. adminasst@vetmis.gov - Admin Assistant (password123)');
+        $this->command->info('10. diseasecontrol@vetmis.gov - Assistant Veterinary (password123)');
+        $this->command->info('11. adminasst@vetmis.gov - Admin Assistant (password123)');
         $this->command->info('');
     }
 }

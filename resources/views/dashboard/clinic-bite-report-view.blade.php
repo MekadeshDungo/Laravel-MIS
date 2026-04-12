@@ -32,7 +32,7 @@ $rolePrefix = 'clinic';
             <!-- Date Reported -->
             <div>
                 <p class="text-sm text-gray-500">Date Reported</p>
-                <p class="font-medium text-gray-800">{{ $report->date_reported?->format('M d, Y') }}</p>
+                <p class="font-medium text-gray-800">{{ $report->date_reported ? (is_string($report->date_reported) ? \Carbon\Carbon::parse($report->date_reported)->format('M d, Y') : $report->date_reported->format('M d, Y')) : 'N/A' }}</p>
             </div>
 
             <!-- Patient Name -->
@@ -44,25 +44,25 @@ $rolePrefix = 'clinic';
             <!-- Patient Age -->
             <div>
                 <p class="text-sm text-gray-500">Patient Age</p>
-                <p class="font-medium text-gray-800">{{ $report->patient_age }}</p>
+                <p class="font-medium text-gray-800">{{ $report->age ?? 'N/A' }}</p>
             </div>
 
             <!-- Patient Gender -->
             <div>
                 <p class="text-sm text-gray-500">Gender</p>
-                <p class="font-medium text-gray-800">{{ $report->patient_gender }}</p>
+                <p class="font-medium text-gray-800">{{ ucfirst($report->gender) ?? 'N/A' }}</p>
             </div>
 
             <!-- Patient Contact -->
             <div>
                 <p class="text-sm text-gray-500">Contact</p>
-                <p class="font-medium text-gray-800">{{ $report->patient_contact }}</p>
+                <p class="font-medium text-gray-800">{{ $report->patient_contact ?? 'N/A' }}</p>
             </div>
 
             <!-- Patient Barangay -->
             <div>
-                <p class="text-sm text-gray-500">Barangay</p>
-                <p class="font-medium text-gray-800">{{ $report->patient_barangay_id }}</p>
+                <p class="text-sm text-gray-500">Address (Barangay)</p>
+                <p class="font-medium text-gray-800">{{ $report->barangay->barangay_name ?? ($report->patient_barangay ?? 'N/A') }}</p>
             </div>
         </div>
 
@@ -72,25 +72,25 @@ $rolePrefix = 'clinic';
                 <!-- Incident Date -->
                 <div>
                     <p class="text-sm text-gray-500">Incident Date</p>
-                    <p class="font-medium text-gray-800">{{ $report->incident_date?->format('M d, Y') }}</p>
+                    <p class="font-medium text-gray-800">{{ $report->incident_date ? (is_string($report->incident_date) ? \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') : $report->incident_date->format('M d, Y')) : 'N/A' }}</p>
                 </div>
 
                 <!-- Nature of Incident -->
                 <div>
                     <p class="text-sm text-gray-500">Nature of Incident</p>
-                    <p class="font-medium text-gray-800">{{ $report->nature_of_incident }}</p>
+                    <p class="font-medium text-gray-800">{{ ucfirst($report->exposure_type) ?? 'N/A' }}</p>
                 </div>
 
                 <!-- Bite Site -->
                 <div>
                     <p class="text-sm text-gray-500">Bite Site</p>
-                    <p class="font-medium text-gray-800">{{ $report->bite_site }}</p>
+                    <p class="font-medium text-gray-800">{{ $report->bite_site ?? 'N/A' }}</p>
                 </div>
 
                 <!-- Exposure Category -->
                 <div>
                     <p class="text-sm text-gray-500">Exposure Category</p>
-                    <p class="font-medium text-gray-800">{{ $report->exposure_category }}</p>
+                    <p class="font-medium text-gray-800">{{ $report->category ? 'Category ' . $report->category : 'N/A' }}</p>
                 </div>
             </div>
         </div>
@@ -101,13 +101,13 @@ $rolePrefix = 'clinic';
                 <!-- Animal Species -->
                 <div>
                     <p class="text-sm text-gray-500">Animal Species</p>
-                    <p class="font-medium text-gray-800">{{ $report->animal_species }}</p>
+                    <p class="font-medium text-gray-800">{{ ucfirst($report->animal_type) ?? 'N/A' }}</p>
                 </div>
 
                 <!-- Animal Status -->
                 <div>
                     <p class="text-sm text-gray-500">Animal Status</p>
-                    <p class="font-medium text-gray-800">{{ $report->animal_status }}</p>
+                    <p class="font-medium text-gray-800">{{ ucfirst($report->animal_status) ?? 'N/A' }}</p>
                 </div>
 
                 <!-- Animal Owner Name -->
@@ -119,13 +119,7 @@ $rolePrefix = 'clinic';
                 <!-- Animal Vaccination Status -->
                 <div>
                     <p class="text-sm text-gray-500">Vaccination Status</p>
-                    <p class="font-medium text-gray-800">{{ $report->animal_vaccination_status ?? 'N/A' }}</p>
-                </div>
-
-                <!-- Animal Current Condition -->
-                <div>
-                    <p class="text-sm text-gray-500">Current Condition</p>
-                    <p class="font-medium text-gray-800">{{ $report->animal_current_condition ?? 'N/A' }}</p>
+                    <p class="font-medium text-gray-800">{{ ucfirst($report->vaccination_status) ?? 'N/A' }}</p>
                 </div>
             </div>
         </div>

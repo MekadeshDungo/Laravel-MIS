@@ -52,6 +52,8 @@ class CheckRole
                 return redirect()->route('admin.dashboard');
             case 'clinic':
                 return redirect()->route('clinic.dashboard');
+            case 'hospital':
+                return redirect()->route('hospital.dashboard');
             case 'inventory_staff':
             case 'assistant_vet':
                 return redirect()->route('assistant-vet.dashboard');

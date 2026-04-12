@@ -52,12 +52,12 @@ class RecordsController extends Controller
         ];
 
         // Get recent registrations with eager loading
-        $recentAnimals = Pet::with(['owner', 'barangay'])->latest()->take(5)->get();
+        $recentPets = Pet::with(['owner', 'barangay'])->latest()->take(5)->get();
 
         // Get recent vaccinations with eager loading
         $recentVaccinations = Vaccination::with(['pet', 'user'])->latest()->take(5)->get();
 
-        return view('admin-staff.dashboard', compact('user', 'stats', 'recentPets', 'recentVaccinations'));
+        return view('dashboard.admin-staff', compact('user', 'stats', 'recentPets', 'recentVaccinations'));
     }
 
     /**
@@ -88,7 +88,7 @@ class RecordsController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
-        return view('admin-staff.pets.index', compact('pets', 'search', 'species', 'vaccinationStatus'));
+        return view('records-staff.pets.index', compact('pets', 'search', 'species', 'vaccinationStatus'));
     }
 
     /**
@@ -101,7 +101,7 @@ class RecordsController extends Controller
     {
         // Use Client model for owners (pet owners)
         $owners = Client::active()->orderBy('last_name')->get();
-        return view('admin-staff.pets.create', compact('owners'));
+        return view('records-staff.pets.create', compact('owners'));
     }
 
     /**
@@ -160,31 +160,31 @@ class RecordsController extends Controller
             'notes' => $validated['notes'] ?? null,
         ]);
 
-        return redirect()->route('admin-staff.pets.index')->with('success', 'Pet registered successfully.');
+        return redirect()->route('records-staff.pets.index')->with('success', 'Pet registered successfully.');
     }
 
     /**
      * Display pet details.
      */
-    public function showAnimal(Animal $pet)
+    public function showAnimal(Pet $pet)
     {
         $pet->load('owner', 'vaccinations');
-        return view('admin-staff.pets.show', compact('pet'));
+        return view('records-staff.pets.show', compact('pet'));
     }
 
     /**
      * Show pet edit form.
      */
-    public function editAnimal(Animal $pet)
+    public function editAnimal(Pet $pet)
     {
         $owners = User::where('role', 'citizen')->orderBy('name')->get();
-        return view('admin-staff.pets.edit', compact('pet', 'owners'));
+        return view('records-staff.pets.edit', compact('pet', 'owners'));
     }
 
     /**
      * Update pet record.
      */
-    public function updateAnimal(Request $request, Animal $pet)
+    public function updateAnimal(Request $request, Pet $pet)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -195,7 +195,7 @@ class RecordsController extends Controller
             'color' => 'nullable|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'client_id' => 'nullable|exists:users,id',
-            'license_number' => 'nullable|string|unique:animals,license_number,' . $pet->id,
+            'license_number' => 'nullable|string|unique:pets,license_number,' . $pet->id,
             'microchip_number' => 'nullable|string',
             'health_status' => 'nullable|string',
             'vaccination_status' => 'nullable|string|in:vaccinated,unvaccinated,pending',
@@ -206,7 +206,7 @@ class RecordsController extends Controller
 
         $pet->update($validated);
 
-        return redirect()->route('admin-staff.pets.show', $pet)->with('success', 'Pet record updated successfully.');
+        return redirect()->route('records-staff.pets.show', $pet)->with('success', 'Pet record updated successfully.');
     }
 
     /**
@@ -226,7 +226,7 @@ class RecordsController extends Controller
             ->orderBy('name')
             ->paginate(15);
 
-        return view('admin-staff.owners.index', compact('owners', 'search'));
+        return view('records-staff.owners.index', compact('owners', 'search'));
     }
 
     /**
@@ -235,10 +235,10 @@ class RecordsController extends Controller
     public function showOwner(User $owner)
     {
         $owner->load(['pets' => function ($query) {
-            $query->orderBy('name');
+            $query->orderBy('pet_name');
         }]);
 
-        return view('admin-staff.owners.show', compact('owner'));
+        return view('records-staff.owners.show', compact('owner'));
     }
 
     /**
@@ -246,8 +246,8 @@ class RecordsController extends Controller
      */
     public function createVaccination()
     {
-        $animals = Pet::orderBy('name')->get();
-        return view('admin-staff.vaccinations.create', compact('animals'));
+        $animals = Pet::orderBy('pet_name')->get();
+        return view('records-staff.vaccinations.create', compact('animals'));
     }
 
     /**
@@ -328,7 +328,7 @@ class RecordsController extends Controller
             ->orderBy('vaccination_date', 'desc')
             ->paginate(15);
 
-        return view('admin-staff.vaccinations.index', compact('vaccinations', 'search', 'status', 'month'));
+        return view('records-staff.vaccinations.index', compact('vaccinations', 'search', 'status', 'month'));
     }
 
     /**
@@ -336,7 +336,7 @@ class RecordsController extends Controller
      */
     public function showVaccination(RabiesVaccinationReport $report)
     {
-        return view('admin-staff.vaccinations.show', compact('report'));
+        return view('records-staff.vaccinations.show', compact('report'));
     }
 
     /**
@@ -375,6 +375,6 @@ class RecordsController extends Controller
             ->take(10)
             ->get();
 
-        return view('admin-staff.search', compact('search', 'pets', 'owners', 'vaccinations'));
+        return view('records-staff.search', compact('search', 'pets', 'owners', 'vaccinations'));
     }
 }

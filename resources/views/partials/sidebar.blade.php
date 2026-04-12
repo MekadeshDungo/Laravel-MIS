@@ -191,10 +191,8 @@
             @php
                 // Get available reports route for current role
                 $reportsRoute = null;
-                if (Route::has('assistant-vet.rabies-bite-reports.index')) {
-                    $reportsRoute = route('assistant-vet.rabies-bite-reports.index');
-                } elseif (Route::has('admin.rabies-bite-reports.index')) {
-                    $reportsRoute = route('admin.rabies-bite-reports.index');
+                if (Route::has('city-vet.rabies-bite-reports.index')) {
+                    $reportsRoute = route('city-vet.rabies-bite-reports.index');
                 }
             @endphp
 
@@ -206,7 +204,7 @@
 
             @if($reportsRoute)
             <a href="{{ $reportsRoute }}"
-               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('assistant-vet.rabies-bite-reports.*') || request()->routeIs('admin.rabies-bite-reports.*') ? 'bg-green-600 text-white' : '' }}">
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('city-vet.rabies-bite-reports.*') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-virus text-lg w-6"></i>
                 <span>Bite & Rabies Reports</span>
             </a>

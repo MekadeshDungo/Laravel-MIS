@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminAsst;
 
 use App\Http\Controllers\Controller;
+use App\Models\MissingPet;
 use App\Models\Pet;
 use App\Models\Client;
 use Illuminate\Http\Request;
@@ -16,8 +17,7 @@ class MissingPetController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Pet::where('is_missing', true)
-            ->with('owner');
+        $query = MissingPet::query();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -25,9 +25,9 @@ class MissingPetController extends Controller
 
         $missingPets = $query->orderBy('missing_since', 'desc')->paginate(12);
         
-        $pendingCount = Pet::where('is_missing', true)->where('status', 'active')->count();
-        $approvedCount = Pet::where('is_missing', true)->where('status', 'approved')->count();
-        $totalCount = Pet::where('is_missing', true)->count();
+        $pendingCount = MissingPet::where('status', 'pending')->count();
+        $approvedCount = MissingPet::where('status', 'approved')->count();
+        $totalCount = MissingPet::count();
             
         return view('admin-staff.missing-pets.index', compact('missingPets', 'pendingCount', 'approvedCount', 'totalCount'));
     }
@@ -65,35 +65,28 @@ class MissingPetController extends Controller
             $validated['photo_url'] = $path;
         }
 
-        $validated['is_missing'] = true;
-        $validated['status'] = 'active';
+        $validated['status'] = 'pending';
 
-        $pet = Pet::create($validated);
+        $pet = MissingPet::create($validated);
 
-        return redirect()->route('admin-staff.missing-pets.show', $pet->animal_id)
+        return redirect()->route('admin-staff.missing-pets.show', $pet->missing_id)
             ->with('success', 'Missing pet report created successfully!');
     }
 
     /**
      * Display the specified missing pet.
      */
-    public function show(Pet $animal)
+    public function show(MissingPet $animal)
     {
-        $animal->load('owner');
         return view('admin-staff.missing-pets.show', compact('animal'));
     }
 
     /**
      * Mark missing pet as found.
      */
-    public function markFound(Request $request, Pet $animal)
+    public function markFound(Request $request, MissingPet $animal)
     {
-        $animal->update([
-            'is_missing' => false,
-            'missing_since' => null,
-            'last_seen_location' => null,
-            'contact_info' => null,
-        ]);
+        $animal->delete();
 
         return redirect()->route('admin-staff.missing-pets.index')
             ->with('success', 'Pet marked as found!');
@@ -102,7 +95,7 @@ class MissingPetController extends Controller
     /**
      * Approve missing pet report.
      */
-    public function approve(Request $request, Pet $animal)
+    public function approve(Request $request, MissingPet $animal)
     {
         $animal->update([
             'status' => 'approved',
@@ -114,43 +107,42 @@ class MissingPetController extends Controller
     /**
      * Show form to edit missing pet details.
      */
-    public function edit(Pet $animal)
+    public function edit(MissingPet $animal)
     {
-        $clients = Client::active()->orderBy('last_name')->get();
-        return view('admin-staff.missing-pets.edit', compact('animal', 'clients'));
+        return view('admin-staff.missing-pets.edit', compact('animal'));
     }
 
     /**
      * Update missing pet details.
      */
-    public function update(Request $request, Pet $animal)
+    public function update(Request $request, MissingPet $animal)
     {
         $validated = $request->validate([
-            'client_id' => 'required|exists:clients,client_id',
-            'name' => 'required|string|max:255',
-            'animal_type' => 'required|string|in:dog,cat,other',
+            'pet_name' => 'required|string|max:255',
+            'species' => 'required|string|in:dog,cat,other',
+            'gender' => 'nullable|string|in:male,female,unknown',
+            'age' => 'nullable|integer',
             'breed' => 'nullable|string|max:255',
-            'color' => 'nullable|string|max:255',
-            'sex' => 'nullable|string|in:male,female,unknown',
-            'photo' => 'nullable|image|max:2048',
-            'missing_since' => 'required|date',
-            'last_seen_location' => 'required|string',
-            'contact_info' => 'required|string',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
+            'date_of_birth' => 'nullable|date',
+            'missing_since' => 'nullable|date',
+            'last_seen_location' => 'nullable|string',
+            'contact_info' => 'nullable|string',
         ]);
 
         // Handle photo upload
         if ($request->hasFile('photo')) {
-            // Delete old photo if exists
-            if ($animal->photo_url) {
-                Storage::disk('public')->delete($animal->photo_url);
+            if ($animal->image) {
+                Storage::disk('public')->delete($animal->image);
             }
             $path = $request->file('photo')->store('missing-pets', 'public');
-            $validated['photo_url'] = $path;
+            $validated['image'] = $path;
         }
 
         $animal->update($validated);
 
-        return redirect()->route('admin-staff.missing-pets.show', $animal->animal_id)
+        return redirect()->route('admin-staff.missing-pets.show', $animal->missing_id)
             ->with('success', 'Missing pet report updated successfully!');
     }
 }
