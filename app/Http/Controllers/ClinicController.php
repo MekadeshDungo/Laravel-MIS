@@ -91,6 +91,10 @@ class ClinicController extends Controller
             'remarks' => 'nullable|string',
         ]);
 
+        // Find barangay_id from incident_barangay name
+        $barangay = \App\Models\Barangay::where('barangay_name', $validated['incident_barangay'])->first();
+        $barangayId = $barangay ? $barangay->barangay_id : null;
+
         $patientName = trim($validated['victim_first_name'] . ' ' . 
             ($validated['victim_middle_name'] ? $validated['victim_middle_name'] . ' ' : '') . 
             $validated['victim_last_name']);
@@ -101,7 +105,7 @@ class ClinicController extends Controller
         
         $report = BiteRabiesReport::create([
             'report_number' => $reportNumber,
-            'status' => 'Pending Review',
+            'status' => 'Under Investigation', // Auto-approve to show on map
             'date_reported' => now()->toDateString(),
             'reporting_facility' => Auth::user()->name,
             'reported_by' => Auth::id(),
@@ -113,8 +117,7 @@ class ClinicController extends Controller
             'gender' => ucfirst($validated['victim_sex']),
             'patient_contact' => $validated['victim_contact'] ?? '',
             'patient_address' => $validated['victim_address'],
-            'barangay_id' => $validated['barangay_id'] ?? null,
-            'patient_barangay_id' => $validated['barangay_id'] ?? null,
+            'barangay_id' => $barangayId,
             'incident_date' => \Carbon\Carbon::parse($validated['incident_date'])->toDateString(),
             'incident_barangay' => $validated['incident_barangay'] ?? null,
             'exact_location' => $validated['exact_location'] ?? null,

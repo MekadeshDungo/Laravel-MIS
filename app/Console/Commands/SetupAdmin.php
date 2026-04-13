@@ -23,21 +23,28 @@ class SetupAdmin extends Command
         DB::table('admin_users')->where('email', 'admin@vetmis.com')->delete();
         $this->info('Old admin user deleted.');
 
-        // Create new admin user
-        DB::table('admin_users')->insert([
-            'name' => 'Administrator',
+        // Create new admin user (legacy fields for backward compatibility - assignRole will be called separately)
+        $userId = DB::table('admin_users')->insertGetId([
+            'first_name' => 'System',
+            'last_name' => 'Administrator',
             'email' => 'admin@vetmis.com',
             'password' => Hash::make('admin123'),
-            'role' => 'admin',
+            'status' => 'active',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        $this->info('Admin user created successfully!');
+        
+        // Assign Spatie role
+        $user = \App\Models\User::find($userId);
+        $user->assignRole('city_vet');
+        
+        $this->info('Admin user created successfully with city_vet role!');
 
         $this->info('');
         $this->info('=== ADMIN LOGIN CREDENTIALS ===');
         $this->info('Email: admin@vetmis.com');
         $this->info('Password: admin123');
+        $this->info('Role: City Veterinarian');
         $this->info('==============================');
         $this->info('');
         $this->info('Please clear your browser cache and cookies,');

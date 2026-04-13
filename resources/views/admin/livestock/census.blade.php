@@ -100,7 +100,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        {{ ucfirst($record->animal_type) }}
+                                        {{ ucfirst($record->species) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right font-semibold text-gray-900">{{ number_format($record->total_count) }}</td>

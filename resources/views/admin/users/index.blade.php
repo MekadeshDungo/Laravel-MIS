@@ -141,7 +141,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                                @switch($user->role)
+                                @switch($user->getRoleAttribute())
                                     @case('super_admin') bg-red-100 text-red-800 @break
                                     @case('city_vet') bg-blue-100 text-blue-800 @break
                                     @case('admin_staff') bg-green-100 text-green-800 @break
@@ -151,11 +151,11 @@
                                     @case('citizen') bg-pink-100 text-pink-800 @break
                                     @default bg-gray-100 text-gray-800
                                 @endswitch">
-                                {{ str_replace('_', ' ', $user->role) }}
+                                {{ str_replace('_', ' ', $user->getRoleAttribute()) }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $user->barangay ?? 'N/A' }}
+                            {{ $user->barangay?->barangay_name ?? 'N/A' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ $user->created_at->format('M d, Y') }}

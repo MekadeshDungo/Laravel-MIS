@@ -251,7 +251,7 @@ class MeatInspectionController extends Controller
 
     private function authorizeReport($report)
     {
-        if ($report->inspector_user_id !== Auth::id() && !in_array(Auth::user()->role, ['super_admin', 'admin'])) {
+        if ($report->inspector_user_id !== Auth::id() && !Auth::user()->hasAnyRole(['super_admin', 'city_vet'])) {
             abort(403, 'Unauthorized action.');
         }
     }

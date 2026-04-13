@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -55,11 +56,11 @@ class RegisteredUserController extends Controller
 
         // Create user as unverified
         $user = User::create([
-            'name' => $request->first_name . ' ' . $request->last_name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'citizen',
-            'is_verified' => false,
+            'status' => 'active',
         ]);
 
         // Combine date of birth (if provided)
@@ -97,7 +98,7 @@ class RegisteredUserController extends Controller
         try {
             Mail::to($user->email)->send(new OtpMail($otp));
         } catch (\Exception $e) {
-            \Log::warning('OTP email could not be sent: ' . $e->getMessage());
+            Log::warning('OTP email could not be sent: ' . $e->getMessage());
         }
 
         // Store email in session for OTP verification

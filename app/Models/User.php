@@ -2,14 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 use App\Models\PetOwner;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
+class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable, Authorizable
 {
-    use Authenticatable, Notifiable;
+    use Authenticatable, Notifiable, HasRoles;
+
+    protected $guard_name = 'web';
 
     /**
      * The database table used by the model.
@@ -24,15 +31,16 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'middle_name',
+        'last_name',
         'email',
         'password',
-        'role',
-        'barangay',
-        'clinic_name',
-        'division',
+        'barangay_id',
+        'facility_id',
         'contact_number',
         'address',
+        'status',
         // OTP fields
         'otp_code',
         'otp_expires_at',
@@ -52,17 +60,91 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
         'is_verified',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'otp_expires_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the user's full name (accessor for backward compatibility).
+     */
+    public function getNameAttribute(): string
+    {
+        $parts = array_filter([
+            $this->first_name,
+            $this->middle_name,
+            $this->last_name
+        ]);
+        return implode(' ', $parts);
+    }
+
+    /**
+     * Set the user's full name (mutator for backward compatibility).
+     * Parses the name and splits into first_name, middle_name, last_name.
+     */
+    public function setNameAttribute($value): void
+    {
+        if (empty($value)) {
+            $this->attributes['first_name'] = null;
+            $this->attributes['middle_name'] = null;
+            $this->attributes['last_name'] = null;
+            return;
+        }
+
+        $parts = explode(' ', trim($value));
+        $count = count($parts);
+
+        if ($count === 1) {
+            $this->attributes['first_name'] = $parts[0];
+            $this->attributes['middle_name'] = null;
+            $this->attributes['last_name'] = null;
+        } elseif ($count === 2) {
+            $this->attributes['first_name'] = $parts[0];
+            $this->attributes['middle_name'] = null;
+            $this->attributes['last_name'] = $parts[1];
+        } else {
+            $this->attributes['first_name'] = $parts[0];
+            $this->attributes['middle_name'] = $parts[1];
+            $this->attributes['last_name'] = implode(' ', array_slice($parts, 2));
+        }
+    }
+
+    /**
+     * Get the barangay this user is assigned to.
+     */
+    public function barangay()
+    {
+        return $this->belongsTo(Barangay::class, 'barangay_id', 'barangay_id');
+    }
+
+    /**
+     * Get the facility this user is assigned to.
+     */
+    public function facility()
+    {
+        return $this->belongsTo(Facility::class, 'facility_id');
+    }
+
+    public function setOtpCodeAttribute($value): void
+    {
+        $this->attributes['otp_code'] = $value ? bcrypt($value) : $value;
+    }
+
+    public function verifyOtp(string $otp): bool
+    {
+        if (!$this->otp_code || !$this->otp_expires_at) {
+            return false;
+        }
+
+        if (Carbon::now()->gt($this->otp_expires_at)) {
+            return false;
+        }
+
+        return Hash::check($otp, $this->otp_code);
     }
 
     /**
@@ -137,6 +219,15 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
         $this->{$this->getRememberTokenName()} = $value;
     }
 
+    /**
+     * Check if the user has a given ability.
+     * Implements Authorizable interface for Laravel Gate compatibility.
+     */
+    public function can($ability, $arguments = [])
+    {
+        return $this->checkPermissionTo($ability);
+    }
+
     // Role constants - Clean Role Structure for Vet MIS (7 roles)
     public const ROLE_SUPER_ADMIN = 'super_admin';          // IT Personnel
     public const ROLE_CITY_VET = 'city_vet';               // City Veterinarian (Admin/Office Head)
@@ -153,98 +244,102 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
 
     /**
      * Check if user is a super admin (System Administrator).
+     * Uses Spatie hasRole() for permission checking.
      */
     public function isSuperAdmin(): bool
     {
-        return $this->role === self::ROLE_SUPER_ADMIN;
+        return $this->hasRole('super_admin');
     }
 
     /**
      * Check if user is an administrator (City Veterinarian / Admin).
+     * Uses Spatie hasRole() for permission checking.
      */
     public function isAdmin(): bool
     {
-        return $this->role === self::ROLE_CITY_VET || $this->role === self::ROLE_SUPER_ADMIN;
+        return $this->hasRole('city_vet') || $this->hasRole('super_admin');
     }
 
     /**
      * Check if user is a City Veterinarian.
+     * Uses Spatie hasRole() for permission checking.
      */
     public function isCityVet(): bool
     {
-        return $this->role === self::ROLE_CITY_VET;
+        return $this->hasRole('city_vet');
     }
 
     /**
      * Check if user is a records staff.
+     * Uses Spatie hasRole() for permission checking.
      */
     public function isRecordsStaff(): bool
     {
-        return $this->role === 'records_staff';
+        return $this->hasRole('records_staff');
     }
 
     /**
      * Check if user is a barangay encoder.
+     * Uses Spatie hasRole() for permission checking.
      */
     public function isBarangayEncoder(): bool
     {
-        return $this->role === 'barangay_encoder';
+        return $this->hasRole('barangay_encoder');
     }
 
     /**
      * Check if user is a meat inspector.
+     * Uses Spatie hasRole() for permission checking.
      */
     public function isMeatInspector(): bool
     {
-        return $this->role === self::ROLE_MEAT_INSPECTOR;
+        return $this->hasRole('meat_inspector');
     }
 
     /**
      * Check if user is assistant vet (includes former inventory staff and city pound roles).
+     * Uses Spatie hasRole() for permission checking.
      */
     public function isAssistantVet(): bool
     {
-        return $this->role === self::ROLE_ASSISTANT_VET;
+        return $this->hasRole('assistant_vet');
     }
 
     /**
      * Check if user is admin assistant (gatekeeper).
+     * Uses Spatie hasRole() for permission checking.
      */
     public function isAdminAsst(): bool
     {
-        return $this->role === self::ROLE_ADMIN_ASST;
+        return $this->hasRole('admin_asst');
     }
 
     /**
      * Check if user is a citizen.
+     * Uses Spatie hasRole() for permission checking.
      */
     public function isCitizen(): bool
     {
-        return $this->role === self::ROLE_CITIZEN;
-    }
-
-    /**
-     * Check if user has a specific role.
-     */
-    public function hasRole(string $role): bool
-    {
-        return $this->role === $role;
-    }
-
-    /**
-     * Check if user has a specific primary role.
-     */
-    public function hasPrimaryRole(string $role): bool
-    {
-        return $this->role === $role;
+        return $this->hasRole('citizen');
     }
 
     /**
      * Get effective role.
+     * Returns the first Spatie role assigned to the user.
      */
     public function getEffectiveRole(): string
     {
-        return $this->role;
+        $roles = $this->getRoleNames();
+        return $roles->first() ?? 'viewer';
+    }
+
+    /**
+     * Get the user's role (from Spatie, for backward compatibility).
+     * Returns the primary role name from Spatie roles.
+     */
+    public function getRoleAttribute(): string
+    {
+        return $this->getEffectiveRole();
     }
 
     /**
@@ -252,7 +347,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function isAdminWithBarangayAccess(): bool
     {
-        return in_array($this->role, [self::ROLE_CITY_VET, self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN_STAFF]);
+        return $this->hasAnyRole([self::ROLE_CITY_VET, self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN_STAFF]);
     }
 
     /**
@@ -260,7 +355,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function isAdminWithClinicAccess(): bool
     {
-        return in_array($this->role, [self::ROLE_CITY_VET, self::ROLE_SUPER_ADMIN, self::ROLE_ASSISTANT_VET]);
+        return $this->hasAnyRole([self::ROLE_CITY_VET, self::ROLE_SUPER_ADMIN, self::ROLE_ASSISTANT_VET]);
     }
 
     /**
@@ -268,7 +363,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function getRoleDisplayName(): string
     {
-        return match($this->role) {
+        return match($this->getRoleAttribute()) {
             self::ROLE_SUPER_ADMIN => 'Super Administrator (IT)',
             self::ROLE_CITY_VET => 'City Veterinarian (Admin/Office Head)',
             self::ROLE_ADMIN_STAFF => 'Administrative Assistant IV',
@@ -332,7 +427,8 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function getHierarchyLevel(): int
     {
-        return self::getRoleHierarchy()[$this->role] ?? 0;
+        $role = $this->getRoleAttribute();
+        return self::getRoleHierarchy()[$role] ?? 0;
     }
 
     /**
@@ -342,13 +438,13 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
     public function canManageUser(User $targetUser): bool
     {
         // Super admin cannot be managed by anyone
-        if ($targetUser->role === self::ROLE_SUPER_ADMIN) {
+        if ($targetUser->hasRole(self::ROLE_SUPER_ADMIN)) {
             return false;
         }
 
         // If target is super_admin, only another super_admin can manage (but cannot delete self)
-        if ($targetUser->isSuperAdmin()) {
-            return $this->isSuperAdmin();
+        if ($targetUser->hasRole(self::ROLE_SUPER_ADMIN)) {
+            return $this->hasRole(self::ROLE_SUPER_ADMIN);
         }
 
         // Other users: check hierarchy
@@ -389,7 +485,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function canAccessAdminPanel(): bool
     {
-        return $this->role !== self::ROLE_CITIZEN;
+        return !$this->hasRole(self::ROLE_CITIZEN);
     }
 
     /**
@@ -397,7 +493,7 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
      */
     public function canModifySuperAdmin(): bool
     {
-        return $this->isSuperAdmin();
+        return $this->hasRole(self::ROLE_SUPER_ADMIN);
     }
 
     /**
@@ -434,17 +530,6 @@ class User extends Model implements \Illuminate\Contracts\Auth\Authenticatable
             self::ROLE_RECORDS_STAFF,
             self::ROLE_CITY_POUND,
         ];
-    }
-
-    /**
-     * Get all roles assigned to this user (many-to-many relationship).
-     */
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class, 'user_roles')
-                    ->using(UserRole::class)
-                    ->withPivot('assigned_at')
-                    ->withTimestamps();
     }
 
     /**

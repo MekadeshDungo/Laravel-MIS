@@ -6,10 +6,9 @@
 @section('subheader', 'View and manage meat inspection records')
 
 @php
-$role = auth()->user()->role ?? 'admin';
+$role = auth()->user()->getRoleAttribute() ?? 'city_vet';
 $dashboardRoutes = [
     'super_admin' => 'super-admin.dashboard',
-    'admin' => 'admin.dashboard',
     'city_vet' => 'city-vet.dashboard',
     'admin_staff' => 'admin-staff.dashboard',
     'admin_asst' => 'admin-staff.dashboard',

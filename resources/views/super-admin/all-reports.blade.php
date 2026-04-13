@@ -126,7 +126,7 @@
                         <td class="px-5 py-4 text-sm text-gray-600">{{ $user->email }}</td>
                         <td class="px-5 py-4 text-sm">
                             <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700 capitalize">
-                                {{ str_replace('_', ' ', $user->role) }}
+                                {{ str_replace('_', ' ', $user->getRoleAttribute()) }}
                             </span>
                         </td>
                         <td class="px-5 py-4 text-sm">

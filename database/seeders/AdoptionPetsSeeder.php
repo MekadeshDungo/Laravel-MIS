@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AdoptionPet;
 use App\Models\AdoptionTrait;
+use App\Models\Pet;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -146,14 +147,17 @@ class AdoptionPetsSeeder extends Seeder
             ],
         ];
 
+        $allTraits = AdoptionTrait::pluck('id')->toArray();
+
         foreach ($pets as $pet) {
-            $createdPet = AdoptionPet::create($pet);
-            
-            $allTraits = AdoptionTrait::all()->pluck('id')->toArray();
-            if (!empty($allTraits)) {
+            $petModel = Pet::where('source_module', 'adoption_pets')
+                ->where('pet_name', $pet['pet_name'])
+                ->first();
+
+            if ($petModel && !empty($allTraits)) {
                 $numTraits = rand(1, min(3, count($allTraits)));
                 $randomTraitIds = array_rand(array_flip($allTraits), $numTraits);
-                $createdPet->traits()->attach($randomTraitIds);
+                $petModel->traits()->attach($randomTraitIds);
             }
         }
     }

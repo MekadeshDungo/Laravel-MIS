@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,192 +14,183 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      *
-     * New Role Structure:
-     * 1. super_admin - Super Administrator (IT)
-     * 2. city_vet - City Veterinarian (Admin/Office Head)
-     * 3. admin_asst - Administrative Assistant IV
-     * 4. assistant_vet - Veterinarian III (Assistant Vet)
-     * 5. livestock_inspector - Livestock Inspector
-     * 6. meat_inspector - Meat & Post-Abattoir Inspector
-     * 7. records_staff - Records Staff
-     * 8. disease_control - Assistant Veterinary Personnel
-     * 9. barangay_encoder - Barangay Encoder
-     * 10. viewer - Viewer/Supervisor
+     * Roles are now managed via Spatie Laravel Permission.
+     * The legacy role column has been removed.
      */
     public function run(): void
     {
-        // Note: Roles are now stored as strings in users.role column
-        // No RoleSeeder needed - roles are defined in the enum/string
+        // Ensure Spatie roles exist first
+        $this->call([
+            SpatieRoleSeeder::class,
+        ]);
 
         // ==============================
         // 1. SUPER ADMIN (IT Personnel)
         // Full system control
         // ==============================
-        User::firstOrCreate(
+        $superAdmin = User::firstOrCreate(
             ['email' => 'superadmin@vetmis.gov'],
             [
-                'name' => 'Super Admin',
+                'first_name' => 'Super',
+                'last_name' => 'Admin',
                 'password' => bcrypt('password123'),
-                'role' => 'super_admin',
                 'status' => 'active',
                 'contact_number' => '091234567890',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $superAdmin->assignRole('super_admin');
 
         // ==============================
         // 2. CITY VETERINARIAN (Admin/Office Head)
         // Analytics, monitoring, decision-making
         // ==============================
-        User::firstOrCreate(
+        $cityVet = User::firstOrCreate(
             ['email' => 'cityvet@vetmis.gov'],
             [
-                'name' => 'Dr. Maria Santos',
+                'first_name' => 'Maria',
+                'last_name' => 'Santos',
                 'password' => bcrypt('password123'),
-                'role' => 'city_vet',
                 'status' => 'active',
                 'contact_number' => '091234567891',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $cityVet->assignRole('city_vet');
 
         // ==============================
         // 3. ADMINISTRATIVE ASSISTANT IV
         // Clerical operations, adoption management
         // ==============================
-        User::firstOrCreate(
+        $adminStaff = User::firstOrCreate(
             ['email' => 'adminstaff@vet.gov.ph'],
             [
-                'name' => 'Admin Staff',
+                'first_name' => 'Admin',
+                'last_name' => 'Staff',
                 'password' => bcrypt('password123'),
-                'role' => 'admin_staff', // Primary role - admin_asst is legacy alias
                 'status' => 'active',
                 'contact_number' => '091234567892',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $adminStaff->assignRole('admin_staff');
 
         // ==============================
         // 4. VETERINARIAN III (Assistant Vet)
         // Medical records, vaccination
         // ==============================
-        User::firstOrCreate(
+        $assistantVet = User::firstOrCreate(
             ['email' => 'assistant_vet@vetmis.gov'],
             [
-                'name' => 'Dr. Pedro Garcia',
+                'first_name' => 'Pedro',
+                'last_name' => 'Garcia',
                 'password' => bcrypt('password123'),
-                'role' => 'assistant_vet',
                 'status' => 'active',
                 'contact_number' => '091234567893',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $assistantVet->assignRole('assistant_vet');
 
         // ==============================
         // 5. LIVESTOCK INSPECTOR
         // Farm profiling, livestock tracking
         // ==============================
-        User::firstOrCreate(
+        $livestock = User::firstOrCreate(
             ['email' => 'livestock@vetmis.gov'],
             [
-                'name' => 'Roberto Cruz',
+                'first_name' => 'Roberto',
+                'last_name' => 'Cruz',
                 'password' => bcrypt('password123'),
-                'role' => 'livestock_inspector',
                 'status' => 'active',
                 'contact_number' => '091234567894',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $livestock->assignRole('livestock_inspector');
 
         // ==============================
         // 6. MEAT INSPECTOR
         // Establishment profiling, compliance
         // ==============================
-        User::firstOrCreate(
+        $meatInspector = User::firstOrCreate(
             ['email' => 'meatinspector@vetmis.gov'],
             [
-                'name' => 'Maria Lopez',
+                'first_name' => 'Maria',
+                'last_name' => 'Lopez',
                 'password' => bcrypt('password123'),
-                'role' => 'meat_inspector',
                 'status' => 'active',
                 'contact_number' => '091234567895',
-                'address' => 'Abattoir Office',
             ]
         );
+        $meatInspector->assignRole('meat_inspector');
 
         // ==============================
         // 7. RECORDS STAFF
         // Encoding, organizing records
         // ==============================
-        User::firstOrCreate(
+        $recordsStaff = User::firstOrCreate(
             ['email' => 'records@vetmis.gov'],
             [
-                'name' => 'Sarah Miller',
+                'first_name' => 'Sarah',
+                'last_name' => 'Miller',
                 'password' => bcrypt('password123'),
-                'role' => 'records_staff',
                 'status' => 'active',
                 'contact_number' => '091234567896',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $recordsStaff->assignRole('records_staff');
 
         // ==============================
         // 8. DISEASE CONTROL PERSONNEL
         // Animal health, vaccination, rabies monitoring
         // ==============================
-        User::firstOrCreate(
+        $diseaseControl = User::firstOrCreate(
             ['email' => 'diseasecontrol@vetmis.gov'],
             [
-                'name' => 'Carlos Reyes',
+                'first_name' => 'Carlos',
+                'last_name' => 'Reyes',
                 'password' => bcrypt('password123'),
-                'role' => 'disease_control',
                 'status' => 'active',
                 'contact_number' => '091234567897',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $diseaseControl->assignRole('disease_control');
 
         // ==============================
         // 9. BARANGAY ENCODER
         // Data entry
         // ==============================
-        User::firstOrCreate(
+        $barangayEncoder = User::firstOrCreate(
             ['email' => 'barangay@vetmis.gov'],
             [
-                'name' => 'Barangay Encoder',
+                'first_name' => 'Barangay',
+                'last_name' => 'Encoder',
                 'password' => bcrypt('password123'),
-                'role' => 'barangay_encoder',
-                'barangay' => 'Poblacion',
                 'status' => 'active',
                 'contact_number' => '091234567898',
-                'address' => 'Barangay Poblacion',
             ]
         );
+        $barangayEncoder->assignRole('barangay_encoder');
 
         // ==============================
         // 10. VIEWER / SUPERVISOR
         // Read-only access
         // ==============================
-        User::firstOrCreate(
+        $viewer = User::firstOrCreate(
             ['email' => 'viewer@vetmis.gov'],
             [
-                'name' => 'Supervisor',
+                'first_name' => 'Supervisor',
+                'last_name' => 'Viewer',
                 'password' => bcrypt('password123'),
-                'role' => 'viewer',
                 'status' => 'active',
                 'contact_number' => '091234567899',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $viewer->assignRole('viewer');
 
         // Run BarangaySeeder AFTER users are created
         $this->call([
             BarangaySeeder::class,
         ]);
 
-        // Run additional seeders (MissingPetSeeder disabled - uses wrong table)
+        // Run additional seeders
         $this->call([
-            // MissingPetSeeder::class, // Disabled - uses animals table instead of adoption_pets
             AdoptionTraitsSeeder::class,
             AdoptionPetsSeeder::class,
         ]);

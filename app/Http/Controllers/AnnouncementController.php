@@ -13,12 +13,12 @@ class AnnouncementController extends Controller
     private function canManage()
     {
         $user = Auth::user();
-        return $user && in_array($user->role, ['super_admin', 'city_vet', 'admin_asst', 'admin_staff']);
+        return $user && $user->hasAnyRole(['super_admin', 'city_vet', 'admin_asst', 'admin_staff']);
     }
 
     private function getAdminRedirectRoute()
     {
-        $role = Auth::user()->role;
+        $role = Auth::user()->getRoleAttribute();
         return match($role) {
             'super_admin' => 'super-admin.announcements.index',
             'city_vet' => 'admin.announcements.index',

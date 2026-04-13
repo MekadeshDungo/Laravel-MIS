@@ -1,4 +1,4 @@
-@php $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'admin'); @endphp
+@php $rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'city-vet'); @endphp
 
 @extends('layouts.admin')
 

@@ -59,7 +59,12 @@ class UserController extends Controller
         // Get assignable roles based on current user's hierarchy
         $assignableRoles = auth()->user()->getAssignableRoles();
 
-        return view('admin.users.create', compact('assignableRoles'));
+        // Get facilities for dropdown (only Super Admin sees this)
+        $facilities = auth()->user()->hasRole('super_admin') 
+            ? \App\Models\Facility::orderBy('name')->get() 
+            : collect();
+
+        return view('admin.users.create', compact('assignableRoles', 'facilities'));
     }
 
     /**
@@ -74,10 +79,11 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:admin_users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|string',
-            'barangay' => 'nullable|string|max:255',
+            'barangay_id' => 'nullable|exists:barangays,barangay_id',
+            'facility_id' => 'nullable|exists:facilities,id',
             'contact_number' => 'nullable|string|max:20',
         ]);
 
@@ -87,42 +93,49 @@ class UserController extends Controller
         }
 
         // Prevent creating super_admin by non-super_admin
-        if ($validated['role'] === User::ROLE_SUPER_ADMIN && !auth()->user()->isSuperAdmin()) {
+        if ($validated['role'] === User::ROLE_SUPER_ADMIN && !auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
             return back()->with('error', 'You cannot create Super Administrator accounts.');
         }
 
-        $user = User::create([
-            'name' => $validated['name'],
+        // Parse name into first_name and last_name
+        $nameParts = explode(' ', $validated['name'], 2);
+        $firstName = $nameParts[0] ?? '';
+        $lastName = $nameParts[1] ?? '';
+
+        $userData = [
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
-            'barangay' => $validated['barangay'] ?? null,
-            'clinic_name' => $validated['clinic_name'] ?? null,
+            'barangay_id' => $validated['barangay_id'] ?? null,
             'contact_number' => $validated['contact_number'] ?? null,
             'status' => 'active',
-        ]);
+        ];
+
+        // Only Super Admin can assign facility_id
+        if (auth()->user()->hasRole('super_admin') && !empty($validated['facility_id'])) {
+            $userData['facility_id'] = $validated['facility_id'];
+        }
+
+        $user = User::create($userData);
+
+        // Assign Spatie role
+        $user->assignRole($validated['role']);
 
         if ($validated['role'] === User::ROLE_CITIZEN) {
-            $nameParts = explode(' ', $validated['name']);
-            $firstName = array_shift($nameParts);
-            $lastName = implode(' ', $nameParts) ?: '';
-
             \App\Models\PetOwner::create([
                 'user_id' => $user->id,
                 'first_name' => $firstName,
                 'last_name' => $lastName,
                 'phone_number' => $validated['contact_number'] ?? null,
                 'email' => $validated['email'],
-                'barangay' => $validated['barangay'] ?? null,
-                'house_no' => null,
-                'street' => null,
-                'subdivision' => null,
             ]);
         }
 
         \App\Models\SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'create_user',
+            'event' => 'create',
             'module' => 'User Management',
             'description' => "Created new user: {$validated['name']} with role: {$validated['role']}",
             'ip_address' => request()->ip(),
@@ -161,7 +174,12 @@ class UserController extends Controller
         // Get assignable roles
         $assignableRoles = auth()->user()->getAssignableRoles();
 
-        return view('admin.users.edit', compact('user', 'assignableRoles'));
+        // Get facilities for dropdown (only Super Admin can modify)
+        $facilities = auth()->user()->hasRole('super_admin') 
+            ? \App\Models\Facility::orderBy('name')->get() 
+            : collect();
+
+        return view('admin.users.edit', compact('user', 'assignableRoles', 'facilities'));
     }
 
     /**
@@ -176,10 +194,11 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:admin_users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|string',
-            'barangay' => 'nullable|string|max:255',
+            'barangay_id' => 'nullable|exists:barangays,barangay_id',
+            'facility_id' => 'nullable|exists:facilities,id',
             'contact_number' => 'nullable|string|max:20',
         ]);
 
@@ -187,37 +206,48 @@ class UserController extends Controller
         // SUPER ADMIN SELF-PROTECTION VALIDATION RULES
         // ============================================
         
+        $currentRole = $user->getRoleAttribute();
+        
         // 1. If user is super_admin trying to change their own role -> BLOCK
-        if (auth()->user()->isSuperAdmin() && $user->isSelf() && $validated['role'] !== $user->role) {
+        if (auth()->user()->hasRole(User::ROLE_SUPER_ADMIN) && $user->isSelf() && $validated['role'] !== $currentRole) {
             return back()->with('error', 'You cannot change your own role as Super Administrator.');
         }
 
         // 2. Check role change permissions
-        if ($validated['role'] !== $user->role) {
+        if ($validated['role'] !== $currentRole) {
             // Check if user can assign the new role
             if (!auth()->user()->canAssignRole($validated['role'])) {
                 return back()->with('error', 'You cannot assign the role "' . $validated['role'] . '".');
             }
 
             // Prevent changing to super_admin by non-super_admin
-            if ($validated['role'] === User::ROLE_SUPER_ADMIN && !auth()->user()->isSuperAdmin()) {
+            if ($validated['role'] === User::ROLE_SUPER_ADMIN && !auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
                 return back()->with('error', 'You cannot change a user to Super Administrator.');
             }
 
             // Prevent non-super_admin from modifying super_admin
-            if ($user->isSuperAdmin() && !auth()->user()->isSuperAdmin()) {
+            if ($user->hasRole(User::ROLE_SUPER_ADMIN) && !auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)) {
                 return back()->with('error', 'You cannot modify Super Administrator accounts.');
             }
         }
 
+        // Parse name into first_name and last_name
+        $nameParts = explode(' ', $validated['name'], 2);
+        $firstName = $nameParts[0] ?? '';
+        $lastName = $nameParts[1] ?? '';
+
         $updateData = [
-            'name' => $validated['name'],
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'email' => $validated['email'],
-            'role' => $validated['role'],
-            'barangay' => $validated['barangay'] ?? null,
-            'clinic_name' => $validated['clinic_name'] ?? null,
+            'barangay_id' => $validated['barangay_id'] ?? null,
             'contact_number' => $validated['contact_number'] ?? null,
         ];
+
+        // Only Super Admin can change facility_id
+        if (auth()->user()->hasRole('super_admin')) {
+            $updateData['facility_id'] = $validated['facility_id'] ?? null;
+        }
 
         if (!empty($validated['password'])) {
             $updateData['password'] = Hash::make($validated['password']);
@@ -225,9 +255,15 @@ class UserController extends Controller
 
         $user->update($updateData);
 
+        // Update Spatie role if changed
+        if ($validated['role'] !== $currentRole) {
+            $user->syncRoles($validated['role']);
+        }
+
         \App\Models\SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'update_user',
+            'event' => 'update',
             'module' => 'User Management',
             'description' => "Updated user: {$user->name} (ID: {$user->id})",
             'ip_address' => request()->ip(),
@@ -272,6 +308,7 @@ class UserController extends Controller
         \App\Models\SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'delete_user',
+            'event' => 'delete',
             'module' => 'User Management',
             'description' => "Deleted user: {$user->name} (ID: {$user->id})",
             'ip_address' => request()->ip(),
@@ -308,6 +345,7 @@ class UserController extends Controller
         \App\Models\SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'toggle_user_status',
+            'event' => 'update',
             'module' => 'User Management',
             'description' => "Changed status of user {$user->name} to {$newStatus}",
             'ip_address' => request()->ip(),

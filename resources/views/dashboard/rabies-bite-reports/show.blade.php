@@ -6,7 +6,7 @@
 @section('subheader', 'View full details of the incident report')
 
 @php
-$rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
+$rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'assistant-vet');
 
 // Get available route for rabies-bite-reports
 $rabiesReportsIndexRoute = 'city-vet.rabies-bite-reports.index';
@@ -261,7 +261,7 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
                     </div>
 
                     <!-- Action Buttons - Only for assistant_vet (not city_vet) -->
-                    @if(auth()->user()->role !== 'city_vet')
+                    @if(!auth()->user()->hasRole('city_vet'))
                         @if(!$rabiesReport->rabiesCase && in_array($rabiesReport->status, ['Pending Review', 'Under Review']))
                             <a href="{{ route($rolePrefix . '.rabies-bite-reports.create-case', $rabiesReport->id) }}"
                                class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
@@ -270,7 +270,7 @@ $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';
                         @endif
 
                         @if($rabiesReport->rabiesCase)
-                            <a href="{{ route($rolePrefix . '.rabies-cases.show', $rabiesReport->rabiesCase->id) }}"
+                            <a href="{{ route('rabies-cases.show', $rabiesReport->rabiesCase->id) }}"
                                class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
                                 <i class="bi bi-eye"></i> View Linked Case
                             </a>

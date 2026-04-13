@@ -6,7 +6,7 @@
 @section('subheader', 'Manage submitted animal bite incident reports')
 
 @php
-$rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
+$rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'assistant-vet');
 
 // Get available route for rabies-bite-reports
 $rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';

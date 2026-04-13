@@ -104,7 +104,7 @@ class SystemLogController extends Controller
             $csv->push([
                 $log->log_id,
                 $log->user ? $log->user->name : 'N/A',
-                $log->role ?? 'N/A',
+                $log->user ? $log->user->getRoleAttribute() : 'N/A',
                 $log->action,
                 $log->module,
                 $log->record_id ?? 'N/A',
@@ -147,8 +147,9 @@ class SystemLogController extends Controller
 
         return SystemLog::create([
             'user_id' => $user->id,
-            'role' => $user->role,
+            'role' => $user->getRoleAttribute(),
             'action' => $action,
+            'event' => $action,
             'module' => $module,
             'record_id' => $recordId,
             'description' => $description,

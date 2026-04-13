@@ -113,19 +113,19 @@
                     <!-- Primary Role -->
                     <div>
                         <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Primary Role <span class="text-red-500">*</span></label>
-                        @if($user->isSuperAdmin() && $user->isSelf())
+                        @if($user->hasRole('super_admin') && $user->isSelf())
                             <div class="w-full px-4 py-3 rounded-lg border bg-gray-100 text-gray-600">
                                 <i class="bi bi-lock-fill mr-2"></i>
                                 {{ $user->getRoleDisplayName() }}
                             </div>
-                            <input type="hidden" name="role" value="{{ $user->role }}">
+                            <input type="hidden" name="role" value="{{ $user->getRoleAttribute() }}">
                             <p class="mt-1 text-xs text-red-500"><i class="bi bi-exclamation-circle"></i> Super Admin cannot change their own role.</p>
                         @else
                             <select name="role" id="role" 
                                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('role') border-red-500 @enderror" required>
                                 <option value="">Select role</option>
                                 @foreach($assignableRoles as $role => $label)
-                                    <option value="{{ $role }}" {{ old('role', $user->role) == $role ? 'selected' : '' }}>{{ $label }}</option>
+                                    <option value="{{ $role }}" {{ old('role', $user->getRoleAttribute()) == $role ? 'selected' : '' }}>{{ $label }}</option>
                                 @endforeach
                             </select>
                             @error('role')
@@ -138,22 +138,60 @@
             </div>
 
             <!-- Barangay Assignment -->
-            @if(auth()->user()->role === 'super_admin' || auth()->user()->role === 'admin')
+            @if(auth()->user()->hasAnyRole(['super_admin', 'city_vet']))
             <div class="mb-8">
                 <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
                     <i class="bi bi-geo-alt text-blue-600"></i> Barangay Assignment
                 </h4>
                 <div>
-                    <label for="barangay" class="block text-sm font-medium text-gray-700 mb-2">Assigned Barangay</label>
-                    <select name="barangay" id="barangay" 
+                    <label for="barangay_id" class="block text-sm font-medium text-gray-700 mb-2">Assigned Barangay</label>
+                    <select name="barangay_id" id="barangay_id" 
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                         <option value="">None</option>
                         @foreach(\App\Models\Barangay::orderBy('barangay_name')->get() as $barangay)
-                            <option value="{{ $barangay->barangay_name }}" {{ old('barangay', $user->barangay) == $barangay->barangay_name ? 'selected' : '' }}>
+                            <option value="{{ $barangay->barangay_id }}" {{ old('barangay_id', $user->barangay_id) == $barangay->barangay_id ? 'selected' : '' }}>
                                 {{ $barangay->barangay_name }}
                             </option>
                         @endforeach
                     </select>
+                </div>
+            </div>
+            @endif
+
+            <!-- Facility Assignment (Super Admin Only) -->
+            @if(auth()->user()->hasRole('super_admin') && $facilities->count() > 0)
+            <div class="mb-8">
+                <h4 class="text-md font-medium text-gray-700 mb-4 flex items-center gap-2">
+                    <i class="bi bi-hospital text-blue-600"></i> Facility Assignment
+                </h4>
+                <div>
+                    <label for="facility_id" class="block text-sm font-medium text-gray-700 mb-2">Assigned Facility</label>
+                    <select name="facility_id" id="facility_id" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                        <option value="">None</option>
+                        <optgroup label="Animal Bite Centers (ABC)">
+                            @foreach($facilities->where('type', 'abc') as $facility)
+                                <option value="{{ $facility->id }}" {{ old('facility_id', $user->facility_id) == $facility->id ? 'selected' : '' }}>
+                                    {{ $facility->name }}
+                                </option>
+                            @endforeach
+                        </optgroup>
+                        <optgroup label="Veterinary Clinics">
+                            @foreach($facilities->where('type', 'clinic') as $facility)
+                                <option value="{{ $facility->id }}" {{ old('facility_id', $user->facility_id) == $facility->id ? 'selected' : '' }}>
+                                    {{ $facility->name }}
+                                </option>
+                            @endforeach
+                        </optgroup>
+                        <optgroup label="Hospitals">
+                            @foreach($facilities->where('type', 'hospital') as $facility)
+                                <option value="{{ $facility->id }}" {{ old('facility_id', $user->facility_id) == $facility->id ? 'selected' : '' }}>
+                                    {{ $facility->name }}
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">Only Super Admin can modify facility assignment.</p>
                 </div>
             </div>
             @endif

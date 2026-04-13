@@ -48,11 +48,10 @@ class OtpController extends Controller
         // Generate 6-digit OTP
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        // Save OTP to user (expires in 10 minutes)
-        $user->update([
-            'otp_code' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(10)
-        ]);
+        // Save hashed OTP to user (expires in 10 minutes)
+        $user->otp_code = $otp;
+        $user->otp_expires_at = Carbon::now()->addMinutes(10);
+        $user->save();
 
         // Send OTP email
         Mail::to($email)->send(new OtpMail($otp));
@@ -92,11 +91,8 @@ class OtpController extends Controller
             return back()->with('error', 'OTP has expired. Please request a new one.')->withInput();
         }
 
-        // Check if OTP matches - use trim() to remove any whitespace
-        $dbOtp = trim($user->otp_code);
-        $inputOtp = trim($request->otp);
-
-        if ($dbOtp !== $inputOtp) {
+        // Verify OTP using Hash::check()
+        if (!$user->verifyOtp($request->otp)) {
             return back()->with('error', 'Invalid OTP code. Please try again.')->withInput();
         }
 
@@ -115,6 +111,7 @@ class OtpController extends Controller
         \App\Models\SystemLog::create([
             'user_id' => $user->id,
             'action' => 'login',
+            'event' => 'login',
             'module' => 'Authentication',
             'description' => "User logged in via OTP verification",
             'ip_address' => request()->ip(),
@@ -161,11 +158,10 @@ class OtpController extends Controller
         // Generate new 6-digit OTP
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        // Save new OTP
-        $user->update([
-            'otp_code' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(10)
-        ]);
+        // Save hashed OTP
+        $user->otp_code = $otp;
+        $user->otp_expires_at = Carbon::now()->addMinutes(10);
+        $user->save();
 
         // Send OTP email
         Mail::to($email)->send(new OtpMail($otp));
@@ -210,11 +206,10 @@ class OtpController extends Controller
         // Generate 6-digit OTP
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        // Save OTP to user (expires in 10 minutes)
-        $user->update([
-            'otp_code' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(10)
-        ]);
+        // Save hashed OTP to user (expires in 10 minutes)
+        $user->otp_code = $otp;
+        $user->otp_expires_at = Carbon::now()->addMinutes(10);
+        $user->save();
 
         // Send OTP email
         Mail::to($email)->send(new OtpMail($otp));
@@ -254,11 +249,8 @@ class OtpController extends Controller
             return back()->with('error', 'Verification code has expired. Please request a new one.');
         }
 
-        // Check if OTP matches
-        $dbOtp = trim($user->otp_code);
-        $inputOtp = trim($request->otp);
-
-        if ($dbOtp !== $inputOtp) {
+        // Verify OTP using Hash::check()
+        if (!$user->verifyOtp($request->otp)) {
             return back()->with('error', 'Invalid verification code. Please try again.');
         }
 
@@ -297,11 +289,10 @@ class OtpController extends Controller
         // Generate new 6-digit OTP
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        // Save new OTP
-        $user->update([
-            'otp_code' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(10)
-        ]);
+        // Save hashed OTP
+        $user->otp_code = $otp;
+        $user->otp_expires_at = Carbon::now()->addMinutes(10);
+        $user->save();
 
         // Send OTP email
         Mail::to($email)->send(new OtpMail($otp));

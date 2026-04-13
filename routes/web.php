@@ -28,6 +28,20 @@ use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\OtpController;
 use App\Http\Controllers\Client\PetRegistrationController;
 use App\Http\Controllers\Client\PetController;
+
+/*
+|--------------------------------------------------------------------------
+| Fallback Routes (Available in all contexts including console)
+|--------------------------------------------------------------------------
+*/
+// Fallback route for announcements - used by NotificationService and redirects
+Route::get('/announcements-public', [AnnouncementController::class, 'index'])->name('announcements.index');
+
+// Fallback route for system-logs.show - used by views
+Route::get('/fallback/system-logs/{log}', [SystemLogController::class, 'show'])->name('admin.system-logs.show');
+
+// Fallback route for notifications.index - used by bell dropdown
+Route::get('/fallback/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 // Include Breeze authentication routes
 require __DIR__.'/auth.php';
 
@@ -58,29 +72,28 @@ Route::get('/', function () {
     // If user is authenticated, redirect to their role-based dashboard
     if (Auth::check()) {
         $user = Auth::user();
-        switch ($user->role) {
-            case 'super_admin':
-                return redirect()->route('super-admin.dashboard');
-            case 'city_vet':
-                return redirect()->route('city-vet.dashboard');
-            case 'admin_staff':
-                return redirect()->route('admin-staff.dashboard');
-            case 'assistant_vet':
-                return redirect()->route('assistant-vet.dashboard');
-            case 'livestock_inspector':
-                return redirect()->route('livestock.dashboard');
-            case 'meat_inspector':
-                return redirect()->route('meat-inspection.dashboard');
-            case 'citizen':
-                return redirect()->route('owner.dashboard');
-            case 'clinic':
-                return redirect()->route('clinic.dashboard');
-            case 'hospital':
-                return redirect()->route('hospital.dashboard');
-            default:
-                // Unknown role - log out and redirect to login for security
-                Auth::logout();
-                return redirect()->route('login');
+        if ($user->hasRole('super_admin')) {
+            return redirect()->route('super-admin.dashboard');
+        } elseif ($user->hasRole('city_vet')) {
+            return redirect()->route('city-vet.dashboard');
+        } elseif ($user->hasRole('admin_staff')) {
+            return redirect()->route('admin-staff.dashboard');
+        } elseif ($user->hasRole('assistant_vet')) {
+            return redirect()->route('assistant-vet.dashboard');
+        } elseif ($user->hasRole('livestock_inspector')) {
+            return redirect()->route('livestock.dashboard');
+        } elseif ($user->hasRole('meat_inspector')) {
+            return redirect()->route('meat-inspection.dashboard');
+        } elseif ($user->hasRole('citizen')) {
+            return redirect()->route('owner.dashboard');
+        } elseif ($user->hasRole('clinic')) {
+            return redirect()->route('clinic.dashboard');
+        } elseif ($user->hasRole('hospital')) {
+            return redirect()->route('hospital.dashboard');
+        } else {
+            // Unknown role - log out and redirect to login for security
+            Auth::logout();
+            return redirect()->route('login');
         }
     }
     // Get missing pets for the landing page
@@ -261,6 +274,7 @@ Route::middleware(['auth', 'role:city_vet'])->prefix('city-vet')->name('city-vet
     // Bite & Rabies Reports - View Only
     Route::get('/bite-rabies-reports', [DiseaseControlController::class, 'indexRabiesReports'])->name('rabies-bite-reports.index');
     Route::get('/bite-rabies-reports/{rabiesReport}', [DiseaseControlController::class, 'showRabiesReport'])->name('rabies-bite-reports.show');
+    Route::patch('/bite-rabies-reports/{rabiesReport}/check', [DiseaseControlController::class, 'acceptRabiesReport'])->name('rabies-bite-reports.check');
 
     // ========== ADMIN ASST MODULES (merged into assistant_vet) ==========
     // Pet Registrations (Portal Gatekeeper)
@@ -437,9 +451,7 @@ Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('ad
 // Access: Shares access with city_vet (merged modules)
 // ==============================
 Route::middleware(['auth', 'role:assistant_vet'])->prefix('assistant-vet')->name('assistant-vet.')->group(function () {
-    Route::get('/dashboard', function () {
-        return redirect()->route('city-vet.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\CityVetController::class, 'dashboard'])->name('dashboard');
 
     // Vaccination Records (shared with admin_staff)
     Route::get('/vaccinations', [\App\Http\Controllers\RecordsController::class, 'vaccinations'])->name('vaccinations.index');
@@ -579,6 +591,7 @@ Route::middleware(['auth', 'role:city_vet|super_admin|assistant_vet|livestock_in
 // ==============================
 Route::middleware(['auth', 'role:livestock_inspector'])->prefix('livestock')->name('livestock.')->group(function () {
     Route::get('/dashboard', [LivestockController::class, 'dashboard'])->name('dashboard');
+    Route::get('/census', [LivestockController::class, 'census'])->name('census');
     Route::get('/', [LivestockController::class, 'index'])->name('index');
     Route::get('/create', [LivestockController::class, 'create'])->name('create');
     Route::post('/', [LivestockController::class, 'store'])->name('store');
@@ -586,7 +599,6 @@ Route::middleware(['auth', 'role:livestock_inspector'])->prefix('livestock')->na
     Route::get('/{livestock}/edit', [LivestockController::class, 'edit'])->name('edit');
     Route::put('/{livestock}', [LivestockController::class, 'update'])->name('update');
     Route::delete('/{livestock}', [LivestockController::class, 'destroy'])->name('destroy');
-    Route::get('/census', [LivestockController::class, 'census'])->name('census');
 });
 
 // ==============================

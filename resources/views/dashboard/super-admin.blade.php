@@ -128,7 +128,7 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-800">{{ $user->name }}</p>
-                            <p class="text-xs text-gray-500 capitalize">{{ str_replace('_', ' ', $user->role) }}</p>
+                            <p class="text-xs text-gray-500 capitalize">{{ str_replace('_', ' ', $user->getRoleAttribute()) }}</p>
                         </div>
                     </div>
                     <span class="text-xs text-gray-400">{{ $user->created_at->format('M d, Y') }}</span>

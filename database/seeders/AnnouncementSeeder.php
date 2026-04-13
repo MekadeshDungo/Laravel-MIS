@@ -9,7 +9,7 @@ class AnnouncementSeeder extends Seeder
 {
     public function run(): void
     {
-        $userId = \App\Models\AdminUser::first()->id ?? 1;
+        $userId = \App\Models\User::first()->id ?? 1;
         
         $announcements = [
             [

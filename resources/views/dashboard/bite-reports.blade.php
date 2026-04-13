@@ -6,7 +6,7 @@
 @section('subheader', 'Track and manage all animal bite and rabies incident reports')
 
 @php
-$rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'disease-control');
+$rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'disease-control');
 @endphp
 
 @section('content')

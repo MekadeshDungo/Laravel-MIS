@@ -6,7 +6,7 @@
 @section('subheader', 'Assistant Veterinary monitoring and reporting')
 
 @php
-$rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
+$rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'assistant-vet');
 @endphp
 
 @section('content')

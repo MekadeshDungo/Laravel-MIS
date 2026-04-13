@@ -6,7 +6,7 @@
 @section('subheader', 'View case information and updates')
 
 @php
-$rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
+$rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'assistant-vet');
 @endphp
 
 @section('content')

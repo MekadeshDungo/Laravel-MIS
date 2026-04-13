@@ -22,7 +22,7 @@ class ProfileUpdateRequest extends FormRequest
             'email' => [
                 'email',
                 'max:255',
-                $userId ? "unique:users,email,{$userId}" : 'unique:users,email'
+                $userId ? "unique:admin_users,email,{$userId}" : 'unique:admin_users,email'
             ],
             'password' => [
                 'nullable',

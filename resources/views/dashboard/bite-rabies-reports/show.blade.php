@@ -6,7 +6,7 @@
 @section('subheader', 'View full details of the incident report')
 
 @php
-$rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
+$rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'assistant-vet');
 
 $rabiesReportsIndexRoute = 'city-vet.rabies-bite-reports.index';
 $rabiesReportsShowRoute = 'city-vet.rabies-bite-reports.show';

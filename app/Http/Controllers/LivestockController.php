@@ -193,6 +193,9 @@ class LivestockController extends Controller
             ->get()
             ->groupBy('barangay_id');
 
+        // Census by animal type (same as species for this model)
+        $censusByAnimalType = $censusBySpecies;
+
         // Get total count per barangay
         $totalByBarangay = Livestock::selectRaw('barangay_id, COUNT(*) as total_count')
             ->groupBy('barangay_id')
@@ -205,13 +208,18 @@ class LivestockController extends Controller
             ->get()
             ->pluck('total_count', 'species');
 
+        // Overall totals by animal type (same as species for this model)
+        $overallByAnimalType = $overallBySpecies;
+
         $grandTotal = Livestock::count();
         $barangays = Barangay::orderBy('barangay_name')->get();
 
         return view('admin.livestock.census', compact(
             'censusBySpecies',
+            'censusByAnimalType',
             'totalByBarangay',
             'overallBySpecies',
+            'overallByAnimalType',
             'grandTotal',
             'barangays'
         ));

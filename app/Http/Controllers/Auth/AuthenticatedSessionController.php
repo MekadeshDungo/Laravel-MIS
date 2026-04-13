@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
 
         // Check if user has verified their email
-        if (!$user->is_verified && $user->role === 'citizen') {
+        if (!$user->is_verified && $user->hasRole('citizen')) {
             // Store email in session and redirect to OTP verification
             session(['email' => $user->email]);
             Auth::logout();
@@ -47,7 +47,9 @@ class AuthenticatedSessionController extends Controller
      */
     protected function redirectToDashboard($user): RedirectResponse
     {
-        switch ($user->role) {
+        $role = $user->getEffectiveRole();
+        
+        switch ($role) {
             case 'super_admin':
                 return redirect()->intended('/super-admin/dashboard')
                     ->with('success', 'Welcome back, Super Administrator ' . $user->name . '!');

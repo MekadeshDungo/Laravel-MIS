@@ -47,61 +47,35 @@ class AuthenticatedSessionController extends Controller
 
             // Redirect based on user role - admins go to their dashboards
             // Citizens/Clients go to client landing page
-            switch ($user->role) {
-                case 'super_admin':
-                    return redirect()->route('super-admin.dashboard')
-                        ->with('success', 'Welcome back, Super Administrator ' . $user->name . '!');
-                case 'admin':
-                    return redirect()->route('admin.dashboard')
-                        ->with('success', 'Welcome back, Administrator ' . $user->name . '!');
-                case 'city_vet':
-                    return redirect()->route('city-vet.dashboard')
-                        ->with('success', 'Welcome back, City Veterinarian ' . $user->name . '!');
-                case 'admin_staff':
-                case 'admin_asst':
-                    return redirect()->route('admin-staff.dashboard')
-                        ->with('success', 'Welcome back, Admin Staff ' . $user->name . '!');
-                case 'assistant_vet':
-                    return redirect()->route('assistant-vet.dashboard')
-                        ->with('success', 'Welcome back, Assistant Veterinarian ' . $user->name . '!');
-                case 'livestock_inspector':
-                    return redirect()->route('livestock.dashboard')
-                        ->with('success', 'Welcome back, Livestock Inspector ' . $user->name . '!');
-                case 'admin_staff':
-                    return redirect()->route('admin-staff.dashboard')
-                        ->with('success', 'Welcome back, Admin Staff ' . $user->name . '!');
-                case 'disease_control':
-                    return redirect()->route('assistant-vet.dashboard')
-                        ->with('success', 'Welcome back, Assistant Veterinary Personnel ' . $user->name . '!');
-                case 'meat_inspector':
-                    return redirect()->route('meat-inspection.dashboard')
-                        ->with('success', 'Welcome back, Meat Inspector ' . $user->name . '!');
-                case 'inventory_staff':
-                    // Merged into assistant_vet - redirect to Assistant Veterinary dashboard
-                    return redirect()->route('assistant-vet.dashboard')
-                        ->with('success', 'Welcome back, Assistant Veterinarian ' . $user->name . '!');
-                case 'barangay_encoder':
-                    return redirect()->route('barangay.dashboard')
-                        ->with('success', 'Welcome back, Barangay Encoder ' . $user->name . '!');
-                case 'barangay':
-                    return redirect()->route('barangay.dashboard')
-                        ->with('success', 'Welcome back, Barangay Encoder ' . $user->name . '!');
-                case 'clinic':
-                    return redirect()->route('clinic.dashboard')
-                        ->with('success', 'Welcome back, Clinic User ' . $user->name . '!');
-                case 'hospital':
-                    return redirect()->route('hospital.dashboard')
-                        ->with('success', 'Welcome back, Hospital User ' . $user->name . '!');
-                case 'viewer':
-                    return redirect()->route('viewer.dashboard')
-                        ->with('success', 'Welcome back, Viewer ' . $user->name . '!');
-                case 'citizen':
-                    // Citizens/Clients go to client landing page
-                    return redirect()->to('/client')
-                        ->with('success', 'Welcome back, ' . $user->name . '!');
-                default:
-                    Auth::logout();
-                    return back()->withErrors([
+            $role = $user->getRoleAttribute();
+            
+            if ($user->hasRole('super_admin')) {
+                return redirect()->route('super-admin.dashboard')
+                    ->with('success', 'Welcome back, Super Administrator ' . $user->name . '!');
+            } elseif ($user->hasRole('city_vet')) {
+                return redirect()->route('city-vet.dashboard')
+                    ->with('success', 'Welcome back, City Veterinarian ' . $user->name . '!');
+            } elseif ($user->hasAnyRole(['admin_staff', 'admin_asst'])) {
+                return redirect()->route('admin-staff.dashboard')
+                    ->with('success', 'Welcome back, Admin Staff ' . $user->name . '!');
+            } elseif ($user->hasRole('assistant_vet')) {
+                return redirect()->route('assistant-vet.dashboard')
+                    ->with('success', 'Welcome back, Assistant Veterinarian ' . $user->name . '!');
+            } elseif ($user->hasRole('livestock_inspector')) {
+                return redirect()->route('livestock.dashboard')
+                    ->with('success', 'Welcome back, Livestock Inspector ' . $user->name . '!');
+            } elseif ($user->hasRole('meat_inspector')) {
+                return redirect()->route('meat-inspection.dashboard')
+                    ->with('success', 'Welcome back, Meat Inspector ' . $user->name . '!');
+            } elseif ($user->hasAnyRole(['clinic', 'hospital'])) {
+                return redirect()->route('clinic.dashboard')
+                    ->with('success', 'Welcome back, Clinic User ' . $user->name . '!');
+            } elseif ($user->hasRole('citizen')) {
+                return redirect()->to('/client')
+                    ->with('success', 'Welcome back, ' . $user->name . '!');
+            } else {
+                Auth::logout();
+                return back()->withErrors([
                         'email' => 'Invalid role. Please contact the system administrator.',
                     ])->withInput($request->only('email'));
             }

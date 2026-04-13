@@ -35,15 +35,4 @@ class Role extends Model
             'updated_at' => 'datetime',
         ];
     }
-
-    /**
-     * Get the users that have this role.
-     */
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'user_roles')
-                    ->using(UserRole::class)
-                    ->withPivot('assigned_at')
-                    ->withTimestamps();
-    }
 }

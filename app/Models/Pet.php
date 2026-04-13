@@ -4,15 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Pet extends Model
 {
     protected $table = 'pets';
     protected $primaryKey = 'pet_id';
+    public $timestamps = false;
 
     protected $fillable = [
         'owner_id',
+        'barangay_id',
         'pet_name',
         'species',
         'breed',
@@ -43,10 +46,17 @@ class Pet extends Model
         'dislikes',
         'diet',
         'allergy',
+        'source_module',
+        'source_module_id',
+        'is_approved',
+        'consolidated_at',
+        'pet_status',
     ];
 
     protected $casts = [
         'birthdate' => 'date',
+        'is_approved' => 'boolean',
+        'consolidated_at' => 'datetime',
     ];
 
     public function owner(): BelongsTo
@@ -72,5 +82,16 @@ class Pet extends Model
     public function medicalRecords(): HasMany
     {
         return $this->hasMany(MedicalRecord::class, 'pet_id');
+    }
+
+    public function missingReport(): HasMany
+    {
+        return $this->hasMany(MissingReport::class, 'pet_id');
+    }
+
+    public function traits(): BelongsToMany
+    {
+        return $this->belongsToMany(AdoptionTrait::class, 'pet_traits', 'pet_id', 'trait_id')
+            ->withTimestamps();
     }
 }

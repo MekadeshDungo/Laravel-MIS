@@ -30,7 +30,7 @@
                     <h4 class="text-xl font-semibold text-gray-800">{{ $user->name }}</h4>
                     <p class="text-gray-500">{{ $user->email }}</p>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-2 capitalize">
-                        {{ str_replace('_', ' ', $user->role) }}
+                        {{ str_replace('_', ' ', $user->getRoleAttribute()) }}
                     </span>
                 </div>
             </div>
@@ -38,21 +38,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="p-4 bg-gray-50 rounded-lg">
                     <p class="text-sm text-gray-500 mb-1">Role</p>
-                    <p class="font-medium text-gray-800 capitalize">{{ str_replace('_', ' ', $user->role) }}</p>
+                    <p class="font-medium text-gray-800 capitalize">{{ str_replace('_', ' ', $user->getRoleAttribute()) }}</p>
                 </div>
 
-
-                @if($user->barangay)
+                @if($user->barangay_id)
                 <div class="p-4 bg-gray-50 rounded-lg">
                     <p class="text-sm text-gray-500 mb-1">Barangay</p>
-                    <p class="font-medium text-gray-800">{{ $user->barangay }}</p>
-                </div>
-                @endif
-
-                @if($user->clinic_name)
-                <div class="p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-500 mb-1">Clinic Name</p>
-                    <p class="font-medium text-gray-800">{{ $user->clinic_name }}</p>
+                    <p class="font-medium text-gray-800">{{ $user->barangay?->barangay_name }}</p>
                 </div>
                 @endif
 

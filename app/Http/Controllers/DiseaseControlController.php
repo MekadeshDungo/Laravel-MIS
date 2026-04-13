@@ -22,7 +22,7 @@ use Carbon\Carbon;
  *
  * ACCESSIBLE ROUTES:
  * - assistant-vet.dashboard
- * - assistant-vet.rabies-cases.*
+ * - rabies-cases.*
  * - assistant-vet.animal-bite-reports.*
  * - assistant-vet.vaccinations.*
  * - assistant-vet.spay-neuter.*
@@ -306,10 +306,10 @@ class DiseaseControlController extends Controller
     public function acceptRabiesReport(BiteRabiesReport $rabiesReport)
     {
         $rabiesReport->update([
-            'status' => 'Under Review',
+            'status' => 'Under Investigation',
         ]);
 
-        return redirect()->back()->with('success', 'Report accepted and now under review.');
+        return redirect()->back()->with('success', 'Report accepted and now under investigation.');
     }
 
     /**
@@ -403,7 +403,7 @@ class DiseaseControlController extends Controller
             'notes' => ($rabiesReport->notes ? $rabiesReport->notes . "\n\n" : '') . 'Converted to Rabies Case: ' . $case->case_number,
         ]);
 
-        return redirect()->route('assistant-vet.rabies-cases.show', $case)
+        return redirect()->route('rabies-cases.show', $case)
             ->with('success', 'Rabies Case created successfully from the report!');
     }
 

@@ -23,7 +23,7 @@ class AdminController extends Controller
         $user = Auth::user();
 
         // Viewers cannot access the admin dashboard - redirect to their own
-        if ($user->role === 'viewer') {
+        if ($user->hasRole('viewer')) {
             return redirect()->route('viewer.dashboard');
         }
 
@@ -51,7 +51,7 @@ class AdminController extends Controller
     public function allReports()
     {
         $user = Auth::user();
-        $isSuperAdmin = $user->role === 'super_admin';
+        $isSuperAdmin = $user->hasRole('super_admin');
 
         // Get all statistics from database
         $stats = [

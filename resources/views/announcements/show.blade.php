@@ -6,9 +6,9 @@
 @section('content')
 @php
     // Decide which route prefix to use based on role
-    $role = auth()->user()->role ?? null;
+    $role = auth()->user()->getRoleAttribute() ?? 'city_vet';
     $prefix = ($role === 'super_admin') ? 'super-admin' : 'admin';
-    $canManage = in_array($role, ['super_admin', 'city_vet', 'admin_staff']);
+    $canManage = auth()->user()->hasAnyRole(['super_admin', 'city_vet', 'admin_staff']);
 @endphp
 
 <div class="p-6">

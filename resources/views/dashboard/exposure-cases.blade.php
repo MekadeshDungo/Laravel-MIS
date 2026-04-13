@@ -6,7 +6,7 @@
 @section('subheader', 'Unified Bite & Rabies Case Management')
 
 @php
-$rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'city-vet');
+$rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'city-vet');
 @endphp
 
 @section('content')

@@ -9,177 +9,170 @@ class TestAccountsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * Creates test accounts for all 7 thesis roles
+     * Creates test accounts for all roles using Spatie
      */
     public function run(): void
     {
-        // Note: Roles are stored as strings in users.role column
-        // All 7 thesis roles are implemented with backward compatibility aliases
-
         // ==============================
         // THESIS ROLE 1: SUPER ADMIN
         // ==============================
-        User::firstOrCreate(
+        $user1 = User::firstOrCreate(
             ['email' => 'superadmin@vetmis.gov'],
             [
-                'name' => 'Super Administrator',
+                'first_name' => 'Super',
+                'last_name' => 'Administrator',
                 'password' => bcrypt('password123'),
-                'role' => 'super_admin',
                 'status' => 'active',
                 'contact_number' => '09198887701',
-                'address' => 'IT Department, City Hall',
             ]
         );
+        $user1->assignRole('super_admin');
 
         // ==============================
         // THESIS ROLE 2: CITY VETERINARIAN
         // ==============================
-        User::firstOrCreate(
+        $user2 = User::firstOrCreate(
             ['email' => 'cityvet@vetmis.gov'],
             [
-                'name' => 'Dr. Maria Santos',
+                'first_name' => 'Maria',
+                'last_name' => 'Santos',
                 'password' => bcrypt('password123'),
-                'role' => 'city_vet',
                 'status' => 'active',
                 'contact_number' => '091988877702',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $user2->assignRole('city_vet');
 
         // ==============================
         // THESIS ROLE 3: ADMINISTRATIVE STAFF
         // ==============================
-        User::firstOrCreate(
+        $user3 = User::firstOrCreate(
             ['email' => 'adminstaff@vetmis.gov'],
             [
-                'name' => 'Carmen Rivera',
+                'first_name' => 'Carmen',
+                'last_name' => 'Rivera',
                 'password' => bcrypt('password123'),
-                'role' => 'admin_staff',
                 'status' => 'active',
                 'contact_number' => '091988877703',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $user3->assignRole('admin_staff');
 
         // ==============================
         // THESIS ROLE 4: ASSISTANT VETERINARIAN
         // ==============================
-        User::firstOrCreate(
+        $user4 = User::firstOrCreate(
             ['email' => 'assistantvet@vetmis.gov'],
             [
-                'name' => 'Dr. Jose Reyes',
+                'first_name' => 'Jose',
+                'last_name' => 'Reyes',
                 'password' => bcrypt('password123'),
-                'role' => 'assistant_vet',
                 'status' => 'active',
                 'contact_number' => '091988877704',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $user4->assignRole('assistant_vet');
 
         // ==============================
         // THESIS ROLE 5: LIVESTOCK INSPECTOR
         // ==============================
-        User::firstOrCreate(
+        $user5 = User::firstOrCreate(
             ['email' => 'livestock@vetmis.gov'],
             [
-                'name' => 'Roberto Gonzales',
+                'first_name' => 'Roberto',
+                'last_name' => 'Gonzales',
                 'password' => bcrypt('password123'),
-                'role' => 'livestock_inspector',
                 'status' => 'active',
                 'contact_number' => '091988877705',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $user5->assignRole('livestock_inspector');
 
         // ==============================
         // THESIS ROLE 6: MEAT INSPECTOR
         // ==============================
-        User::firstOrCreate(
+        $user6 = User::firstOrCreate(
             ['email' => 'meatinspector@vetmis.gov'],
             [
-                'name' => 'Pedro Martinez',
+                'first_name' => 'Pedro',
+                'last_name' => 'Martinez',
                 'password' => bcrypt('password123'),
-                'role' => 'meat_inspector',
                 'status' => 'active',
                 'contact_number' => '091988877706',
-                'address' => 'City Slaughterhouse',
             ]
         );
+        $user6->assignRole('meat_inspector');
 
         // ==============================
         // THESIS ROLE 7: CITIZEN (PET OWNER)
         // ==============================
-        User::firstOrCreate(
+        $user7 = User::firstOrCreate(
             ['email' => 'citizen@test.com'],
             [
-                'name' => 'Juan dela Cruz',
+                'first_name' => 'Juan',
+                'last_name' => 'dela Cruz',
                 'password' => bcrypt('password123'),
-                'role' => 'citizen',
                 'status' => 'active',
                 'contact_number' => '091988877707',
-                'address' => 'Barangay Salitran, Dasmariñas City',
             ]
         );
+        $user7->assignRole('citizen');
 
         // ==============================
-        // LEGACY ACCOUNTS (Backward Compatibility)
+        // ADDITIONAL ACCOUNTS
         // ==============================
 
-        // Legacy: Assistant Veterinary (alias for assistant_vet)
-        User::firstOrCreate(
+        // Disease Control (alias for assistant_vet)
+        $user8 = User::firstOrCreate(
             ['email' => 'diseasecontrol@vetmis.gov'],
             [
-                'name' => 'Miguel Torres',
+                'first_name' => 'Miguel',
+                'last_name' => 'Torres',
                 'password' => bcrypt('password123'),
-                'role' => 'disease_control', // Legacy alias for assistant_vet
                 'status' => 'active',
                 'contact_number' => '091988877708',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $user8->assignRole('disease_control');
 
-        // Legacy: Admin Assistant (alias for admin_staff)
-        User::firstOrCreate(
+        // Admin Assistant
+        $user9 = User::firstOrCreate(
             ['email' => 'adminasst@vetmis.gov'],
             [
-                'name' => 'Lucia Fernandez',
+                'first_name' => 'Lucia',
+                'last_name' => 'Fernandez',
                 'password' => bcrypt('password123'),
-                'role' => 'admin_asst', // Legacy alias for admin_staff
                 'status' => 'active',
                 'contact_number' => '091988877709',
-                'address' => 'City Veterinary Office',
             ]
         );
+        $user9->assignRole('admin_asst');
 
-        // ==============================
-        // CLINIC ACCOUNT (External Vet Clinic)
-        // ==============================
-        User::firstOrCreate(
+        // Vet Clinic
+        $user10 = User::firstOrCreate(
             ['email' => 'clinic@vetmis.gov'],
             [
-                'name' => 'Happy Paws Veterinary Clinic',
+                'first_name' => 'Happy Paws',
+                'last_name' => 'Veterinary Clinic',
                 'password' => bcrypt('password123'),
-                'role' => 'clinic',
                 'status' => 'active',
                 'contact_number' => '091988877710',
-                'address' => '123 Main Street, Dasmariñas City',
             ]
         );
+        $user10->assignRole('clinic');
 
-        // ==============================
-        // HOSPITAL ACCOUNT (External Vet Hospital)
-        // ==============================
-        User::firstOrCreate(
+        // Vet Hospital
+        $user11 = User::firstOrCreate(
             ['email' => 'hospital@vetmis.gov'],
             [
-                'name' => 'City Pet Hospital',
+                'first_name' => 'City Pet',
+                'last_name' => 'Hospital',
                 'password' => bcrypt('password123'),
-                'role' => 'hospital',
                 'status' => 'active',
                 'contact_number' => '091988877711',
-                'address' => '456 Health Ave, Dasmariñas City',
             ]
         );
+        $user11->assignRole('hospital');
 
         // Print info
         $this->command->info('');
@@ -187,7 +180,7 @@ class TestAccountsSeeder extends Seeder
         $this->command->info('THESIS TEST ACCOUNTS CREATED');
         $this->command->info('========================================');
         $this->command->info('');
-        $this->command->info('📋 7 THESIS ROLES:');
+        $this->command->info('📋 ROLES:');
         $this->command->info('1. superadmin@vetmis.gov - Super Admin (password123)');
         $this->command->info('2. cityvet@vetmis.gov - City Veterinarian (password123)');
         $this->command->info('3. adminstaff@vetmis.gov - Admin Staff (password123)');
@@ -195,14 +188,10 @@ class TestAccountsSeeder extends Seeder
         $this->command->info('5. livestock@vetmis.gov - Livestock Inspector (password123)');
         $this->command->info('6. meatinspector@vetmis.gov - Meat Inspector (password123)');
         $this->command->info('7. citizen@test.com - Citizen/Pet Owner (password123)');
-        $this->command->info('');
-        $this->command->info('🔄 EXTERNAL ACCOUNTS:');
-        $this->command->info('8. clinic@vetmis.gov - Vet Clinic (password123)');
-        $this->command->info('9. hospital@vetmis.gov - Vet Hospital (password123)');
-        $this->command->info('');
-        $this->command->info('🔄 LEGACY ACCOUNTS (Backward Compatible):');
-        $this->command->info('10. diseasecontrol@vetmis.gov - Assistant Veterinary (password123)');
-        $this->command->info('11. adminasst@vetmis.gov - Admin Assistant (password123)');
+        $this->command->info('8. diseasecontrol@vetmis.gov - Disease Control (password123)');
+        $this->command->info('9. adminasst@vetmis.gov - Admin Assistant (password123)');
+        $this->command->info('10. clinic@vetmis.gov - Vet Clinic (password123)');
+        $this->command->info('11. hospital@vetmis.gov - Vet Hospital (password123)');
         $this->command->info('');
     }
 }

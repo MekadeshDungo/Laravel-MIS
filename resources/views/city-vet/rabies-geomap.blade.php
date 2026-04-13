@@ -5,7 +5,7 @@
 @section('subheader', '')
 
 @php
-    $currentYear = 2026;
+    $currentYear = date('Y');
     $selectedYear = (int) ($year ?? $currentYear);
     $years = range($currentYear, $currentYear - 5);
     $months = [
@@ -324,9 +324,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (document.getElementById('dateTo').value) params.append('date_to', document.getElementById('dateTo').value);
 
         var baseUrl = window.location.pathname.replace(/\/$/, '');
+        console.log('Fetching from:', baseUrl + '/data?' + params.toString());
+        
         fetch(baseUrl + '/data?' + params.toString())
             .then(function(r) { return r.json(); })
             .then(function(data) {
+                console.log('API Response:', data);
                 updateMap(data.heatmapData);
                 updateStats(data);
                 updateFilterSummary();
@@ -352,22 +355,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function normalizeBarangayName(name) {
-        return name.toLowerCase()
+        // Normalize to match both API and GeoJSON names
+        // API uses "II", GeoJSON may use "2" - normalize both to just the number
+        var n = name.toLowerCase()
             .replace(/\s+/g, '')
-            .replace(/\(.*\)/, '')
-            .replace(/i$/, '1')
-            .replace(/ii$/, '2')
-            .replace(/iii$/, '3')
-            .replace(/iv$/, '4')
-            .replace(/v$/, '5');
+            .replace(/\(.*\)/, '');
+        
+        // Replace roman numerals with numbers
+        n = n.replace(/iii$/, '3');
+        n = n.replace(/ii$/, '2');
+        n = n.replace(/iv$/, '4');
+        n = n.replace(/v$/, '5');
+        n = n.replace(/i$/, '1');
+        
+        return n;
     }
 
     function updateMap(heatmapData) {
+        console.log('heatmapData:', heatmapData);
+        
         var caseData = {};
         heatmapData.forEach(function(item) {
-            caseData[normalizeBarangayName(item.name)] = item.count;
+            var normalizedName = normalizeBarangayName(item.name);
+            caseData[normalizedName] = item.count;
+            console.log('API Item:', item.name, '-> normalized:', normalizedName, 'count:', item.count);
         });
 
+        if (!geojsonData || !geojsonData.features) {
+            console.error('GeoJSON not loaded');
+            return;
+        }
+        
+        console.log('GeoJSON features count:', geojsonData.features.length);
+        
+        // Debug: Show some GeoJSON names
+        geojsonData.features.slice(0, 5).forEach(function(f) {
+            console.log('GeoJSON sample:', f.properties.name, '-> normalized:', normalizeBarangayName(f.properties.name || ''));
+        });
+        
         var copy = JSON.parse(JSON.stringify(geojsonData));
         copy.features.forEach(function(f) {
             var name = normalizeBarangayName(f.properties.name || '');

@@ -14,19 +14,31 @@ class BiteRabiesReport extends Model
     protected $fillable = [
         'report_number',
         'status',
+        'report_source',
+        'assigned_to_role',
         'reporting_facility',
+        'facility_name',
         'date_reported',
         'patient_name',
+        'patient_age',
+        'patient_gender',
+        'patient_barangay_id',
+        'patient_contact',
+        'incident_date',
+        'nature_of_incident',
+        'exposure_category',
+        'animal_species',
+        'animal_current_condition',
+        'animal_vaccination_status',
+        // Standard fields
         'patient_first_name',
         'patient_middle_name',
         'patient_suffix',
         'age',
         'gender',
         'patient_address',
-        'patient_contact',
         'patient_barangay',
         'barangay_id',
-        'incident_date',
         'incident_barangay',
         'exact_location',
         'exposure_type',
@@ -55,7 +67,7 @@ class BiteRabiesReport extends Model
 
     public function patientBarangay(): BelongsTo
     {
-        return $this->belongsTo(Barangay::class, 'patient_barangay_id', 'barangay_id');
+        return $this->belongsTo(Barangay::class, 'patient_barangay', 'barangay_name', 'barangay_name');
     }
 
     public function reportedBy(): BelongsTo

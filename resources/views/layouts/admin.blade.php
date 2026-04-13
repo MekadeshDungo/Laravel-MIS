@@ -88,7 +88,7 @@
 
 <body class="bg-slate-50 m-0 p-0 min-h-screen">
 @php
-    $role = auth()->check() ? auth()->user()->role : null;
+    $role = auth()->check() ? auth()->user()->getRoleAttribute() : null;
 @endphp
 
     <!-- Mobile Header -->
@@ -134,10 +134,9 @@
         </div>
 
         @php
-            $role = auth()->check() ? auth()->user()->role : null;
+            $role = auth()->check() ? auth()->user()->getRoleAttribute() : null;
             $routeMap = [
                 'super_admin'      => 'super-admin',
-                'admin'            => 'admin',
                 'city_vet'         => 'city-vet',
                 'admin_staff'      => 'admin-staff',
                 'admin_asst'       => 'admin-asst',
@@ -159,7 +158,7 @@
                 <span>Dashboard</span>
             </a>
 
-            @if(auth()->check() && auth()->user()->role === 'super_admin')
+            @if(auth()->check() && auth()->user()->hasRole('super_admin'))
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">System Admin</div>
 
@@ -173,10 +172,13 @@
                 <i class="bi bi-megaphone"></i><span>Announcements</span>
             </a>
 
-            @elseif(auth()->check() && auth()->user()->role === 'admin')
+            @elseif(auth()->check() && auth()->user()->hasRole('city_vet'))
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Operations</div>
 
+            <a href="{{ route('city-vet.dashboard') }}" class="nav-item {{ request()->routeIs('city-vet.dashboard') ? 'active-nav' : '' }}">
+                <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+            </a>
             <a href="{{ route('admin.users.index') }}" class="nav-item {{ request()->routeIs('admin.users.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-people"></i><span>Staff Accounts</span>
             </a>
@@ -187,11 +189,11 @@
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Reports</div>
 
-
+            <a href="{{ route('admin.bite-reports.index') }}" class="nav-item {{ request()->routeIs('admin.bite-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-exclamation-triangle"></i><span>Animal Bite Reports</span>
             </a>
             <a href="{{ route('admin.vaccination-reports.index') }}" class="nav-item {{ request()->routeIs('admin.vaccination-reports.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-shield-check"></i><span>Rabies Anti-Rabies Vaccination</span>
+                <i class="bi bi-shield-check"></i><span>Anti-Rabies Vaccination</span>
             </a>
             <a href="{{ route('admin.meat-inspection-reports.index') }}" class="nav-item {{ request()->routeIs('admin.meat-inspection-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-clipboard-check"></i><span>Meat Inspection</span>
@@ -200,7 +202,7 @@
                 <i class="bi bi-file-earmark-bar-graph"></i><span>All Reports</span>
             </a>
 
-            @elseif(auth()->check() && auth()->user()->role === 'city_vet')
+            @elseif(auth()->check() && auth()->user()->hasRole('city_vet'))
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Rabies Control</div>
 
@@ -232,7 +234,7 @@
                 <i class="bi bi-file-earmark-bar-graph"></i><span>Analytics & Reports</span>
             </a>
 
-            @elseif(auth()->check() && auth()->user()->role === 'admin_staff')
+            @elseif(auth()->check() && auth()->user()->hasRole('admin_staff'))
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Records</div>
 
@@ -270,24 +272,24 @@
                 <i class="bi bi-file-medical"></i><span>Medical & Vaccination Records</span>
             </a>
 
-            @elseif(auth()->check() && auth()->user()->role === 'assistant_vet')
+            @elseif(auth()->check() && auth()->user()->hasRole('assistant_vet'))
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Clinical</div>
 
-            <!-- <a href="{{ route('assistant-vet.rabies-cases.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.rabies-cases.*') ? 'active-nav' : '' }}">
+            <a href="{{ route('rabies-cases.index') }}" class="nav-item {{ request()->routeIs('rabies-cases.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-exclamation-triangle"></i><span>Rabies Cases</span>
-            </a> -->
+            </a>
             <a href="{{ route('city-vet.rabies-bite-reports.index') }}" class="nav-item {{ request()->routeIs('city-vet.rabies-bite-reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-file-medical"></i><span>Bite Reports</span>
             </a>
             <a href="{{ route('assistant-vet.vaccinations.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.vaccinations.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-shield-check"></i><span>Anti-Rabies Vaccination</span>
             </a>
-            <a href="{{ route('assistant-vet.spay-neuter.index') }}" class="nav-item {{ request()->routeIs('assistant-vet.spay-neuter.*') ? 'active-nav' : '' }}">
+            <a href="{{ route('spay-neuter.reports.index') }}" class="nav-item {{ request()->routeIs('spay-neuter.reports.*') ? 'active-nav' : '' }}">
                 <i class="bi bi-heart"></i><span>Spay/Neuter</span>
             </a>
 
-            @elseif(auth()->check() && auth()->user()->role === 'admin_asst')
+            @elseif(auth()->check() && auth()->user()->hasRole('admin_asst'))
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Gatekeeper</div>
 
@@ -301,7 +303,7 @@
                 <i class="bi bi-search"></i><span>Missing Pets</span>
             </a>
 
-            @elseif(auth()->check() && auth()->user()->role === 'meat_inspector')
+            @elseif(auth()->check() && auth()->user()->hasRole('meat_inspector'))
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Meat Inspection</div>
 
@@ -312,7 +314,7 @@
                 <i class="bi bi-shop-window"></i><span>Register Shop</span>
             </a>
 
-            @elseif(auth()->check() && auth()->user()->role === 'livestock_inspector')
+            @elseif(auth()->check() && auth()->user()->hasRole('livestock_inspector'))
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Livestock</div>
 
@@ -329,7 +331,7 @@
                 <i class="bi bi-shop"></i><span>Business Profiling</span>
             </a>
 
-            @elseif(auth()->check() && auth()->user()->role === 'veterinarian')
+            @elseif(auth()->check() && auth()->user()->hasAnyRole(['clinic', 'hospital']))
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Clinic Portal</div>
 
@@ -400,7 +402,7 @@
                             </div>
                             <div class="max-h-80 overflow-y-auto">
                                 @forelse($unreadNotifications as $notification)
-                                    <a href="#" class="block p-3 hover:bg-slate-50 border-b border-slate-50 last:border-0">
+                                    <a href="{{ route('notifications.index') }}" class="block p-3 hover:bg-slate-50 border-b border-slate-50 last:border-0">
                                         <div class="flex items-start gap-3">
                                             <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 {{ $notification->priority === 'high' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }}">
                                                 <i class="bi bi-bell-fill text-sm"></i>

@@ -27,12 +27,11 @@
     </div>
 
     @php
-        $role = auth()->user()->role ?? 'admin';
+        $role = auth()->user()->getRoleAttribute() ?? 'city_vet';
 
         // Role -> route name prefix
         $routeMap = [
             'super_admin'      => 'super-admin',
-            'admin'            => 'admin',
             'city_vet'         => 'city-vet',
             'admin_staff'      => 'admin-staff',
             'admin_asst'       => 'admin-asst',
@@ -40,12 +39,14 @@
             'livestock_inspector' => 'livestock',
             'meat_inspector'   => 'meat-inspection',
             'citizen'          => 'owner',
+            'clinic'           => 'clinic',
+            'hospital'         => 'hospital',
         ];
 
-        $prefix = $routeMap[$role] ?? 'admin';
+        $prefix = $routeMap[$role] ?? 'city-vet';
 
         $isSuperAdmin = ($role === 'super_admin');
-        $isAdmin = ($role === 'admin' || $role === 'city_vet');
+        $isAdmin = ($role === 'city_vet');
         $isCityVet = ($role === 'city_vet');
         $isAdminStaff = ($role === 'admin_staff');
         $isAdminAsst = ($role === 'admin_asst');
@@ -53,7 +54,7 @@
         $isLivestockInspector = ($role === 'livestock_inspector');
         $isMeatInspector = ($role === 'meat_inspector');
         $isCityPound = ($role === 'city_pound');
-        $isClinic = in_array($role, ['veterinarian', 'clinic']);
+        $isClinic = in_array($role, ['clinic', 'hospital']);
 
         // Dashboard route (always exists per role in your routes)
         $dashboardRoute = $prefix . '.dashboard';
@@ -154,6 +155,16 @@
            ========================= --}}
         @elseif($role === 'city_vet')
             <div class="pt-4 pb-2">
+                <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Dashboard</p>
+            </div>
+
+            <a href="{{ route('city-vet.dashboard') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('city-vet.dashboard') ? 'bg-green-600 text-white' : '' }}">
+                <i class="bi bi-speedometer2 text-lg w-6"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <div class="pt-4 pb-2">
                 <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Analytics & Reports</p>
             </div>
 
@@ -203,11 +214,11 @@
                 }
             @endphp
 
-            <!-- <a href="{{ route('assistant-vet.rabies-cases.index') }}"
-               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('assistant-vet.rabies-cases.*') ? 'bg-green-600 text-white' : '' }}">
+            <a href="{{ route('rabies-cases.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('rabies-cases.*') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-exclamation-triangle text-lg w-6"></i>
                 <span>Rabies Cases</span>
-            </a> -->
+            </a>
 
             @if($reportsRoute)
             <a href="{{ $reportsRoute }}"
@@ -223,8 +234,8 @@
                 <span>Vaccinations</span>
             </a>
 
-            <a href="{{ route('assistant-vet.spay-neuter.index') }}"
-               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('assistant-vet.spay-neuter.*') ? 'bg-green-600 text-white' : '' }}">
+            <a href="{{ route('spay-neuter.reports.index') }}"
+               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('spay-neuter.reports.*') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-heart text-lg w-6"></i>
                 <span>Spay/Neuter</span>
             </a>

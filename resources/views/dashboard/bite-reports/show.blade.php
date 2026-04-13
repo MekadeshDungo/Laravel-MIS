@@ -6,7 +6,7 @@
 @section('subheader', 'Animal bite incident information')
 
 @php
-$rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'clinic');
+$rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'clinic');
 $backRoute = $rolePrefix . '.bite-reports.index';
 @endphp
 

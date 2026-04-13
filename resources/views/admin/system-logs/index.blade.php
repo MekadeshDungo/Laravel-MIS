@@ -138,9 +138,11 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $log->created_at->diffForHumans() }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            @if($log->log_id)
                             <a href="{{ route('admin.system-logs.show', $log->log_id) }}" class="text-blue-600 hover:text-blue-800">
                                 <i class="bi bi-eye"></i>
                             </a>
+                            @endif
                         </td>
                     </tr>
                 @empty

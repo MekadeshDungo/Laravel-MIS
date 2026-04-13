@@ -6,7 +6,7 @@
 @section('subheader', 'Track and manage rabies cases')
 
 @php
-$rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
+$rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'assistant-vet');
 @endphp
 
 @section('content')
@@ -38,7 +38,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <a href="{{ route(rabies-cases.index) }}"
+        <a href="{{ route('rabies-cases.index') }}"
            class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:scale-[1.02] transition-all duration-200 cursor-pointer group">
             <div class="flex items-center justify-between">
                 <div>
@@ -50,7 +50,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
                 </div>
             </div>
         </a>
-        <a href="{{ route(rabies-cases.index) }}?status=open"
+        <a href="{{ route('rabies-cases.index') }}?status=open"
            class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:scale-[1.02] transition-all duration-200 cursor-pointer group border-l-4 border-l-yellow-400">
             <div class="flex items-center justify-between">
                 <div>
@@ -62,7 +62,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
                 </div>
             </div>
         </a>
-        <a href="{{ route(rabies-cases.index) }}?status=under_investigation"
+        <a href="{{ route('rabies-cases.index') }}?status=under_investigation"
            class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:scale-[1.02] transition-all duration-200 cursor-pointer group border-l-4 border-l-blue-400">
             <div class="flex items-center justify-between">
                 <div>
@@ -74,7 +74,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
                 </div>
             </div>
         </a>
-        <a href="{{ route(rabies-cases.index) }}?status=closed"
+        <a href="{{ route('rabies-cases.index') }}?status=closed"
            class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:scale-[1.02] transition-all duration-200 cursor-pointer group border-l-4 border-l-green-400">
             <div class="flex items-center justify-between">
                 <div>
@@ -90,7 +90,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
 
     <!-- Filters -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
-        <form method="GET" action="{{ route(rabies-cases.index) }}" class="space-y-4">
+        <form method="GET" action="{{ route('rabies-cases.index') }}" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Search -->
                 <div class="lg:col-span-2">
@@ -128,7 +128,7 @@ $rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'assistant-vet');
             </div>
 
             <div class="flex justify-end gap-3">
-                <a href="{{ route(rabies-cases.index) }}"
+                <a href="{{ route('rabies-cases.index') }}"
                    class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
                     <i class="bi bi-x-circle mr-1"></i>Clear
                 </a>

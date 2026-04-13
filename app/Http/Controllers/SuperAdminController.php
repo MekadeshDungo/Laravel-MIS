@@ -251,6 +251,7 @@ class SuperAdminController extends Controller
         SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'export_report',
+            'event' => 'export',
             'description' => "Exported {$type} report for year {$year}",
             'ip_address' => request()->ip(),
         ]);
@@ -301,6 +302,7 @@ class SuperAdminController extends Controller
         SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'update_settings',
+            'event' => 'update',
             'description' => "Updated system settings: " . json_encode($validated),
             'ip_address' => request()->ip(),
         ]);
@@ -368,6 +370,7 @@ class SuperAdminController extends Controller
         SystemLog::create([
             'user_id' => auth()->id(),
             'action' => 'toggle_user_status',
+            'event' => 'update',
             'description' => "Changed user {$user->name} status to {$newStatus}",
             'ip_address' => request()->ip(),
         ]);

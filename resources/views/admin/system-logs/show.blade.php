@@ -154,10 +154,12 @@
             @if($relatedLogs->count() > 0)
                 <div class="space-y-3">
                     @foreach($relatedLogs as $related)
+                        @if($related && $related->log_id)
                         <a href="{{ route('admin.system-logs.show', $related->log_id) }}" class="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
                             <p class="text-sm font-medium text-gray-800">{{ $related->action }}</p>
                             <p class="text-xs text-gray-500">{{ $related->created_at->diffForHumans() }}</p>
                         </a>
+                        @endif
                     @endforeach
                 </div>
             @else

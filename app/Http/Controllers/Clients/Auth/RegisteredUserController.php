@@ -27,26 +27,27 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:admin_users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         // Create user with 'citizen' role for client portal
         // Only citizen role is allowed to register through client portal
+        $nameParts = explode(' ', $request->name, 2);
+        $firstName = $nameParts[0] ?? '';
+        $lastName = $nameParts[1] ?? '';
+
         $user = User::create([
-            'name' => $request->name,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'citizen', // Client portal only allows citizen role
+            'status' => 'active',
         ]);
 
         event(new Registered($user));
 
         // Create pet owner record
-        $nameParts = explode(' ', $request->name);
-        $firstName = array_shift($nameParts);
-        $lastName = implode(' ', $nameParts) ?: '';
-
         \App\Models\PetOwner::create([
             'user_id' => $user->id,
             'first_name' => $firstName,
@@ -58,6 +59,7 @@ class RegisteredUserController extends Controller
         \App\Models\SystemLog::create([
             'user_id' => $user->id,
             'action' => 'register',
+            'event' => 'create',
             'module' => 'Authentication',
             'description' => "New user registered via client portal",
             'ip_address' => request()->ip(),

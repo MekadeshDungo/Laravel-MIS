@@ -42,7 +42,7 @@ class RabiesCaseController extends Controller
         }
 
         // Non-admin users can only see their own entries
-        if (!in_array(Auth::user()->role, ['super_admin', 'admin', 'city_vet', 'disease_control'])) {
+        if (!Auth::user()->hasAnyRole(['super_admin', 'city_vet', 'disease_control', 'admin_staff'])) {
             $query->where('user_id', Auth::id());
         }
 
@@ -202,22 +202,21 @@ class RabiesCaseController extends Controller
     {
         // Check user role for access control
         $user = Auth::user();
-        $userRole = $user->role;
 
         // Define access levels
         // City Veterinarian: Full operational access
         // Veterinarian III: View-only access
         $allowedRoles = ['city_vet', 'veterinarian'];
 
-        // Check if user has access
-        $hasAccess = in_array($userRole, $allowedRoles);
+        // Check if user has access using Spatie
+        $hasAccess = $user->hasAnyRole($allowedRoles);
 
         if (!$hasAccess) {
             abort(403, 'Access denied. Only City Veterinarian and Veterinarian III can access the rabies geomap.');
         }
 
         // Determine access level based on role
-        $isCityVet = $userRole === 'city_vet';
+        $isCityVet = $user->hasRole('city_vet');
         $accessLevel = $isCityVet ? 'full_operational' : 'view_only';
 
         // Get parameters from request
@@ -392,13 +391,12 @@ class RabiesCaseController extends Controller
     {
         // Check user role for access control
         $user = Auth::user();
-        $userRole = $user->role;
 
         // Define access levels
         $allowedRoles = ['city_vet', 'veterinarian'];
 
-        // Check if user has access
-        $hasAccess = in_array($userRole, $allowedRoles);
+        // Check if user has access using Spatie
+        $hasAccess = $user->hasAnyRole($allowedRoles);
 
         if (!$hasAccess) {
             return response()->json([
@@ -410,8 +408,8 @@ class RabiesCaseController extends Controller
         // Determine access level based on role
         // City Vet gets full operational access
         // Veterinarian gets view-only access
-        $isCityVet = $userRole === 'city_vet';
-        $isVeterinarian = $userRole === 'veterinarian';
+        $isCityVet = $user->hasRole('city_vet');
+        $isVeterinarian = $user->hasRole('veterinarian');
 
         // Validate request - apply stricter validation for Veterinarian (view-only)
         if ($isVeterinarian && !$isCityVet) {
@@ -578,11 +576,10 @@ class RabiesCaseController extends Controller
     public function getIncidents(Request $request)
     {
         $user = Auth::user();
-        $userRole = $user->role;
 
-        // Check access
-        $allowedRoles = ['city_vet', 'veterinarian', 'super_admin', 'admin'];
-        $hasAccess = in_array($userRole, $allowedRoles);
+        // Check access using Spatie
+        $allowedRoles = ['city_vet', 'assistant_vet', 'super_admin'];
+        $hasAccess = $user->hasAnyRole($allowedRoles);
 
         if (!$hasAccess) {
             return response()->json([
@@ -629,11 +626,10 @@ class RabiesCaseController extends Controller
     public function getBarangaysWithCaseCounts(Request $request)
     {
         $user = Auth::user();
-        $userRole = $user->role;
 
-        // Check access
-        $allowedRoles = ['city_vet', 'veterinarian', 'super_admin', 'admin'];
-        $hasAccess = in_array($userRole, $allowedRoles);
+        // Check access using Spatie
+        $allowedRoles = ['city_vet', 'assistant_vet', 'super_admin'];
+        $hasAccess = $user->hasAnyRole($allowedRoles);
 
         if (!$hasAccess) {
             return response()->json([
@@ -678,11 +674,10 @@ class RabiesCaseController extends Controller
     public function getHeatmapData(Request $request)
     {
         $user = Auth::user();
-        $userRole = $user->role ?? null;
 
-        // Check access
-        $allowedRoles = ['city_vet', 'veterinarian', 'super_admin', 'admin'];
-        $hasAccess = in_array($userRole, $allowedRoles);
+        // Check access using Spatie
+        $allowedRoles = ['city_vet', 'assistant_vet', 'super_admin'];
+        $hasAccess = $user->hasAnyRole($allowedRoles);
 
         if (!$hasAccess) {
             return response()->json([

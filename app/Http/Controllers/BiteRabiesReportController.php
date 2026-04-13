@@ -89,7 +89,7 @@ class BiteRabiesReportController extends Controller
 
         \App\Services\NotificationService::biteReportCreated($report->id);
 
-        return redirect()->route('bite-rabies-reports.index')
+        return redirect()->route('city-vet.rabies-bite-reports.index')
             ->with('success', 'Bite/Rabies report created successfully.');
     }
 
@@ -130,7 +130,7 @@ class BiteRabiesReportController extends Controller
 
         $biteRabiesReport->update($request->validated());
 
-        return redirect()->route('bite-rabies-reports.show', $biteRabiesReport)
+        return redirect()->route('city-vet.rabies-bite-reports.show', $biteRabiesReport)
             ->with('success', 'Report updated successfully.');
     }
 
@@ -138,7 +138,7 @@ class BiteRabiesReportController extends Controller
     {
         $biteRabiesReport->delete();
 
-        return redirect()->route('bite-rabies-reports.index')
+        return redirect()->route('city-vet.rabies-bite-reports.index')
             ->with('success', 'Report deleted successfully.');
     }
 

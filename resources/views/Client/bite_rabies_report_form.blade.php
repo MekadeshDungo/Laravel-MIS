@@ -329,10 +329,10 @@
                         <!-- Incident Location (Barangay) -->
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium mb-1.5">
-                                Incident Location (Barangay)
+                                Incident Location (Barangay) <span class="text-red-500">*</span>
                             </label>
-                            <select name="barangay_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                                <option value="">Select Incident Location (optional)</option>
+                            <select name="barangay_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('barangay_id') border-red-500 @enderror" required>
+                                <option value="">Select Incident Location</option>
                                 @foreach($barangays as $barangay)
                                     <option value="{{ $barangay->barangay_id }}" {{ old('barangay_id') == $barangay->barangay_id ? 'selected' : '' }}>
                                         {{ $barangay->barangay_name }}

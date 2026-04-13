@@ -6,7 +6,7 @@
 @section('subheader', $exposureCase->case_number)
 
 @php
-$rolePrefix = str_replace('_', '-', auth()->user()->role ?? 'city-vet');
+$rolePrefix = str_replace('_', '-', auth()->user()->getRoleAttribute() ?? 'city-vet');
 @endphp
 
 @section('content')

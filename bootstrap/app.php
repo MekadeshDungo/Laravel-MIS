@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\CheckRole::class,
             'manage-users' => \App\Http\Middleware\ManageUserAccess::class,
         ]);
+        
+        $middleware->append([
+            \App\Http\Middleware\LogActivity::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
