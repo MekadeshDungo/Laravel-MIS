@@ -116,7 +116,6 @@ $rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Barangay</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Incident Date</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Animal</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
@@ -148,26 +147,6 @@ $rabiesReportsRoute = 'city-vet.rabies-bite-reports.index';
                                         <p class="text-gray-800">{{ ucfirst($report->animal_type) }}</p>
                                         <p class="text-sm text-gray-500">{{ ucfirst($report->animal_status) }}</p>
                                     </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @php
-                                        $statusColors = [
-                                            'Pending Review' => 'bg-yellow-100 text-yellow-700',
-                                            'Under Review' => 'bg-blue-100 text-blue-700',
-                                            'Resolved' => 'bg-green-100 text-green-700',
-                                            'Closed' => 'bg-gray-100 text-gray-700',
-                                        ];
-                                        $statusIcons = [
-                                            'Pending Review' => 'bi-clock',
-                                            'Under Review' => 'bi-search',
-                                            'Resolved' => 'bi-check-circle',
-                                            'Closed' => 'bi-x-circle',
-                                        ];
-                                    @endphp
-                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium {{ $statusColors[$report->status] ?? 'bg-gray-100 text-gray-700' }}">
-                                        <i class="{{ $statusIcons[$report->status] ?? 'bi-circle' }}"></i>
-                                        {{ $report->status }}
-                                    </span>
                                 </td>
                                 <td class="px-6 py-4">
                                     <a href="{{ route($rolePrefix . '.rabies-bite-reports.show', $report->id) }}"

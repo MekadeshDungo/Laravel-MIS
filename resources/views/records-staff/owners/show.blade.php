@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Owner Details - ' . $owner->name)
+@section('title', 'Owner Details')
 
 @section('header', 'Owner Details')
 
@@ -11,7 +11,7 @@
             <i class="bi bi-arrow-left text-gray-600"></i>
         </a>
         <div class="flex-1">
-            <h1 class="text-2xl font-bold text-gray-800">{{ $owner->name }}</h1>
+            <h1 class="text-2xl font-bold text-gray-800">{{ $petOwner ? $petOwner->first_name . ' ' . $petOwner->last_name : $owner->name }}</h1>
             <p class="text-gray-500 mt-1">{{ $owner->email }}</p>
         </div>
         <a href="{{ route('admin-staff.pets.create') }}?owner_id={{ $owner->id }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
@@ -28,19 +28,19 @@
                 <div class="p-6 space-y-3">
                     <div>
                         <p class="text-sm text-gray-500 mb-1">Name</p>
-                        <p class="font-medium text-gray-800">{{ $owner->name }}</p>
+                        <p class="font-medium text-gray-800">{{ $petOwner ? $petOwner->first_name . ' ' . $petOwner->last_name : $owner->name }}</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-500 mb-1">Email</p>
-                        <p class="font-medium text-gray-800">{{ $owner->email }}</p>
+                        <p class="font-medium text-gray-800">{{ $petOwner->email ?? $owner->email }}</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-500 mb-1">Contact</p>
-                        <p class="font-medium text-gray-800">{{ $owner->contact_number ?? '-' }}</p>
+                        <p class="font-medium text-gray-800">{{ $petOwner->phone_number ?? '-' }}</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-500 mb-1">Address</p>
-                        <p class="font-medium text-gray-800">{{ $owner->address ?? '-' }}</p>
+                        <p class="font-medium text-gray-800">{{ $petOwner ? $petOwner->blk_lot_ph . ' ' . $petOwner->street . ', ' . $petOwner->barangay : '-' }}</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-500 mb-1">Registered</p>
@@ -53,13 +53,13 @@
         <div class="lg:col-span-2">
             <div class="bg-white rounded-xl shadow-sm">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                    <h3 class="font-semibold text-gray-800">Pets ({{ $owner->pets->count() }})</h3>
+                    <h3 class="font-semibold text-gray-800">Pets ({{ $petOwner ? $petOwner->pets->count() : 0 }})</h3>
                     <a href="{{ route('admin-staff.pets.create') }}?owner_id={{ $owner->id }}" class="text-sm text-blue-600 hover:text-blue-800">
                         <i class="bi bi-plus-lg mr-1"></i> Add Pet
                     </a>
                 </div>
                 <div class="overflow-x-auto">
-                    @if($owner->pets->count() > 0)
+                    @if($petOwner && $petOwner->pets->count() > 0)
                         <table class="w-full">
                             <thead class="bg-gray-50">
                                 <tr>
@@ -71,9 +71,9 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                @foreach($owner->pets as $pet)
+                                @foreach($petOwner->pets as $pet)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 font-medium text-gray-800">{{ $pet->name }}</td>
+                                        <td class="px-6 py-4 font-medium text-gray-800">{{ $pet->pet_name }}</td>
                                         <td class="px-6 py-4 text-gray-600">{{ ucfirst($pet->species) }}</td>
                                         <td class="px-6 py-4 text-gray-600">{{ $pet->breed ?? '-' }}</td>
                                         <td class="px-6 py-4">

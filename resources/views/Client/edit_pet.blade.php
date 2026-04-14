@@ -140,6 +140,7 @@
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-900">Edit Pet</h2>
                 <p class="text-gray-600 mt-2">Update your pet's information</p>
+                <p class="text-gray-500 text-sm mt-1">Fields marked with <span class="text-red-500">*</span> are required</p>
             </div>
 
             <form id="petEditForm" method="POST" action="{{ route('pet.update', $pet->pet_id) }}" enctype="multipart/form-data">
@@ -165,7 +166,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="file" id="petImage" name="pet_photo" accept="image/*" class="hidden" onchange="previewImage(event)">
+                        <input type="file" id="petImage" name="pet_image" accept="image/*" class="hidden" onchange="previewImage(event)">
                         <div>
                             <p class="text-sm text-gray-600">Click the image to change photo</p>
                             <p class="text-xs text-gray-400">Leave empty to keep current photo</p>
@@ -280,10 +281,10 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Pet Age <span class="text-red-500">*</span></label>
                     <select id="estimatedAge" name="estimated_age" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
                         <option value="">Select estimated age</option>
-                        <option value="less_than_3_months" {{ $pet->age == 'less_than_3_months' ? 'selected' : '' }}>Less than 3 months old</option>
-                        <option value="3_to_12_months" {{ $pet->age == '3_to_12_months' ? 'selected' : '' }}>3 to 12 months old</option>
+                        <option value="less_than_3_months" {{ $pet->estimated_age == 'less_than_3_months' ? 'selected' : '' }}>Less than 3 months old</option>
+                        <option value="3_to_12_months" {{ $pet->estimated_age == '3_to_12_months' ? 'selected' : '' }}>3 to 12 months old</option>
                         @for($i = 1; $i <= 20; $i++)
-                        <option value="{{ $i }}_years" {{ $pet->age == $i . '_years' ? 'selected' : '' }}>{{ $i }} year{{ $i > 1 ? 's' : '' }} old</option>
+                        <option value="{{ $i }}_years" {{ $pet->estimated_age == $i . '_years' ? 'selected' : '' }}>{{ $i }} year{{ $i > 1 ? 's' : '' }} old</option>
                         @endfor
                     </select>
                 </div>
@@ -292,7 +293,7 @@
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Pet's Weight <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input type="text" id="petWeight" name="pet_weight" value="{{ $pet->weight }}" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" oninput="updateWeightSuffix()">
+                        <input type="text" id="petWeight" name="pet_weight" value="{{ $pet->pet_weight }}" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" oninput="updateWeightSuffix()">
                         <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium pointer-events-none"></span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">If you do not know, type "N/A"</p>
@@ -1010,19 +1011,19 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            <span class="text-gray-600 text-sm">City Hall Compound, Dasmariñas City, Cavite</span>
+                            <span class="text-gray-600 text-sm">Brgy. Langkaan 2, Sitio Buwisan, Dasmariñas City, Cavite</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                             </svg>
-                            <span class="text-gray-600 text-sm">(046) 123-4567</span>
+                            <span class="text-gray-600 text-sm">0966-881-2010</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            <span class="text-gray-600 text-sm">vet@dasmarinas.gov.ph</span>
+                            <span class="text-gray-600 text-sm">vetdasma@yahoo.com</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

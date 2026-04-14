@@ -24,25 +24,41 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Pet Name -->
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Pet Name <span class="text-red-500">*</span></label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" required
+                    <label for="pet_name" class="block text-sm font-medium text-gray-700 mb-1">Pet Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="pet_name" id="pet_name" value="{{ old('pet_name') }}" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    @error('name')
+                    @error('pet_name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Animal Type -->
+                <!-- Pet Owner -->
                 <div>
-                    <label for="animal_type" class="block text-sm font-medium text-gray-700 mb-1">Animal Type <span class="text-red-500">*</span></label>
-                    <select name="animal_type" id="animal_type" required
+                    <label for="owner_id" class="block text-sm font-medium text-gray-700 mb-1">Pet Owner</label>
+                    <select name="owner_id" id="owner_id"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Select Owner (Optional)</option>
+                        @if(isset($clients) && $clients->count() > 0)
+                            @foreach($clients as $client)
+                                <option value="{{ $client->owner_id }}" {{ old('owner_id') == $client->owner_id ? 'selected' : '' }}>
+                                    {{ $client->first_name }} {{ $client->last_name }}
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <!-- Species -->
+                <div>
+                    <label for="species" class="block text-sm font-medium text-gray-700 mb-1">Species <span class="text-red-500">*</span></label>
+                    <select name="species" id="species" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Select Type</option>
-                        <option value="dog" {{ old('animal_type') == 'dog' ? 'selected' : '' }}>Dog</option>
-                        <option value="cat" {{ old('animal_type') == 'cat' ? 'selected' : '' }}>Cat</option>
-                        <option value="other" {{ old('animal_type') == 'other' ? 'selected' : '' }}>Other</option>
+                        <option value="dog" {{ old('species') == 'dog' ? 'selected' : '' }}>Dog</option>
+                        <option value="cat" {{ old('species') == 'cat' ? 'selected' : '' }}>Cat</option>
+                        <option value="other" {{ old('species') == 'other' ? 'selected' : '' }}>Other</option>
                     </select>
-                    @error('animal_type')
+                    @error('species')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -61,14 +77,14 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
-                <!-- Sex -->
+                <!-- Gender -->
                 <div>
-                    <label for="sex" class="block text-sm font-medium text-gray-700 mb-1">Sex</label>
-                    <select name="sex" id="sex"
+                    <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                    <select name="gender" id="gender"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Unknown</option>
-                        <option value="male" {{ old('sex') == 'male' ? 'selected' : '' }}>Male</option>
-                        <option value="female" {{ old('sex') == 'female' ? 'selected' : '' }}>Female</option>
+                        <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
+                        <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
                     </select>
                 </div>
 
@@ -106,8 +122,8 @@
 
                 <!-- Photo -->
                 <div>
-                    <label for="photo" class="block text-sm font-medium text-gray-700 mb-1">Photo</label>
-                    <input type="file" name="photo" id="photo" accept="image/*"
+                    <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Photo</label>
+                    <input type="file" name="image" id="image" accept="image/*"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     <p class="text-gray-500 text-xs mt-1">Max 2MB. JPG, PNG, GIF</p>
                     @error('photo')

@@ -18,7 +18,8 @@ class PetOwner extends Model
         'middle_name',
         'suffix',
         'phone_number',
-        'house_no',
+        'alternate_phone_number',
+        'blk_lot_ph',
         'street',
         'subdivision',
         'barangay',
@@ -41,5 +42,12 @@ class PetOwner extends Model
     public function pets(): HasMany
     {
         return $this->hasMany(Pet::class, 'owner_id', 'owner_id');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->whereHas('user', function ($q) {
+            $q->where('status', 'active');
+        });
     }
 }

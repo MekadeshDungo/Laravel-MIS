@@ -71,7 +71,7 @@ class RecordsController extends Controller
 
         $pets = Pet::with(['owner', 'barangay'])
             ->when($search, function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
+                $query->where('pet_name', 'like', "%{$search}%")
                       ->orWhere('license_number', 'like', "%{$search}%")
                       ->orWhereHas('owner', function ($q) use ($search) {
                           $q->where('first_name', 'like', "%{$search}%")
@@ -213,14 +213,18 @@ class RecordsController extends Controller
     {
         $search = $request->get('search', '');
 
-        $owners = User::where('role', 'citizen')
-            ->when($search, function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
+        $owners = User::role('citizen')
+            ->whereHas('petOwner', function ($query) use ($search) {
+                $query->when($search, function ($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                      ->orWhere('last_name', 'like', "%{$search}%")
                       ->orWhere('email', 'like', "%{$search}%")
-                      ->orWhere('contact_number', 'like', "%{$search}%");
+                      ->orWhere('phone_number', 'like', "%{$search}%");
+                });
             })
+            ->with('petOwner')
             ->withCount('pets')
-            ->orderBy('name')
+            ->orderBy('first_name')
             ->paginate(15);
 
         return view('records-staff.owners.index', compact('owners', 'search'));
@@ -231,11 +235,9 @@ class RecordsController extends Controller
      */
     public function showOwner(User $owner)
     {
-        $owner->load(['pets' => function ($query) {
-            $query->orderBy('pet_name');
-        }]);
-
-        return view('records-staff.owners.show', compact('owner'));
+        $petOwner = $owner->petOwner;
+        
+        return view('records-staff.owners.show', compact('owner', 'petOwner'));
     }
 
     /**

@@ -255,7 +255,7 @@
                                     <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
                                         +63
                                     </span>
-                                    <input type="tel" name="alt_mobile_number" placeholder="943 210 2012" maxlength="12"
+                                    <input type="tel" name="alt_mobile_number" placeholder="943 210 2012" maxlength="12" value="{{ old('alt_mobile_number', $petOwner->alternate_phone_number ?? '') }}"
                                            class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                                 </div>
                             </div>
@@ -265,7 +265,7 @@
                                 <label class="block text-sm font-medium mb-1.5">
                                     House No. / Unit No. <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="house_no" placeholder="House No. / Unit No." value="{{ old('house_no', $petOwner->house_no ?? '') }}"
+                                <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ old('blk_lot_ph', $petOwner->blk_lot_ph ?? '') }}"
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
 
@@ -346,18 +346,15 @@
                         </div>
                     </div>
 
-                    <!-- Desired Date of Kapon -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium mb-1.5">
-                            Desired Date of Kapon (Spay/Neuter) <span class="text-red-500">*</span>
-                        </label>
-                        <input type="date" name="appointment_date" id="appointment_date"
-                               class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
-                    </div>
+                    <!-- Slot Picker for Kapon -->
+                    @include('components.appointment-slot-picker', [
+                        'serviceType' => 'kapon',
+                        'fieldName' => 'appointment'
+                    ])
 
                     <!-- Photo Uploads for Each Selected Pet -->
                     <div id="petPhotosContainer" class="mb-6">
-                        <label class="block text-sm font-medium mb-3">
+                        <label class="block text-sm font-medium pt-4 mb-3">
                             Upload Photos <span class="text-red-500">*</span>
                         </label>
                         <div id="petPhotoFields" class="space-y-4">
@@ -1210,17 +1207,33 @@
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('breedDropdown');
             const display = document.getElementById('breedDisplay');
-            if (!dropdown.contains(event.target) && !display.contains(event.target)) {
-                dropdown.classList.add('hidden');
+            
+            if (dropdown && display) {
+                if (!dropdown.contains(event.target) && !display.contains(event.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            } else if (dropdown && !display) {
+                if (!dropdown.contains(event.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            } else if (!dropdown && display) {
+                if (!display.contains(event.target)) {
+                    dropdown?.classList.add('hidden');
+                }
             }
         });
     });
 
     // Update breed options based on patient type
     function updateBreedOptions() {
-        const patientType = document.getElementById('patient_type').value;
+        const patientTypeEl = document.getElementById('patient_type');
+        if (!patientTypeEl) return;
+        
+        const patientType = patientTypeEl.value;
         const breedLabel = document.getElementById('breed_label');
         const singleBreedOptions = document.getElementById('singleBreedOptions');
+        
+        if (!breedLabel) return;
         
         if (patientType === 'male_cat' || patientType === 'female_cat') {
             currentBreeds = catBreedsList;
@@ -1272,17 +1285,22 @@
     // Toggle breed dropdown
     function toggleBreedDropdown() {
         const dropdown = document.getElementById('breedDropdown');
+        if (!dropdown) return;
+        
         dropdown.classList.toggle('hidden');
         
         if (!dropdown.classList.contains('hidden')) {
-            document.getElementById('breedSearch').focus();
+            const breedSearch = document.getElementById('breedSearch');
+            if (breedSearch) breedSearch.focus();
         }
     }
-
+    
     // Filter breeds based on search
     function filterBreeds() {
-        const searchValue = document.getElementById('breedSearch').value;
-        renderBreedOptions(searchValue);
+        const breedSearch = document.getElementById('breedSearch');
+        if (!breedSearch) return;
+        
+        renderBreedOptions(breedSearch.value);
     }
 
     // Select a breed
@@ -1306,34 +1324,43 @@
     }
 
     // Dynamic patient type handling
-    document.getElementById('patient_type').addEventListener('change', function() {
-        // Reset breed selection when patient type changes
-        selectedBreed = '';
-        document.getElementById('selectedBreedText').textContent = 'Select a breed';
-        document.getElementById('selectedBreedText').classList.add('text-gray-500');
-        document.getElementById('selectedBreedText').classList.remove('text-gray-900');
-        document.getElementById('breedInput').value = '';
-        document.getElementById('breedSearch').value = '';
-        
-        updateBreedOptions();
-        
-        const patientType = this.value;
-        const petCountLabel = document.getElementById('pet_count_label');
-        
-        if (patientType === 'male_cat' || patientType === 'female_cat') {
-            if (patientType === 'male_cat') {
-                petCountLabel.innerHTML = 'How many male cats? <span class="text-red-500">*</span>';
-            } else {
-                petCountLabel.innerHTML = 'How many female cats? <span class="text-red-500">*</span>';
+    const patientTypeEl = document.getElementById('patient_type');
+    if (patientTypeEl) {
+        patientTypeEl.addEventListener('change', function() {
+            // Reset breed selection when patient type changes
+            selectedBreed = '';
+            const selectedBreedText = document.getElementById('selectedBreedText');
+            const breedInput = document.getElementById('breedInput');
+            const breedSearch = document.getElementById('breedSearch');
+            
+            if (selectedBreedText) {
+                selectedBreedText.textContent = 'Select a breed';
+                selectedBreedText.classList.add('text-gray-500');
+                selectedBreedText.classList.remove('text-gray-900');
             }
-        } else if (patientType === 'male_dog' || patientType === 'female_dog') {
-            if (patientType === 'male_dog') {
-                petCountLabel.innerHTML = 'How many male dogs? <span class="text-red-500">*</span>';
-            } else {
-                petCountLabel.innerHTML = 'How many female dogs? <span class="text-red-500">*</span>';
+            if (breedInput) breedInput.value = '';
+            if (breedSearch) breedSearch.value = '';
+            
+            updateBreedOptions();
+        
+            const patientType = this.value;
+            const petCountLabel = document.getElementById('pet_count_label');
+            
+            if (patientType === 'male_cat' || patientType === 'female_cat') {
+                if (patientType === 'male_cat') {
+                    petCountLabel.innerHTML = 'How many male cats? <span class="text-red-500">*</span>';
+                } else {
+                    petCountLabel.innerHTML = 'How many female cats? <span class="text-red-500">*</span>';
+                }
+            } else if (patientType === 'male_dog' || patientType === 'female_dog') {
+                if (patientType === 'male_dog') {
+                    petCountLabel.innerHTML = 'How many male dogs? <span class="text-red-500">*</span>';
+                } else {
+                    petCountLabel.innerHTML = 'How many female dogs? <span class="text-red-500">*</span>';
+                }
             }
-        }
-    });
+        });
+    }
 </script>
 
 </body>

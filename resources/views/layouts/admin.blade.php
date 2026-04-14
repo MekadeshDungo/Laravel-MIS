@@ -174,16 +174,10 @@
 
             @elseif(auth()->check() && auth()->user()->hasRole('city_vet'))
             <div class="sidebar-divider"></div>
-            <div class="sidebar-section-label">Operations</div>
+            <div class="sidebar-section-label">Dashboard</div>
 
             <a href="{{ route('city-vet.dashboard') }}" class="nav-item {{ request()->routeIs('city-vet.dashboard') ? 'active-nav' : '' }}">
                 <i class="bi bi-speedometer2"></i><span>Dashboard</span>
-            </a>
-            <a href="{{ route('admin.users.index') }}" class="nav-item {{ request()->routeIs('admin.users.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-people"></i><span>Staff Accounts</span>
-            </a>
-            <a href="{{ route('admin.system-logs.index') }}" class="nav-item {{ request()->routeIs('admin.system-logs.*') ? 'active-nav' : '' }}">
-                <i class="bi bi-journal-text"></i><span>System Logs</span>
             </a>
 
             <div class="sidebar-divider"></div>

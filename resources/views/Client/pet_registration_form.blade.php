@@ -121,6 +121,7 @@
         <div class="text-center mb-8">
             <h2 class="text-3xl font-bold text-gray-900">Pet Registration</h2>
             <p class="text-gray-600 mt-2">Register your pet with Dasmariñas City Veterinary Services</p>
+            <p class="text-gray-500 text-sm mt-1">Fields marked with <span class="text-red-500">*</span> are required</p>
         </div>
 
         <!-- Form Container -->
@@ -302,7 +303,7 @@
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Pet's Weight <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input type="text" id="petWeight" name="pet_weight" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" oninput="updateWeightSuffix()">
+                        <input type="text" id="petWeight" name="pet_weight" class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter weight" maxlength="3" oninput="updateWeightSuffix(); validateWeight(this)">
                         <span id="weightSuffix" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium pointer-events-none hidden">kg</span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">If you do not know, type "N/A"</p>
@@ -954,6 +955,14 @@
                 suffix.classList.add('hidden');
             } else {
                 suffix.classList.remove('hidden');
+            }
+        }
+        
+        // Validate weight input - only numbers, max 3 digits
+        function validateWeight(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value.length > 3) {
+                input.value = input.value.slice(0, 3);
             }
         }
 

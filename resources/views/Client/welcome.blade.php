@@ -222,9 +222,9 @@
                         </div>
                         <p class="text-primary font-semibold text-lg">Limited Slots Available!</p>
                         <p class="text-gray-600 text-sm mt-2">Pre-registration required</p>
-                        <a href="{{ url('/kapon/form') }}" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                        <button class="mt-4 bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
                             Register Now
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -274,9 +274,9 @@
                         </div>
                         <p class="text-secondary font-bold text-3xl">₱150</p>
                         <p class="text-gray-600 text-sm mt-1">Regular price: ₱300</p>
-                        <a href="{{ url('/kapon/form') }}" class="mt-4 bg-secondary text-white px-6 py-2 rounded-lg font-medium hover:bg-secondary-light transition-colors">
+                        <button class="mt-4 bg-secondary text-white px-6 py-2 rounded-lg font-medium hover:bg-secondary-light transition-colors">
                             Book Appointment
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -299,154 +299,41 @@
             </div>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-                <!-- Missing Pet 1 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal(1)">
+                @forelse($missingPets as $pet)
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal({{ $pet->missing_id }})">
                     <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                        <img src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Buddy" alt="Buddy" class="w-full h-full object-cover pet-image">
-                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">MISSING</span>
+                        <img src="{{ $pet->photo_img ? asset($pet->photo_img) : 'https://placehold.co/400x400/e2e8f0/94a3b8?text=' . urlencode($pet->name) }}" alt="{{ $pet->name }}" class="w-full h-full object-cover pet-image">
+                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ strtoupper($pet->status) }}</span>
                     </div>
                     <div class="p-4">
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">Buddy</h3>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $pet->name }}</h3>
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between">
                                 <span class="text-gray-500">Age:</span>
-                                <span class="text-gray-700 font-medium">3 years</span>
+                                <span class="text-gray-700 font-medium">{{ $pet->age }} years</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-500">Weight:</span>
-                                <span class="text-gray-700 font-medium">25 lbs</span>
+                                <span class="text-gray-700 font-medium">{{ $pet->weight }} kg</span>
                             </div>
                             <div class="border-t pt-2 mt-2">
                                 <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
-                                <p class="text-gray-700 font-medium text-xs">Feb 18, 2026 - 3:30 PM</p>
+                                <p class="text-gray-700 font-medium text-xs">{{ $pet->last_seen_at->format('M d, Y - h:i A') }}</p>
                             </div>
                             <div>
                                 <p class="text-gray-500 text-xs mb-1">Location:</p>
-                                <p class="text-gray-700 font-medium text-xs">Poblacion 1, Dasmariñas City</p>
+                                <p class="text-gray-700 font-medium text-xs">{{ $pet->location }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Missing Pet 2 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal(2)">
-                    <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                        <img src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Luna" alt="Luna" class="w-full h-full object-cover pet-image">
-                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">MISSING</span>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">Luna</h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Age:</span>
-                                <span class="text-gray-700 font-medium">2 years</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Weight:</span>
-                                <span class="text-gray-700 font-medium">12 lbs</span>
-                            </div>
-                            <div class="border-t pt-2 mt-2">
-                                <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
-                                <p class="text-gray-700 font-medium text-xs">Feb 17, 2026 - 8:00 AM</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 text-xs mb-1">Location:</p>
-                                <p class="text-gray-700 font-medium text-xs">Salitran 2, Dasmariñas City</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Missing Pet 3 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal(3)">
-                    <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                        <img src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Max" alt="Max" class="w-full h-full object-cover pet-image">
-                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">MISSING</span>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">Max</h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Age:</span>
-                                <span class="text-gray-700 font-medium">5 years</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Weight:</span>
-                                <span class="text-gray-700 font-medium">45 lbs</span>
-                            </div>
-                            <div class="border-t pt-2 mt-2">
-                                <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
-                                <p class="text-gray-700 font-medium text-xs">Feb 19, 2026 - 6:45 PM</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 text-xs mb-1">Location:</p>
-                                <p class="text-gray-700 font-medium text-xs">San Jose 1, Dasmariñas City</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Missing Pet 4 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal(4)">
-                    <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                        <img src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Bella" alt="Bella" class="w-full h-full object-cover pet-image">
-                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">MISSING</span>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">Bella</h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Age:</span>
-                                <span class="text-gray-700 font-medium">1 year</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Weight:</span>
-                                <span class="text-gray-700 font-medium">8 lbs</span>
-                            </div>
-                            <div class="border-t pt-2 mt-2">
-                                <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
-                                <p class="text-gray-700 font-medium text-xs">Feb 16, 2026 - 10:15 AM</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 text-xs mb-1">Location:</p>
-                                <p class="text-gray-700 font-medium text-xs">Buenavista 1, Dasmariñas City</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Missing Pet 5 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-red-100 card-hover missing-pet-card" onclick="showPetModal(5)">
-                    <div class="aspect-square bg-gray-200 relative overflow-hidden">
-                        <img src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Charlie" alt="Charlie" class="w-full h-full object-cover pet-image">
-                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">MISSING</span>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">Charlie</h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Age:</span>
-                                <span class="text-gray-700 font-medium">4 years</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Weight:</span>
-                                <span class="text-gray-700 font-medium">30 lbs</span>
-                            </div>
-                            <div class="border-t pt-2 mt-2">
-                                <p class="text-gray-500 text-xs mb-1">Last Seen:</p>
-                                <p class="text-gray-700 font-medium text-xs">Feb 20, 2026 - 7:30 AM</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 text-xs mb-1">Location:</p>
-                                <p class="text-gray-700 font-medium text-xs">Luzviminda 1, Dasmariñas City</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @empty
+                <p class="col-span-5 text-center text-gray-500">No missing pets found.</p>
+                @endforelse
             </div>
 
             <div class="text-center mt-10">
-                <a href="#" class="inline-flex items-center bg-red-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-600 transition-colors">
+                <a href="{{ url('/missing-pets') }}" class="inline-flex items-center bg-red-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -604,9 +491,9 @@
                                 <span class="text-gray-700 text-sm">Reminder notifications</span>
                             </li>
                         </ul>
-                        <a href="{{ url('/vaccination/form') }}" class="w-full block text-center bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-light transition-colors">
+                        <button class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary-light transition-colors">
                             Schedule Vaccination
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -648,9 +535,9 @@
                                 <span class="text-gray-700 text-sm">Reduces stray animal population</span>
                             </li>
                         </ul>
-                        <a href="{{ url('/kapon') }}" class="w-full block text-center bg-purple-500 text-white py-3 rounded-xl font-semibold hover:bg-purple-600 transition-colors">
+                        <button class="w-full bg-purple-500 text-white py-3 rounded-xl font-semibold hover:bg-purple-600 transition-colors">
                             Learn More
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -696,7 +583,9 @@
                             Meet the Pets
                         </a>
                     </div>
-            </div>
+                </div>
+
+                </div>
         </div>
     </section>
 
@@ -719,7 +608,7 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-900 mb-1">Office Address</h3>
-                                <p class="text-gray-600">City Hall Compound, Dasmariñas City, Cavite</p>
+                                <p class="text-gray-600">Brgy. Langkaan 2, Sitio Buwisan, Dasmariñas City, Cavite</p>
                             </div>
                         </div>
 
@@ -731,7 +620,7 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-900 mb-1">Phone</h3>
-                                <p class="text-gray-600">(046) 123-4567</p>
+                                <p class="text-gray-600">0966-881-2010</p>
                             </div>
                         </div>
 
@@ -743,7 +632,7 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-900 mb-1">Email</h3>
-                                <p class="text-gray-600">vet@dasmarinas.gov.ph</p>
+                                <p class="text-gray-600">vetdasma@yahoo.com</p>
                             </div>
                         </div>
 
@@ -822,19 +711,19 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            <span class="text-gray-600 text-sm">City Hall Compound, Dasmariñas City, Cavite</span>
+                            <span class="text-gray-600 text-sm">Brgy. Langkaan 2, Sitio Buwisan, Dasmariñas City, Cavite</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                             </svg>
-                            <span class="text-gray-600 text-sm">(046) 123-4567</span>
+                            <span class="text-gray-600 text-sm">0966-881-2010</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            <span class="text-gray-600 text-sm">vet@dasmarinas.gov.ph</span>
+                            <span class="text-gray-600 text-sm">vetdasma@yahoo.com</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1015,39 +904,13 @@
                         <p id="modalDescription" class="text-gray-600 text-sm"></p>
                     </div>
                     
-                    <!-- Owner Contact -->
-                    <div class="bg-primary/5 rounded-lg p-4 mb-6">
-                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            Owner Information
-                        </h4>
-                        <div class="space-y-2">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Owner Name:</span>
-                                <span id="modalOwnerName" class="text-gray-900 font-medium"></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Contact Number:</span>
-                                <span id="modalOwnerContact" class="text-gray-900 font-medium"></span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Action Buttons -->
+                    <!-- Contact CVO Button -->
                     <div class="flex gap-3">
                         <button onclick="contactOwner()" class="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            Contact Owner
-                        </button>
-                        <button onclick="reportFoundPet()" class="flex-1 bg-secondary text-white px-4 py-3 rounded-lg font-semibold hover:bg-secondary-light transition-colors flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Report Found
+                            Contact CVO
                         </button>
                     </div>
                 </div>
@@ -1057,102 +920,27 @@
     
     <script>
         // Missing Pet Data
-        const missingPetsData = {
-            1: {
-                name: "Buddy",
-                image: "https://placehold.co/400x400/e2e8f0/94a3b8?text=Buddy",
-                species: "Dog",
-                breed: "Golden Retriever",
-                age: "3 years",
-                weight: "25 lbs",
-                color: "Golden",
-                gender: "Male",
-                lastSeen: "Feb 18, 2026 - 3:30 PM",
-                location: "Poblacion 1, Dasmariñas City",
-                description: "Buddy is a friendly and well-trained Golden Retriever. He was last seen wearing a blue collar with tags. He responds to his name and is familiar with basic commands. Please contact us if you have any information about his whereabouts.",
-                ownerName: "Juan dela Cruz",
-                ownerContact: "0912-345-6789"
-            },
-            2: {
-                name: "Luna",
-                image: "https://placehold.co/400x400/e2e8f0/94a3b8?text=Luna",
-                species: "Cat",
-                breed: "Persian",
-                age: "2 years",
-                weight: "12 lbs",
-                color: "White",
-                gender: "Female",
-                lastSeen: "Feb 17, 2026 - 8:00 AM",
-                location: "Salitran 2, Dasmariñas City",
-                description: "Luna is a calm and gentle Persian cat. She has beautiful white fur and green eyes. She was last seen near the park in Salitran. She is microchipped and may be scared of strangers. Please approach gently.",
-                ownerName: "Maria Santos",
-                ownerContact: "0918-234-5678"
-            },
-            3: {
-                name: "Max",
-                image: "https://placehold.co/400x400/e2e8f0/94a3b8?text=Max",
-                species: "Dog",
-                breed: "German Shepherd",
-                age: "5 years",
-                weight: "45 lbs",
-                color: "Black & Tan",
-                gender: "Male",
-                lastSeen: "Feb 19, 2026 - 6:45 PM",
-                location: "San Jose 1, Dasmariñas City",
-                description: "Max is a loyal and protective German Shepherd. He was last seen during an evening walk. He has a scar on his left ear and wears a brown leather collar. Max is well-trained and friendly but may be wary of strangers.",
-                ownerName: "Pedro Garcia",
-                ownerContact: "0922-345-6789"
-            },
-            4: {
-                name: "Bella",
-                image: "https://placehold.co/400x400/e2e8f0/94a3b8?text=Bella",
-                species: "Cat",
-                breed: "Siamese",
-                age: "1 year",
-                weight: "8 lbs",
-                color: "Cream with Brown Points",
-                gender: "Female",
-                lastSeen: "Feb 16, 2026 - 10:15 AM",
-                location: "Buenavista 1, Dasmariñas City",
-                description: "Bella is a young and playful Siamese cat. She has distinctive blue eyes and cream-colored fur with brown points. She was last seen near the grocery store. She is very vocal and loves attention.",
-                ownerName: "Ana Reyes",
-                ownerContact: "0933-456-7890"
-            },
-            5: {
-                name: "Charlie",
-                image: "https://placehold.co/400x400/e2e8f0/94a3b8?text=Charlie",
-                species: "Dog",
-                breed: "Labrador Mix",
-                age: "4 years",
-                weight: "30 lbs",
-                color: "Brown",
-                gender: "Male",
-                lastSeen: "Feb 20, 2026 - 7:30 AM",
-                location: "Luzviminda 1, Dasmariñas City",
-                description: "Charlie is an energetic and friendly Labrador mix. He has a brown coat with a white patch on his chest. He was last seen running near the basketball court. He loves playing fetch and is very friendly with children.",
-                ownerName: "Roberto Mendoza",
-                ownerContact: "0944-567-8901"
-            }
-        };
+        const missingPetsData = @json($missingPets->toArray());
         
         function showPetModal(petId) {
-            const pet = missingPetsData[petId];
+            const pet = missingPetsData.find(p => p.missing_id === petId);
             if (!pet) return;
             
-            // Populate modal with pet data
-            document.getElementById('modalPetImage').src = pet.image;
+            const imageUrl = pet.photo_img 
+                ? "{{ asset('') }}" + pet.photo_img 
+                : "https://placehold.co/400x400/e2e8f0/94a3b8?text=" + pet.name;
+            
+            document.getElementById('modalPetImage').src = imageUrl;
             document.getElementById('modalPetName').textContent = pet.name;
             document.getElementById('modalPetSpecies').textContent = pet.species;
-            document.getElementById('modalPetBreed').textContent = pet.breed;
-            document.getElementById('modalPetAge').textContent = pet.age;
-            document.getElementById('modalPetWeight').textContent = pet.weight;
-            document.getElementById('modalPetColor').textContent = pet.color;
-            document.getElementById('modalPetGender').textContent = pet.gender;
-            document.getElementById('modalLastSeen').textContent = pet.lastSeen;
+            document.getElementById('modalPetBreed').textContent = pet.breed || 'Unknown';
+            document.getElementById('modalPetAge').textContent = pet.age + ' years';
+            document.getElementById('modalPetWeight').textContent = pet.weight + ' kg';
+            document.getElementById('modalPetColor').textContent = pet.color || 'Unknown';
+            document.getElementById('modalPetGender').textContent = pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1);
+            document.getElementById('modalLastSeen').textContent = new Date(pet.last_seen_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
             document.getElementById('modalLocation').textContent = pet.location;
-            document.getElementById('modalDescription').textContent = pet.description;
-            document.getElementById('modalOwnerName').textContent = pet.ownerName;
-            document.getElementById('modalOwnerContact').textContent = pet.ownerContact;
+            document.getElementById('modalDescription').textContent = pet.description || 'No description available.';
             
             // Show modal
             document.getElementById('petDetailModal').classList.remove('hidden');
@@ -1165,12 +953,10 @@
         }
         
         function contactOwner() {
-            const contact = document.getElementById('modalOwnerContact').textContent;
-            window.location.href = 'tel:' + contact;
-        }
-        
-        function reportFoundPet() {
-            alert('Thank you for your willingness to help! Please contact the veterinary office at (046) 123-4567 to report that you have found this pet.');
+            const petName = document.getElementById('modalPetName').textContent;
+            const subject = 'Inquiry about missing pet: ' + petName;
+            const encodedSubject = encodeURIComponent(subject);
+            window.open('https://mail.google.com/mail/u/0/?view=cm&fs=1&to=vetdasma@yahoo.com&su=' + encodedSubject + '&tf=ui', '_blank');
         }
         
         // Close modal when clicking outside

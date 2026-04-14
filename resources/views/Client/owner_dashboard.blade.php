@@ -282,7 +282,7 @@
                                 <p><strong>Gender:</strong> {{ ucfirst($pet->sex) }}</p>
                                 @php
                                     $ageDisplay = 'Unknown';
-                                    if ($pet->age) {
+                                    if ($pet->estimated_age) {
                                         $ageMap = [
                                             'less_than_3_months' => 'Less than 3 months',
                                             '3_to_12_months' => '3 to 12 months',
@@ -307,7 +307,7 @@
                                             '19_years' => '19 years old',
                                             '20_years' => '20 years old',
                                         ];
-                                        $ageDisplay = $ageMap[$pet->age] ?? $pet->age;
+                                        $ageDisplay = $ageMap[$pet->estimated_age] ?? $pet->estimated_age;
                                     } elseif ($pet->birthdate) {
                                         $birthYear = date('Y', strtotime($pet->birthdate));
                                         $age = date('Y') - $birthYear;
@@ -316,8 +316,8 @@
                                 @endphp
                                 <p><strong>Age:</strong> {{ $ageDisplay }}</p>
                                 <p><strong>Neutered:</strong> {{ $pet->is_neutered === 'yes' ? 'Yes' : 'No' }}</p>
-                                @if($pet->weight)
-                                    <p><strong>Weight:</strong> {{ $pet->weight }}</p>
+                                @if($pet->pet_weight)
+                                    <p><strong>Weight:</strong> {{ $pet->pet_weight }} kg</p>
                                 @endif
                             </div>
                         </div>
@@ -373,7 +373,6 @@
                         <li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Pet Registration</a></li>
                         <li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Anti-Rabies Vaccination</a></li>
                         <li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Pet Adoption</a></li>
-                        <li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Report Animal Cruelty</a></li>
                     </ul>
                 </div>
                 
@@ -381,10 +380,9 @@
                 <div>
                     <h4 class="font-semibold text-lg mb-4">Contact</h4>
                     <ul class="space-y-2 text-gray-600 text-sm">
-                        <li>City Veterinary Office</li>
-                        <li>Dasmariñas City, Cavite</li>
-                        <li>Phone: (046) 123-4567</li>
-                        <li>Email: vet@dasmarinas.gov.ph</li>
+                        <li>Brgy. Langkaan 2, Sitio Buwisan, Dasmariñas City, Cavite</li>
+                        <li>Phone: 0966-881-2010</li>
+                        <li>Email: vetdasma@yahoo.com</li>
                     </ul>
                 </div>
             </div>

@@ -51,6 +51,9 @@
         <!-- Title -->
         <div class="text-center mb-8">
             <h2 class="text-3xl font-bold">Sign Up</h2>
+            <p class="mt-2 text-gray-600 text-sm">
+                Fields marked with <span class="text-red-500">*</span> are required
+            </p>
         </div>
 
         <!-- Session Status -->
@@ -60,38 +63,16 @@
             </div>
         @endif
 
-        <!-- Error Popup Modal -->
+        <!-- Validation Errors -->
         @if ($errors->any())
-            <div id="errorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-                <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-red-600">Please fix the following errors:</h3>
-                        <button type="button" onclick="closeErrorModal()" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <ul class="list-disc ml-5 text-sm text-gray-700 space-y-1">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                    <div class="mt-6 flex justify-end">
-                        <button type="button" onclick="closeErrorModal()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                            OK
-                        </button>
-                    </div>
-                </div>
+            <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
+                <strong>Please fix the following errors:</strong>
+                <ul class="list-disc ml-5 mt-2">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    document.getElementById('errorModal').classList.remove('hidden');
-                });
-                function closeErrorModal() {
-                    document.getElementById('errorModal').classList.add('hidden');
-                }
-            </script>
         @endif
 
         <!-- Form Card -->
@@ -151,7 +132,7 @@
                         <!-- Date of Birth -->
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium mb-1.5">
-                                Date of Birth
+                                Date of Birth <span class="text-red-500">*</span>
                             </label>
                             <div class="grid grid-cols-3 gap-2">
                                 <!-- Year -->
@@ -217,6 +198,27 @@
                             @enderror
                         </div>
 
+                        <!-- Alternate Phone Number -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium mb-1.5">
+                                Alternate Phone Number
+                            </label>
+                            <div class="flex">
+                                <span class="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-sm">
+                                    +63
+                                </span>
+                                <input type="tel" name="alternate_phone_number" value="{{ old('alternate_phone_number') }}" placeholder="943 210 2012" maxlength="12"
+                                       inputmode="numeric" pattern="[0-9\s]{12}"
+                                       onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                       oninput="this.value = this.value.replace(/\D/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3').trim()"
+                                       class="flex-1 px-4 py-2.5 rounded-r-lg border border-gray-300
+                                       focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('alternate_phone_number') border-red-500 @enderror">
+                            </div>
+                            @error('alternate_phone_number')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Email Address -->
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium mb-1.5">
@@ -235,9 +237,28 @@
                             <label class="block text-sm font-medium mb-1.5">
                                 Block/Lot/Phase/House No. <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="block_lot_phase_house_no" value="{{ old('block_lot_phase_house_no') }}"
-                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-300
-                                   focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none @error('block_lot_phase_house_no') border-red-500 @enderror">
+                            <div class="flex rounded-lg border border-gray-300 overflow-hidden focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                                <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-gray-300">
+                                    <span class="text-sm text-gray-600 whitespace-nowrap">Blk</span>
+                                </div>
+                                <input type="text" name="block_lot_phase_house_no_1" value="{{ old('block_lot_phase_house_no_1') }}"
+                                       class="w-full px-2 py-2.5 outline-none bg-white text-center" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-l border-gray-300">
+                                    <span class="text-sm text-gray-600 whitespace-nowrap">Lot</span>
+                                </div>
+                                <input type="text" name="block_lot_phase_house_no_2" value="{{ old('block_lot_phase_house_no_2') }}"
+                                       class="w-full px-2 py-2.5 outline-none bg-white text-center" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-l border-gray-300">
+                                    <span class="text-sm text-gray-600 whitespace-nowrap">Ph</span>
+                                </div>
+                                <input type="text" name="block_lot_phase_house_no_3" value="{{ old('block_lot_phase_house_no_3') }}"
+                                       class="w-full px-2 py-2.5 outline-none bg-white text-center" placeholder="" maxlength="1" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                <div class="flex items-center px-3 py-2.5 bg-gray-50 border-r border-l border-gray-300">
+                                    <span class="text-sm text-gray-600 whitespace-nowrap">House No.</span>
+                                </div>
+                                <input type="text" name="block_lot_phase_house_no_4" value="{{ old('block_lot_phase_house_no_4') }}"
+                                       class="w-full px-2 py-2.5 outline-none bg-white text-center rounded-r-lg" placeholder="" maxlength="2" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            </div>
                             @error('block_lot_phase_house_no')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -365,7 +386,6 @@
                             <label class="block text-sm font-medium mb-1.5">City</label>
                             <input value="Dasmariñas City" disabled
                                    class="w-full px-4 py-2.5 rounded-lg border bg-gray-50 text-gray-500">
-                            <input type="hidden" name="city" value="Dasmariñas City">
                         </div>
 
                         <!-- Province -->
@@ -373,7 +393,6 @@
                             <label class="block text-sm font-medium mb-1.5">Province</label>
                             <input value="Cavite" disabled
                                    class="w-full px-4 py-2.5 rounded-lg border bg-gray-50 text-gray-500">
-                            <input type="hidden" name="province" value="Cavite">
                         </div>
                     </div>
                 </div>
@@ -549,6 +568,7 @@
                 strengthText.className = 'text-xs text-green-600';
             }
         }
+
     </script>
 </body>
 </html>

@@ -47,21 +47,21 @@ class MissingPetController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'animal_type' => 'required|string|in:dog,cat,other',
+            'pet_name' => 'required|string|max:255',
+            'species' => 'required|string|in:dog,cat,other',
             'breed' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:255',
-            'sex' => 'nullable|string|in:male,female,unknown',
-            'photo' => 'nullable|image|max:2048',
+            'gender' => 'nullable|string|in:male,female,unknown',
+            'image' => 'nullable|image|max:2048',
             'missing_since' => 'required|date',
             'last_seen_location' => 'required|string',
             'contact_info' => 'required|string',
         ]);
 
         // Handle photo upload
-        if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('missing-pets', 'public');
-            $validated['photo_url'] = $path;
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('missing-pets', 'public');
+            $validated['image'] = $path;
         }
 
         $validated['status'] = 'pending';

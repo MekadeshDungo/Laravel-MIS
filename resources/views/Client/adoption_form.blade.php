@@ -257,7 +257,7 @@
                                 <label class="block text-sm font-medium mb-1.5">
                                     House No. / Unit No. <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="house_no" placeholder="House No. / Unit No." value="{{ old('house_no', $petOwner->house_no ?? '') }}"
+                                <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ old('blk_lot_ph', $petOwner->blk_lot_ph ?? '') }}"
                                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                             </div>
 
@@ -452,56 +452,31 @@
                     </p>
 
                     <div class="space-y-6">
-                        <!-- What are you looking to adopt? -->
+                        <!-- Pet Selection -->
                         <div>
-                            <label class="block text-sm font-medium mb-2">
-                                What are you looking to adopt? <span class="text-red-500">*</span>
-                            </label>
-                            <div class="flex flex-wrap gap-4 mt-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="adopt_type" value="Cat" class="text-primary">
-                                    <span class="ml-2">Cat</span>
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="block text-sm font-medium">
+                                    Select Pet to Adopt <span class="text-red-500">*</span>
                                 </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="adopt_type" value="Dog" class="text-primary">
-                                    <span class="ml-2">Dog</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="adopt_type" value="Both" class="text-primary">
-                                    <span class="ml-2">Both</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="adopt_type" value="Not Decided" class="text-primary">
-                                    <span class="ml-2">Not Decided</span>
-                                </label>
+                                <button type="button" onclick="openAdoptionPetModal()" 
+                                        class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors flex items-center text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Select Pet
+                                </button>
                             </div>
-                        </div>
-
-                        <!-- Are you applying to adopt a specific shelter animal? -->
-                        <div>
-                            <label class="block text-sm font-medium mb-2">
-                                Are you applying to adopt a specific shelter animal? <span class="text-red-500">*</span>
-                            </label>
-                            <div class="flex gap-4 mt-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="specific_animal" value="Yes" class="text-primary">
-                                    <span class="ml-2">Yes</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="specific_animal" value="No" class="text-primary">
-                                    <span class="ml-2">No</span>
-                                </label>
+                            
+                            <!-- Display selected pet cards here -->
+                            <div id="selectedAdoptionPetsList" class="grid md:grid-cols-2 gap-4">
+                                <!-- Empty state -->
+                                <div id="noAdoptionPetsSelected" class="col-span-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="text-gray-500">No pets selected yet. Click "Select Pet" to choose a pet for adoption.</p>
+                                </div>
                             </div>
-                        </div>
-
-                        <!-- Describe your ideal pet -->
-                        <div>
-                            <label class="block text-sm font-medium mb-1.5">
-                                Describe your ideal pet, including its sex, age, appearance, temperament, etc. <span class="text-red-500">*</span>
-                            </label>
-                            <textarea name="ideal_pet" rows="4" 
-                                      class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none resize-y"
-                                      placeholder="Describe your ideal pet in detail..."></textarea>
                         </div>
 
                         <!-- What type of building do you live in? -->
@@ -726,6 +701,258 @@
                     </div>
                 </div>
 
+                <!-- Pet Selection Modal -->
+                <div id="adoptionPetModal" class="fixed inset-0 z-50 hidden">
+                    <div class="fixed inset-0 bg-black bg-opacity-50" onclick="closeAdoptionPetModal()"></div>
+                    <div class="fixed inset-0 flex items-center justify-center p-4">
+                        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+                            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Select Pet for Adoption</h3>
+                                <button type="button" onclick="closeAdoptionPetModal()" class="text-gray-400 hover:text-gray-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="px-6 py-4 overflow-y-auto max-h-[60vh]">
+                                @if($adoptionPets->isEmpty())
+                                    <div class="text-center py-8">
+                                        <p class="text-gray-500 mb-4">No pets available for adoption at the moment.</p>
+                                        <a href="{{ url('/adoption') }}" class="text-primary hover:text-primary-light font-medium">
+                                            Go back to adoption page
+                                        </a>
+                                    </div>
+                                @else
+                                    <p class="text-sm text-gray-600 mb-4">Select up to 2 pets for adoption:</p>
+                                    <div class="space-y-3" id="adoptionPetSelectionList">
+                                        @foreach($adoptionPets as $pet)
+                                            <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet->adoption_id }}">
+                                                <input type="checkbox" name="selected_adoption_pets[]" value="{{ $pet->adoption_id }}" 
+                                                       class="mt-1 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary adoption-pet-checkbox"
+                                                       onchange="toggleAdoptionPetSelection(this)">
+                                                <div class="ml-3 flex-1">
+                                                    <div class="flex items-center justify-between">
+                                                        <span class="font-semibold text-gray-900 pet-name">{{ $pet->pet_name }}</span>
+                                                        <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">{{ ucfirst($pet->species) }}</span>
+                                                    </div>
+                                                    <div class="mt-1 text-xs text-gray-500">
+                                                        <div>Breed: {{ $pet->breed ?? 'Unknown' }}</div>
+                                                        <div class="text-gray-600">Gender: {{ ucfirst($pet->gender) }}</div>
+                                                        <div class="text-gray-600">Age: {{ $pet->age }}</div>
+                                                    </div>
+                                                </div>
+                                                @if(!empty($pet->image))
+                                                <div class="ml-2 flex-shrink-0">
+                                                    <img src="{{ asset($pet->image) }}" alt="{{ $pet->pet_name }}" class="w-12 h-12 rounded-full object-cover">
+                                                </div>
+                                                @endif
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Selected: <span id="adoptionSelectedCount">0</span> pet(s) (Max: 2)</span>
+                                    <button type="button" onclick="confirmAdoptionPetSelection()" 
+                                            class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                                        Confirm Selection
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    // Pet data from server
+                    const adoptionPetsData = @json($adoptionPets);
+                    const assetBaseUrl = "{{ asset('') }}";
+                    
+                    let selectedAdoptionPets = [];
+
+                    function openAdoptionPetModal() {
+                        // Check if no pets available
+                        if (adoptionPetsData.length === 0) {
+                            document.getElementById('adoptionPetModal').classList.remove('hidden');
+                            document.getElementById('adoptionPetSelectionList').innerHTML = `
+                                <div class="text-center py-8 px-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="text-gray-600 mb-4">No pets available for adoption at the moment.</p>
+                                    <a href="{{ url('/adoption') }}" class="inline-block bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                                        Go back to adoption page
+                                    </a>
+                                </div>
+                            `;
+                            // Hide the footer with confirm button when no pets
+                            document.querySelector('#adoptionPetModal .bg-gray-50').classList.add('hidden');
+                            document.body.style.overflow = 'hidden';
+                            return;
+                        }
+                        
+                        // Show normal modal with pets
+                        document.getElementById('adoptionPetModal').classList.remove('hidden');
+                        document.body.style.overflow = 'hidden';
+                    }
+
+                    function closeAdoptionPetModal() {
+                        document.getElementById('adoptionPetModal').classList.add('hidden');
+                        document.body.style.overflow = 'auto';
+                    }
+
+                    function toggleAdoptionPetSelection(checkbox) {
+                        const petId = String(checkbox.value);
+                        if (checkbox.checked) {
+                            // Check if max limit reached (2 pets)
+                            if (selectedAdoptionPets.length >= 2) {
+                                checkbox.checked = false;
+                                showAdoptionPetLimitModal();
+                                return;
+                            }
+                            if (!selectedAdoptionPets.includes(petId)) {
+                                selectedAdoptionPets.push(petId);
+                            }
+                        } else {
+                            selectedAdoptionPets = selectedAdoptionPets.filter(id => String(id) !== petId);
+                        }
+                        updateAdoptionSelectedCount();
+                    }
+
+                    function showAdoptionPetLimitModal() {
+                        const modalHtml = `
+                            <div id="adoptionPetLimitModal" class="fixed inset-0 z-50">
+                                <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+                                <div class="fixed inset-0 flex items-center justify-center p-4">
+                                    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+                                        <div class="text-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-yellow-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                            </svg>
+                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Pet Limit Reached</h3>
+                                            <p class="text-gray-600 mb-6">You can select up to 2 pets for adoption per application.</p>
+                                            <button type="button" onclick="closeAdoptionPetLimitModal()" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-light transition-colors">
+                                                I understand
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.body.insertAdjacentHTML('beforeend', modalHtml);
+                        document.body.style.overflow = 'hidden';
+                    }
+
+                    function closeAdoptionPetLimitModal() {
+                        const modal = document.getElementById('adoptionPetLimitModal');
+                        if (modal) {
+                            modal.remove();
+                        }
+                        document.body.style.overflow = 'auto';
+                    }
+
+                    function updateAdoptionSelectedCount() {
+                        document.getElementById('adoptionSelectedCount').textContent = selectedAdoptionPets.length;
+                    }
+
+                    function confirmAdoptionPetSelection() {
+                        const container = document.getElementById('selectedAdoptionPetsList');
+                        const noPetsMessage = document.getElementById('noAdoptionPetsSelected');
+                        const modalFooter = document.querySelector('#adoptionPetModal .bg-gray-50');
+
+                        // Restore footer if it was hidden
+                        if (modalFooter) {
+                            modalFooter.classList.remove('hidden');
+                        }
+
+                        if (selectedAdoptionPets.length > 0) {
+                            if (noPetsMessage) {
+                                noPetsMessage.remove();
+                            }
+                        }
+
+                        // Clear current selections and rebuild
+                        container.innerHTML = '';
+
+                        if (selectedAdoptionPets.length === 0) {
+                            container.innerHTML = `
+                                <div id="noAdoptionPetsSelected" class="col-span-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-8 text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="text-gray-500">No pets selected yet. Click "Select Pet" to choose a pet for adoption.</p>
+                                </div>
+                            `;
+                            closeAdoptionPetModal();
+                            return;
+                        }
+
+                        selectedAdoptionPets.forEach(petId => {
+                            const pet = adoptionPetsData.find(p => String(p.adoption_id) === String(petId));
+                            if (pet) {
+                                // Determine image source
+                                let imageHtml = '';
+                                if (pet.image) {
+                                    const imageSrc = pet.image.startsWith('http') ? pet.image : assetBaseUrl + pet.image;
+                                    imageHtml = `<img src="${imageSrc}" alt="${pet.pet_name}" class="w-12 h-12 rounded-full object-cover">`;
+                                } else {
+                                    imageHtml = `<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>`;
+                                }
+                                
+                                // Add pet card
+                                const petCard = document.createElement('div');
+                                petCard.className = 'bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between';
+                                const speciesDisplay = pet.species ? pet.species.charAt(0).toUpperCase() + pet.species.slice(1) : 'Unknown';
+                                petCard.innerHTML = `
+                                    <div class="flex items-center">
+                                        ${imageHtml}
+                                        <div class="ml-3">
+                                            <p class="font-semibold text-gray-900">${pet.pet_name || 'Unknown'}</p>
+                                            <p class="text-xs text-gray-500">${speciesDisplay} • ${pet.breed || 'Unknown'}</p>
+                                            <p class="text-xs text-gray-600 mt-1">Gender: ${pet.gender || 'Unknown'} • Age: ${pet.age || 'Unknown'}</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="removeAdoptionPet(${pet.adoption_id})" class="text-red-500 hover:text-red-700 p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                `;
+                                container.appendChild(petCard);
+                            }
+                        });
+
+                        closeAdoptionPetModal();
+                    }
+
+                    function removeAdoptionPet(petId) {
+                        // Remove from selectedAdoptionPets array (convert to string for comparison)
+                        selectedAdoptionPets = selectedAdoptionPets.filter(id => String(id) !== String(petId));
+                        
+                        // Uncheck the checkbox in modal
+                        const checkbox = document.querySelector(`#adoptionPetSelectionList input[value="${petId}"]`);
+                        if (checkbox) {
+                            checkbox.checked = false;
+                        }
+                        
+                        // Rebuild the display
+                        confirmAdoptionPetSelection();
+                        updateAdoptionSelectedCount();
+                    }
+
+                    // Close modal on escape key
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape') {
+                            closeAdoptionPetModal();
+                        }
+                    });
+                </script>
+
                 <!-- PART 4: HOME PHOTOS -->
                 <div id="part4" class="form-part hidden">
                     <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Part 4: Home Photos</h3>
@@ -920,6 +1147,18 @@
                                 </label>
                             </div>
                         </div>
+
+                        <!-- Interview Appointment Slot Picker -->
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <h4 class="text-md font-semibold text-gray-800 mb-4">Schedule Interview Appointment</h4>
+                            <p class="text-sm text-gray-500 mb-4">
+                                Select a date and time for your adoption interview. You can choose Zoom or in-person.
+                            </p>
+                            @include('components.appointment-slot-picker', [
+                                'serviceType' => 'adoption_interview',
+                                'fieldName' => 'interview'
+                            ])
+                        </div>
                     </div>
 
                     <!-- Navigation Buttons for Part 6 -->
@@ -968,6 +1207,22 @@
         input.value = value;
     }
 
+    function showPetSelectedToast(petName) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-20 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center animate-slide-in';
+        toast.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span><strong>${petName}</strong> has been selected for adoption</span>
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
     // Apply formatPhone to all phone fields on load
     document.addEventListener('DOMContentLoaded', function() {
         const phoneFields = document.querySelectorAll('input[name="mobile_number"], input[name="alt_phone"]');
@@ -976,6 +1231,63 @@
                 formatPhone(this);
             });
         });
+
+        // Check for pre-selected pet from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const preselectedPetId = urlParams.get('pet_id');
+        if (preselectedPetId) {
+            // Find the pet in adoptionPetsData
+            const pet = adoptionPetsData.find(p => String(p.adoption_id) === String(preselectedPetId));
+            if (pet) {
+                // Auto-select the pet
+                selectedAdoptionPets.push(String(preselectedPetId));
+                
+                // Render the selected pet in the form
+                const container = document.getElementById('selectedAdoptionPetsList');
+                const noPetsMessage = document.getElementById('noAdoptionPetsSelected');
+                
+                if (noPetsMessage) {
+                    noPetsMessage.remove();
+                }
+                
+                container.innerHTML = '';
+                
+                selectedAdoptionPets.forEach(petId => {
+                    const petData = adoptionPetsData.find(p => String(p.adoption_id) === String(petId));
+                    if (petData) {
+                        const imageHtml = petData.image 
+                            ? `<img src="${assetBaseUrl}${petData.image}" alt="${petData.pet_name}" class="w-16 h-16 rounded-lg object-cover">`
+                            : `<div class="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                               </div>`;
+                        
+                        const petCard = `
+                            <div class="flex items-center p-4 border border-primary rounded-lg bg-green-50">
+                                ${imageHtml}
+                                <div class="ml-4 flex-1">
+                                    <div class="font-semibold text-gray-900">${petData.pet_name}</div>
+                                    <div class="text-xs text-gray-500">
+                                        <span class="capitalize">${petData.species}</span> · ${petData.gender} · ${petData.age}
+                                    </div>
+                                </div>
+                                <button type="button" onclick="removeAdoptionPet('${petId}')" class="text-red-500 hover:text-red-700 p-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                                <input type="hidden" name="selected_adoption_pets[]" value="${petData.adoption_id}">
+                            </div>
+                        `;
+                        container.innerHTML += petCard;
+                    }
+                });
+                
+                // Show confirmation toast
+                showPetSelectedToast(pet.pet_name);
+            }
+        }
     });
 
     // Step navigation
@@ -1145,19 +1457,19 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            <span class="text-gray-600 text-sm">City Hall Compound, Dasmariñas City, Cavite</span>
+                            <span class="text-gray-600 text-sm">Brgy. Langkaan 2, Sitio Buwisan, Dasmariñas City, Cavite</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                             </svg>
-                            <span class="text-gray-600 text-sm">(046) 123-4567</span>
+                            <span class="text-gray-600 text-sm">0966-881-2010</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            <span class="text-gray-600 text-sm">vet@dasmarinas.gov.ph</span>
+                            <span class="text-gray-600 text-sm">vetdasma@yahoo.com</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

@@ -90,7 +90,7 @@
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Barangay</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Victim</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Severity</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
@@ -99,27 +99,29 @@
                             @forelse($biteReports as $report)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-sm font-medium">#{{ $report->id }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($report->bite_date)->format('M d, Y') }}</td>
-                                <td class="px-4 py-3 text-sm">{{ $report->reporter_name }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->barangay?->barangay_name ?? $report->patient_barangay_id ?? 'N/A' }}</td>
-                                <td class="px-4 py-3 text-sm">{{ $report->victim_name }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($report->incident_date)->format('M d, Y') }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $report->reportedBy?->name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $report->barangay?->barangay_name ?? $report->patient_barangay ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm">{{ $report->patient_name }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ ucfirst($report->animal_type) }}</td>
                                 <td class="px-4 py-3">
-                                    @if($report->bite_severity == 'minor')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Minor</span>
-                                    @elseif($report->bite_severity == 'moderate')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Moderate</span>
+                                    @if($report->category == 'I')
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Category I</span>
+                                    @elseif($report->category == 'II')
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Category II</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Severe</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Category III</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
-                                    @if($report->status == 'pending')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
-                                    @elseif($report->status == 'investigating')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Investigating</span>
+                                    @if($report->status == 'Pending Review')
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending Review</span>
+                                    @elseif($report->status == 'Under Investigation')
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Under Investigation</span>
+                                    @elseif($report->status == 'Cleared')
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Cleared</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Resolved</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Confirmed Rabies</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">

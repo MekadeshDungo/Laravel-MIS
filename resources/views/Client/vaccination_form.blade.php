@@ -209,7 +209,7 @@
                             <label class="block text-sm font-medium mb-1.5">
                                 House No. / Unit No. <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="house_no" placeholder="House No. / Unit No." value="{{ old('house_no', $petOwner->house_no ?? '') }}"
+                            <input type="text" name="blk_lot_ph" placeholder="House No. / Unit No." value="{{ old('blk_lot_ph', $petOwner->blk_lot_ph ?? '') }}"
                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                         </div>
 
@@ -269,11 +269,11 @@
                 <div class="mb-8">
                     <h3 class="text-lg font-semibold mb-4 pb-2 border-b bg-green-50 px-4 py-2 rounded-lg">Appointment Date</h3>
 
-                    <!-- Appointment Date -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Appointment Date <span class="text-red-500">*</span></label>
-                        <input type="date" name="appointment_date" value="{{ old('appointment_date') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
-                    </div>
+                    <!-- Slot Picker -->
+                    @include('components.appointment-slot-picker', [
+                        'serviceType' => 'vaccination',
+                        'fieldName' => 'appointment'
+                    ])
                 </div>
 
                 <!-- MEDICAL HISTORY -->
@@ -348,13 +348,13 @@
                                         @php
                                             $speciesDisplay = isset($pet['species']) ? ucfirst($pet['species']) : 'Unknown';
                                         @endphp
-                                        <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet['pet_id'] }}">
-                                            <input type="checkbox" name="selected_pets[]" value="{{ $pet['pet_id'] }}" 
+                                        <label class="flex items-start p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-primary transition-colors pet-selection-card" data-pet-id="{{ $pet['id'] }}">
+                                            <input type="checkbox" name="selected_pets[]" value="{{ $pet['id'] }}" 
                                                    class="mt-1 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary pet-checkbox"
                                                    onchange="togglePetSelection(this)">
                                             <div class="ml-3 flex-1">
                                                 <div class="flex items-center justify-between">
-                                                    <span class="font-semibold text-gray-900 pet-name">{{ $pet['pet_name'] }}</span>
+                                                    <span class="font-semibold text-gray-900 pet-name">{{ $pet['name'] }}</span>
                                                     <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">{{ $speciesDisplay }}</span>
                                                 </div>
                                                 <div class="mt-1 text-xs text-gray-500">
@@ -363,9 +363,9 @@
                                                     <div class="text-gray-600">Weight: {{ isset($pet['weight']) ? (str_contains(strtolower($pet['weight']), 'kg') || strtolower($pet['weight']) == 'n/a' ? $pet['weight'] : $pet['weight'] . ' kg') : 'Unknown' }}</div>
                                                 </div>
                                             </div>
-                                            @if(!empty($pet['pet_image']))
+                                            @if(!empty($pet['image']))
                                             <div class="ml-2 flex-shrink-0">
-                                                <img src="{{ asset('storage/' . $pet['pet_image']) }}" alt="{{ $pet['pet_name'] }}" class="w-12 h-12 rounded-full object-cover">
+                                                <img src="{{ asset('storage/' . $pet['image']) }}" alt="{{ $pet['name'] }}" class="w-12 h-12 rounded-full object-cover">
                                             </div>
                                             @endif
                                         </label>

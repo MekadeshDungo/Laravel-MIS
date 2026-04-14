@@ -39,7 +39,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs md:text-sm font-medium text-gray-500">Roles</p>
-                <p class="text-xl md:text-3xl font-bold text-gray-800 mt-1">{{ \App\Models\Role::count() }}</p>
+                <p class="text-xl md:text-3xl font-bold text-gray-800 mt-1">{{ \Spatie\Permission\Models\Role::count() }}</p>
             </div>
             <div class="w-10 h-10 md:w-14 md:h-14 bg-purple-100 rounded-xl flex items-center justify-center">
                 <i class="bi bi-person-gear text-purple-600 text-lg md:text-2xl"></i>

@@ -65,7 +65,7 @@ class ClinicalActionController extends Controller
             'medication' => 'nullable|string',
             'follow_up_date' => 'nullable|date',
             'outcome' => 'nullable|string',
-            'veterinarian_id' => 'nullable|exists:users,id',
+            'veterinarian_id' => 'nullable|exists:admin_users,id',
         ]);
 
         $validated['created_by'] = Auth::id();
@@ -104,7 +104,7 @@ class ClinicalActionController extends Controller
             'medication' => 'nullable|string',
             'follow_up_date' => 'nullable|date',
             'outcome' => 'nullable|string',
-            'veterinarian_id' => 'nullable|exists:users,id',
+            'veterinarian_id' => 'nullable|exists:admin_users,id',
         ]);
 
         $clinicalAction->update($validated);

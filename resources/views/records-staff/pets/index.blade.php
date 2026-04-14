@@ -75,14 +75,14 @@
                         @foreach($pets as $pet)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4">
-                                    <div class="font-medium text-gray-800">{{ $pet->name }}</div>
+                                    <div class="font-medium text-gray-800">{{ $pet->pet_name }}</div>
                                     @if($pet->microchip_number)
                                         <div class="text-xs text-gray-500">Chip: {{ $pet->microchip_number }}</div>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-gray-600">{{ ucfirst($pet->species) }}</td>
                                 <td class="px-6 py-4 text-gray-600">{{ $pet->breed ?? '-' }}</td>
-                                <td class="px-6 py-4 text-gray-600">{{ $pet->owner->name ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 text-gray-600">{{ $pet->owner ? $pet->owner->first_name . ' ' . $pet->owner->last_name : 'N/A' }}</td>
                                 <td class="px-6 py-4 text-gray-600">{{ $pet->license_number ?? '-' }}</td>
                                 <td class="px-6 py-4">
                                     @switch($pet->vaccination_status)

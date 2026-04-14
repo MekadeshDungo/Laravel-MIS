@@ -104,18 +104,6 @@
                 <p class="px-4 text-xs font-semibold text-green-300 uppercase tracking-wider">Operations</p>
             </div>
 
-            <a href="{{ route('admin.users.index') }}"
-               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin.users.*') ? 'bg-green-600 text-white' : '' }}">
-                <i class="bi bi-people text-lg w-6"></i>
-                <span>Staff Accounts</span>
-            </a>
-
-            <a href="{{ route('admin.system-logs.index') }}"
-               class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin.system-logs.*') ? 'bg-green-600 text-white' : '' }}">
-                <i class="bi bi-journal-text text-lg w-6"></i>
-                <span>System Logs</span>
-            </a>
-
             <a href="{{ route('admin.announcements.index') }}"
                class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-green-100 hover:bg-green-700 hover:text-white transition {{ request()->routeIs('admin.announcements.*') ? 'bg-green-600 text-white' : '' }}">
                 <i class="bi bi-megaphone text-lg w-6"></i>

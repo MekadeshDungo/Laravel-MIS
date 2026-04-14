@@ -47,9 +47,9 @@
                     <tbody class="divide-y divide-gray-100">
                         @foreach($owners as $owner)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 font-medium text-gray-800">{{ $owner->name }}</td>
-                                <td class="px-6 py-4 text-gray-600">{{ $owner->email }}</td>
-                                <td class="px-6 py-4 text-gray-600">{{ $owner->contact_number ?? '-' }}</td>
+                                <td class="px-6 py-4 font-medium text-gray-800">{{ $owner->petOwner ? $owner->petOwner->first_name . ' ' . $owner->petOwner->last_name : $owner->name }}</td>
+                                <td class="px-6 py-4 text-gray-600">{{ $owner->petOwner->email ?? $owner->email }}</td>
+                                <td class="px-6 py-4 text-gray-600">{{ $owner->petOwner->phone_number ?? '-' }}</td>
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{{ $owner->pets_count }}</span>
                                 </td>

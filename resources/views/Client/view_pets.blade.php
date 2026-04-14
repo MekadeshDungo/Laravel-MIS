@@ -411,7 +411,7 @@
             
             // Calculate age
             let ageDisplay = 'Unknown';
-            if (pet.age) {
+            if (pet.estimated_age) {
                 const ageMap = {
                     'less_than_3_months': 'Less than 3 months',
                     '3_to_12_months': '3 to 12 months',
@@ -426,7 +426,7 @@
                     '9_years': '9 years old',
                     '10_years': '10 years old',
                 };
-                ageDisplay = ageMap[pet.age] || pet.age;
+                ageDisplay = ageMap[pet.estimated_age] || pet.estimated_age;
             } else if (pet.birthdate) {
                 const birthYear = new Date(pet.birthdate).getFullYear();
                 const age = new Date().getFullYear() - birthYear;
@@ -434,7 +434,7 @@
             }
             document.getElementById('modalPetAge').textContent = ageDisplay;
             
-            document.getElementById('modalPetWeight').textContent = pet.weight ? pet.weight + ' kg' : 'N/A';
+            document.getElementById('modalPetWeight').textContent = pet.pet_weight ? pet.pet_weight + ' kg' : 'N/A';
             document.getElementById('modalPetNeutered').textContent = pet.is_neutered === 'yes' ? 'Yes' : 'No';
             document.getElementById('modalPetCrossbreed').textContent = pet.is_crossbreed === 'yes' ? 'Yes' : 'No';
             
@@ -609,7 +609,6 @@
                         <li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Pet Registration</a></li>
                         <li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Anti-Rabies Vaccination</a></li>
                         <li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Pet Adoption</a></li>
-                        <li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Report Animal Cruelty</a></li>
                     </ul>
                 </div>
                 
@@ -619,8 +618,8 @@
                     <ul class="space-y-2 text-gray-600 text-sm">
                         <li>City Veterinary Office</li>
                         <li>Dasmariñas City, Cavite</li>
-                        <li>Phone: (046) 123-4567</li>
-                        <li>Email: vet@dasmarinas.gov.ph</li>
+                        <li>Phone: 0966-881-2010</li>
+                        <li>Email: vetdasma@yahoo.com</li>
                     </ul>
                 </div>
             </div>

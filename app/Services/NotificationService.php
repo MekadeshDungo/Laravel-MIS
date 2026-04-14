@@ -39,7 +39,7 @@ class NotificationService
 
     public static function notifyAboveLevel(int $level, string $title, string $message, ?string $module = null, ?int $recordId = null, string $priority = 'normal'): void
     {
-        $users = User::whereRaw('(SELECT hierarchy_level FROM role_hierarchy WHERE role = users.role) >= ?', [$level])->get();
+        $users = User::whereRaw('(SELECT hierarchy_level FROM role_hierarchy WHERE role = admin_users.role) >= ?', [$level])->get();
         
         foreach ($users as $user) {
             self::create($user, $title, $message, $module, $recordId, $priority);

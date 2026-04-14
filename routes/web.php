@@ -377,9 +377,13 @@ Route::middleware(['auth', 'role:admin_asst'])->prefix('admin-asst')->name('admi
 
     // Missing Pets
     Route::get('/missing-pets', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'index'])->name('missing-pets.index');
-    Route::get('/missing-pets/{animal}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'show'])->name('missing-pets.show');
-    Route::post('/missing-pets/{animal}/found', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
-    Route::post('/missing-pets/{animal}/approve', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'approve'])->name('missing-pets.approve');
+    Route::get('/missing-pets/create', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'create'])->name('missing-pets.create');
+    Route::post('/missing-pets', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'store'])->name('missing-pets.store');
+    Route::get('/missing-pets/{missingPet}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'show'])->name('missing-pets.show');
+    Route::get('/missing-pets/{missingPet}/edit', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'edit'])->name('missing-pets.edit');
+    Route::put('/missing-pets/{missingPet}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'update'])->name('missing-pets.update');
+    Route::post('/missing-pets/{missingPet}/found', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
+    Route::post('/missing-pets/{missingPet}/approve', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'approve'])->name('missing-pets.approve');
 
     // Impound Records
     Route::get('/impounds', [\App\Http\Controllers\AdminAsst\ImpoundController::class, 'index'])->name('impounds.index');
@@ -420,11 +424,11 @@ Route::middleware(['auth', 'role:admin_staff'])->prefix('admin-staff')->name('ad
     Route::get('/missing-pets', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'index'])->name('missing-pets.index');
     Route::get('/missing-pets/create', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'create'])->name('missing-pets.create');
     Route::post('/missing-pets', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'store'])->name('missing-pets.store');
-    Route::get('/missing-pets/{animal}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'show'])->name('missing-pets.show');
-    Route::get('/missing-pets/{animal}/edit', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'edit'])->name('missing-pets.edit');
-    Route::put('/missing-pets/{animal}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'update'])->name('missing-pets.update');
-    Route::post('/missing-pets/{animal}/found', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
-    Route::post('/missing-pets/{animal}/approve', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'approve'])->name('missing-pets.approve');
+    Route::get('/missing-pets/{missingPet}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'show'])->name('missing-pets.show');
+    Route::get('/missing-pets/{missingPet}/edit', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'edit'])->name('missing-pets.edit');
+    Route::put('/missing-pets/{missingPet}', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'update'])->name('missing-pets.update');
+    Route::post('/missing-pets/{missingPet}/found', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'markFound'])->name('missing-pets.mark-found');
+    Route::post('/missing-pets/{missingPet}/approve', [\App\Http\Controllers\AdminAsst\MissingPetController::class, 'approve'])->name('missing-pets.approve');
 
     // Adoption Pets
     Route::get('/adoption-pets', [\App\Http\Controllers\AdminAsst\AdoptionPetController::class, 'index'])->name('adoption-pets.index');
@@ -714,23 +718,41 @@ Route::get('/kapon', function () {
 // Kapon Form Page Route - Public
 Route::get('/kapon/form', function () {
     $user = auth()->user();
-    $client = $user ? \App\Models\PetOwner::where('email', $user->email)->first() : null;
-    $pets = $client ? $client->pets : collect([]);
+    $petOwner = $user ? $user->petOwner : null;
+    $pets = $petOwner ? $petOwner->pets : collect([]);
 
     $petsArray = $pets->map(function ($pet) {
         return [
-            'id' => $pet->id,
-            'name' => $pet->name,
+            'id' => $pet->pet_id,
+            'name' => $pet->pet_name,
             'species' => $pet->species,
             'breed' => $pet->breed,
             'age' => $pet->age,
             'weight' => $pet->weight,
-            'image' => $pet->photo_url,
+            'image' => $pet->pet_image,
         ];
     })->toArray();
 
-    return view('Client.kapon_form', compact('user', 'client', 'petsArray'));
+    return view('Client.kapon_form', compact('user', 'petOwner', 'petsArray'));
 });
+
+// Kapon Form POST Route
+Route::post('/kapon/form', function (\Illuminate\Http\Request $request) {
+    $validated = $request->validate([
+        'first_name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'email' => 'required|email',
+        'mobile_number' => 'required|string|max:20',
+        'blk_lot_ph' => 'required|string|max:255',
+        'street' => 'required|string|max:255',
+        'barangay' => 'required|string|max:255',
+        'selected_pets' => 'required|array|min:1',
+        'appointment_date_date' => 'required|date|after_or_equal:today',
+        'appointment_date_time' => 'required',
+    ]);
+
+    return redirect('/kapon')->with('status', 'Kapon application submitted successfully!');
+})->middleware('auth');
 
 // Adoption Page Route - Public
 Route::get('/adoption', function (\Illuminate\Http\Request $request) {
@@ -901,9 +923,10 @@ Route::get('/adoption/paginate', function (\Illuminate\Http\Request $request) {
 // Adoption Form Page Route
 Route::get('/adoption/form', function () {
     $user = auth()->user();
-    $client = $user ? \App\Models\PetOwner::where('user_id', $user->id)->first() : null;
+    $petOwner = $user ? $user->petOwner : null;
     $traits = \App\Models\AdoptionTrait::orderBy('name')->get();
-    return view('Client.adoption_form', compact('user', 'client', 'traits'));
+    $adoptionPets = \App\Models\AdoptionPet::all();
+    return view('Client.adoption_form', compact('user', 'petOwner', 'traits', 'adoptionPets'));
 })->name('adoption.form');
 
 // Store Adoption Pet Route
@@ -914,7 +937,7 @@ Route::get('/missing-pets', function () {
     $missingPets = Pet::where('is_missing', true)
         ->with('owner')
         ->orderBy('missing_since', 'desc')
-        ->get();
+        ->paginate(12);
     
     // Get active announcements for public (all published, no audience filter)
     $announcements = Announcement::where('is_active', true)
@@ -923,6 +946,29 @@ Route::get('/missing-pets', function () {
     
     return view('Client.missing_pets_page', compact('missingPets', 'announcements'));
 });
+
+// Missing Pets Form Page Route
+Route::get('/missing-pets/form', function () {
+    $user = auth()->user();
+    $petOwner = $user ? $user->petOwner : null;
+    $pets = $petOwner ? $petOwner->pets : collect([]);
+    
+    $petsArray = $pets->map(function($pet) {
+        return [
+            'id' => $pet->pet_id,
+            'name' => $pet->pet_name,
+            'species' => $pet->species,
+            'breed' => $pet->breed,
+            'gender' => $pet->gender,
+            'is_neutered' => $pet->is_neutered,
+            'age' => $pet->estimated_age,
+            'weight' => $pet->weight,
+            'image' => $pet->pet_image
+        ];
+    })->toArray();
+    
+    return view('Client.missing_pets_form', compact('user', 'petOwner', 'petsArray'));
+})->middleware('auth')->name('missing-pets.form');
 
 // Pet Registration Page Route - Public
 Route::get('/pet-registration', function () {

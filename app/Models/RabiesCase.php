@@ -57,6 +57,11 @@ class RabiesCase extends Model
         return $this->belongsTo(BiteRabiesReport::class, 'report_number', 'report_number');
     }
 
+    public function owner()
+    {
+        return $this->belongsTo(Owner::class, 'animal_owner_name', 'owner_name');
+    }
+
     public static function generateCaseNumber(): string
     {
         $year = date('Y');
